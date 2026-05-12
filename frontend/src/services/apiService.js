@@ -337,8 +337,7 @@ export async function saveGameToBackend(gameState, slotNumber) {
         await addCapturedPokemon({
           pokemon_id: pokemon.id,
           pokemon_name: pokemon.name,
-          slot_id: gameState.slotDbId || null,
-          is_global: true,
+          slot_id: gameState.slotDbId || null
         });
       } catch (e) {
         // Pokemon might already exist in pokedex, ignore

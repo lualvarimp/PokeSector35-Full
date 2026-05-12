@@ -214,20 +214,19 @@ async function confirmNewGame(slotNumber, slotOccupied = false) {
     // Avisos de sobreescritura solo si el slot ya tiene una partida
     if (slotOccupied) {
         const aviso1 = confirm(
-            '⚠️ NUEVA PARTIDA\n\n' +
-            'Empezar una nueva partida borrará TODOS los datos del slot:\n' +
+            'NUEVA PARTIDA partida borrará TODOS los datos del slot:\n' +
             '  · Tu pokédex de este slot\n' +
             '  · Tu progreso actual\n' +
-            '  · Tus estadísticas\n\n' +
-            'Esta acción no se puede deshacer.\n\n' +
+            '  · Tus estadísticas\n' +
+            'Esta acción no se puede deshacer.\n' +
             '¿Quieres continuar?'
         );
         if (!aviso1) return;
 
         const aviso2 = confirm(
-            '🚨 ¿ESTÁS SEGURO/A?\n\n' +
-            'Comenzarás una partida completamente nueva desde cero.\n' +
-            'Todos los datos anteriores se perderán para siempre.\n\n' +
+            '¿ESTÁS SEGURO/A?\n' +
+            'Comenzarás una partida nueva desde cero.\n' +
+            'Todos los datos anteriores se perderán para siempre.\n' +
             '¿Confirmas que quieres empezar de nuevo?'
         );
         if (!aviso2) return;

@@ -1,4 +1,3 @@
-
 // =============================================================================
 //  movement.js — Movimiento del jugador y lógica del mapa
 // =============================================================================
@@ -79,6 +78,9 @@ export async function checkSquare(square) {
     }
 
     // ── CASO 2: encuentro Pokémon ─────────────────────────────────────────
+    // Doble comprobación: isGoal puede haberse activado durante el await anterior
+    if (gameState.isGoal || gameState.isGameOver) return;
+
     const diff          = gameState.difficulty;
     const encounterRate = diff ? diff.encounterRate : 0.30;
     const wildRate      = diff ? diff.wildRate      : 0.70;

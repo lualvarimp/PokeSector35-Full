@@ -30,10 +30,19 @@ export async function initPokedex() {
     let allCapturedData = [];
 
     if (api.isLoggedIn()) {
+        const slotId = gameState.slotDbId || null;
+
+        // Si no hay slotDbId activo no podemos saber qué slot mostrar.
+        // Usamos los pokémon capturados en esta sesión (gameState) como fuente.
+        if (!slotId) {
+            allCapturedData = gameState.pokemonCaptured.map(p => ({ id: p.id, name: p.name }));
+            pokedex = new Pokedex(allCapturedData);
+            return;
+        }
+
         try {
             // Filtrar siempre por el slot actual: la pokédex muestra solo
             // los pokémon capturados en este slot, no en todos los slots
-            const slotId = gameState.slotDbId || null;
             const pokedexFromBD = await api.getPokedex(slotId);
 
             // Deduplicar por si hubiera duplicados legacy en BD

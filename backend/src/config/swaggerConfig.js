@@ -165,16 +165,12 @@ const options = {
               nullable: true,
               example: 1
             },
-            is_global: {
-              type: 'boolean',
-              example: true
-            },
             captured_at: {
               type: 'string',
               format: 'date-time'
             }
           },
-          required: ['id', 'user_id', 'pokemon_id', 'pokemon_name', 'is_global', 'captured_at']
+          required: ['id', 'user_id', 'pokemon_id', 'pokemon_name', 'captured_at']
         },
 
         /**

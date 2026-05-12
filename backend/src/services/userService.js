@@ -14,14 +14,12 @@ export async function getUserStats(userId) {
     if (!user) {
       throw new Error('Usuario no encontrado');
     }
-
-    // Contar pokémon capturados únicos (is_global = true) - sin SQL injection
+    // Contar pokémon capturados únicos por slot
     const uniquePokemonCount = await CapturedPokemon.count({
       distinct: true,
       col: 'pokemon_id',
       where: {
-        user_id: userId,
-        is_global: true
+        user_id: userId
       }
     });
 

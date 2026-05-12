@@ -1,0 +1,123 @@
+/* Styles by Luis Alonso */
+
+/* =============================================================================
+   stats-screen.css — Pantalla de estadísticas y Pokédex
+   =============================================================================
+   RESPONSABILIDAD: Estilizar la pantalla de estadísticas con sus dos vistas:
+   el resumen de capturados/perdidos y la Pokédex global. El contenido puede
+   desbordar la pantalla cuadrada, por lo que .stats-list se desplaza con
+   translateY mediante el dPad (mismo mecanismo que .goal-list).
+   También estiliza el diálogo de confirmación de borrado de datos.
+
+   RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
+   ✅ Visualización de datos  → listas de Pokémon capturados, perdidos y Pokédex global
+   ✅ Filtrado de información  → la Pokédex filtra por letra; el filtro activo se muestra en cabecera
+   ✅ Manipulación del DOM    → stats.js aplica translateY a .stats-list para el scroll
+   ============================================================================= */
+
+.stats-screen {
+    overflow: hidden;            /* recorta el contenido que desborda la pantalla cuadrada */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* ancla el contenido arriba, evita el centrado vertical */
+    align-items: stretch;
+
+    /* Título "Estadísticas" — mismo estilo que el h2 de goal-screen */
+    h2 {
+        width: fit-content;
+        margin: 0 auto;
+        padding: 0.4rem 1.6rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--white);
+        border: 0.15rem solid var(--black-screen);
+        outline: 0.15rem solid var(--black-screen);
+        outline-offset: 0.3rem;
+        background: var(--black-screen);
+    }
+
+    p {
+        padding: 0 1rem;
+        font-size: 0.95rem;
+        line-height: 1.3rem;
+    }
+
+    /* Contenedor desplazable: stats.js aplica translateY para el scroll con dPad.
+       Contiene las instrucciones (.info-stats) y el listado dinámico (.game-list). */
+    .stats-list {
+        display: block;
+        width: 100%;
+        padding: 1rem 0 0;
+        box-sizing: border-box;
+        mix-blend-mode: multiply;
+
+        /* Párrafos de instrucciones de la cabecera (START, A, B).
+           stats-ui.js los oculta con .hidden al entrar a la vista Pokédex
+           y los restaura al volver al resumen. */
+        .info-stats {
+            padding-left: 2rem;
+            margin: 1rem 0 0;
+
+            span {
+                font-weight: 400; /* el separador "---" en peso normal */
+            }
+        }
+
+        /* Hint de "B/ESC: Volver atrás" — creado dinámicamente por stats-ui.js
+           la primera vez que se entra en la vista Pokédex */
+        #pokedex-back-hint {
+            margin: 1rem 0;
+        }
+    }
+
+    /* Contenedor de las listas de Pokémon — rellenado dinámicamente por JS.
+       Usa flex column para apilar los párrafos verticalmente. */
+    .game-list {
+        display: flex;
+        flex-direction: column;
+
+        p {
+            margin: 0.35rem 0;
+            font-size: 0.85rem; /* ligeramente más pequeño que el texto base */
+
+            span {
+                display: block;
+                padding: 1rem 0 0 0; /* espacio encima de textos de hint */
+            }
+        }
+
+        /* Cabeceras de sección (CAPTURADOS, PERDIDOS, POKÉDEX):
+           fondo gris con texto blanco, estilo de etiqueta retro */
+        p strong {
+            padding: 0.6rem 0.8rem;
+            width: fit-content;
+            color: var(--white);
+            background-color: var(--grey);
+        }
+    }
+
+    /* ── Diálogo de confirmación de borrado ─────────────────────────────
+       Creado con createElement por stats.js, centrado sobre la pantalla.
+       stats.js lo muestra al pulsar B en la vista resumen y lo oculta
+       con A (confirmar borrado) o B (cancelar). */
+    #erase-confirm {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* centrado perfecto sobre la pantalla */
+        width: 85%;
+        border: solid 0.2rem var(--black-screen);
+        line-height: 1.4rem;
+        text-align: center;
+        color: var(--black-screen);
+        background-image: url(/assets/img/screen-back.png); /* misma textura que la pantalla */
+        z-index: 10; /* encima de todo el contenido de stats */
+
+        p {
+            margin: 0;
+            padding: 1.2rem 1.5rem;
+            font-size: 0.9rem;
+            line-height: 1.7rem;
+        }
+    }
+}

@@ -1,0 +1,100 @@
+//- ============================================================================
+//- POKÉSECTOR ADMIN PANEL - USERS.PUG
+//- Gestión de usuarios con filtros de rol, letra y estado
+//- ============================================================================
+
+extends layout
+
+block content
+  main.main-content
+    .users-container
+      //- HEADER
+      .users-header
+        .header-top
+          a.btn-back(href="/admin/dashboard") ← Volver
+          h1.users-title Usuarios
+
+      //- FILTROS
+      .users-filters
+        .filter-group
+          label(for="roleFilter") Rol:
+          select#roleFilter.filter-select
+            option(value="all") Todos
+            option(value="user") Usuario
+            option(value="admin") Admin
+
+        .filter-group
+          label(for="letterFilter") Primera letra:
+          select#letterFilter.filter-select
+            option(value="all") Todas
+            option(value="A") A
+            option(value="B") B
+            option(value="C") C
+            option(value="D") D
+            option(value="E") E
+            option(value="F") F
+            option(value="G") G
+            option(value="H") H
+            option(value="I") I
+            option(value="J") J
+            option(value="K") K
+            option(value="L") L
+            option(value="M") M
+            option(value="N") N
+            option(value="O") O
+            option(value="P") P
+            option(value="Q") Q
+            option(value="R") R
+            option(value="S") S
+            option(value="T") T
+            option(value="U") U
+            option(value="V") V
+            option(value="W") W
+            option(value="X") X
+            option(value="Y") Y
+            option(value="Z") Z
+
+        .filter-group
+          label(for="statusFilter") Estado:
+          select#statusFilter.filter-select
+            option(value="all") Todos
+            option(value="enabled") Habilitados
+            option(value="disabled") Deshabilitados
+
+      //- TABLA
+      .table-wrapper
+        table.users-table
+          thead
+            tr
+              th
+                span(data-sort-state="none") ID
+                span.sort-icon ▲
+                span.sort-icon ▼
+                span.sort-icon ●
+
+              th
+                span(data-sort-state="none") Usuario
+                span.sort-icon ▲
+                span.sort-icon ▼
+                span.sort-icon ●
+
+              th Rol
+
+              th Creado
+
+              th Acciones
+
+          tbody#usersTableBody
+            tr
+              td(colspan="5").loading Cargando usuarios...
+
+      //- PAGINACIÓN
+      .users-pagination
+        .pagination-controls
+          button#prevBtn.pagination-btn(onclick="previousPage()") ◀
+          span#pageInfo Página 0 de 0
+          button#nextBtn.pagination-btn(onclick="nextPage()") ▶
+
+  //- SCRIPTS
+  script(src="/js/multiColumnSort.js")
+  script(src="/js/users.js")

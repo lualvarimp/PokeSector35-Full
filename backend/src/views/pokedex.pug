@@ -1,0 +1,103 @@
+extends layout
+
+block content
+  .pokedex-container
+    //- Encabezado con botón volver
+    .pokedex-header
+      .header-top
+        a.btn-back(href='javascript:history.back()') ← Volver
+        h1.pokedex-title Pokédex del Usuario
+
+    //- Filtros y acciones (solo búsqueda)
+    .pokedex-controls
+      .controls-left
+        .search-group
+          input#pokemonSearch.search-input(
+            type='text'
+            placeholder='Buscar Pokémon...'
+          )
+
+      .controls-right
+        button#addPokemonBtn.btn-add + Añadir Pokémon
+
+    //- Tabla de Pokémon CON ORDENAMIENTO EN HEADERS
+    .table-wrapper
+      table.pokedex-table
+        thead
+          tr
+            th
+              span(data-sort-state='none') ID
+              .sort-icon ↑
+              .sort-icon ↓
+              .sort-icon ↕
+            th
+              span(data-sort-state='none') Nombre
+              .sort-icon ↑
+              .sort-icon ↓
+              .sort-icon ↕
+            th
+              span(data-sort-state='none') Slot
+              .sort-icon ↑
+              .sort-icon ↓
+              .sort-icon ↕
+            th Capturado
+            th Acciones
+
+        tbody#pokemonTableBody
+          tr
+            td(colspan='5').loading Cargando Pokémon...
+
+    //- Contador
+    .pokedex-footer
+      span#pokemonCountTotal Total: 0 Pokémon capturados
+
+    //- Modal añadir Pokémon CON AUTOCOMPLETE
+    #addPokemonModal.modal(style='display: none;')
+      .modal-content
+        .modal-header
+          h2 Añadir Pokémon Capturado
+          button.modal-close(type='button' onclick='closeAddModal()') ✕
+        
+        .modal-body
+          form#addPokemonForm
+            .form-group
+              label(for='pokemonId') ID Pokémon (Pokedex)
+              input#pokemonId(
+                type='number'
+                placeholder='Ej: 25'
+                required
+                min='1'
+              )
+              small(style='color: #666;') Escribe el ID y se rellena automáticamente el nombre
+            
+            .form-group
+              label(for='pokemonName') Nombre Pokémon
+              input#pokemonName(
+                type='text'
+                placeholder='Ej: Pikachu'
+                required
+                autocomplete='off'
+              )
+              small(style='color: #666;') Escribe 2+ letras para ver sugerencias
+              #pokemonSuggestions
+
+            .form-group
+              label(for='slotId') Slot de Partida (opcional)
+              select#slotId.filter-select
+                option(value='') Sin asignar
+                option(value='1') Slot 1
+                option(value='2') Slot 2
+                option(value='3') Slot 3
+
+            .form-group
+              label(for='isGlobal')
+                input#isGlobal(type='checkbox')
+                span  Añadir a Pokédex global (visible en estadísticas)
+        
+        .modal-footer
+          button.btn-secondary(type='button' onclick='closeAddModal()') Cancelar
+          button.btn-primary(type='button' onclick='addPokemon()') Añadir
+
+block scripts
+  script(src='/js/multiColumnSort.js')
+  script(src='/js/pokedex.js')

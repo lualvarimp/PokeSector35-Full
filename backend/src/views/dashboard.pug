@@ -1,0 +1,94 @@
+extends layout
+
+block content
+  .dashboard-container
+    //- Encabezado
+    .dashboard-header
+      h1.dashboard-title DASHBOARD
+
+    //- Stats Cards
+    .stats-flex
+      .stat-card
+        .stat-icon
+          img(src='/img/icon-users.png' alt='Usuarios')
+        .stat-content
+          .stat-label Usuarios Registrados
+          .stat-value#totalUsers 0
+          .stat-change +0 esta semana
+
+      .stat-card
+        .stat-icon
+          img(src='/img/icon-games.png' alt='Partidas')
+        .stat-content
+          .stat-label Partidas Completadas
+          .stat-value#totalGames 0
+          .stat-change +0 esta semana
+
+      .stat-card
+        .stat-icon
+          img(src='/img/icon-pokemon.png' alt='Pokémon')
+        .stat-content
+          .stat-label Pokémon Capturados
+          .stat-value#totalPokemon 0
+          .stat-change +0 esta semana
+
+    //- Top 3 Jugadores
+    .dashboard-section
+      .section-header
+        h2.section-title Top 3 Jugadores
+        a.section-link(href='/admin/ranking') Ver Ranking Completo →
+
+      .top-players
+        .player-card
+          .player-info
+            .player-name#player1Name 
+            .player-stats
+              span#player1Captures 
+              span#player1Difficulty 
+
+        .player-card
+          .player-info
+            .player-name#player2Name 
+            .player-stats
+              span#player2Captures 
+              span#player2Difficulty 
+
+        .player-card
+          .player-info
+            .player-name#player3Name 
+            .player-stats
+              span#player3Captures 
+              span#player3Difficulty 
+
+    //- Sección de Dificultades
+    .dashboard-section
+      .section-header
+        h2.section-title Partidas por Dificultad
+
+      .difficulty-flex
+        .difficulty-card
+          .difficulty-label Fácil
+          .difficulty-value#easyCount 
+          .difficulty-bar
+            .difficulty-fill#easyFill(style='width: 0%')
+
+        .difficulty-card
+          .difficulty-label Normal
+          .difficulty-value#normalCount 
+          .difficulty-bar
+            .difficulty-fill#normalFill(style='width: 0%')
+
+        .difficulty-card
+          .difficulty-label Difícil
+          .difficulty-value#hardCount 
+          .difficulty-bar
+            .difficulty-fill#hardFill(style='width: 0%')
+
+        .difficulty-card
+          .difficulty-label Infernal
+          .difficulty-value#infernalCount 
+          .difficulty-bar
+            .difficulty-fill#infernalFill(style='width: 0%')
+
+block scripts
+  script(src='/js/dashboard.js')

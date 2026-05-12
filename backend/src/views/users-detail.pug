@@ -1,0 +1,130 @@
+extends layout
+
+block content
+  .users-detail-container
+    //- Encabezado con botón volver
+    .detail-header
+      .header-top
+        a.btn-back(href='/admin/users') ← Volver
+        h1.detail-title Detalles del Usuario
+
+    //- Tabla de datos del usuario
+    .detail-section
+      h2.section-title Información del Usuario
+      .table-wrapper
+        table.detail-table
+          tbody
+            tr
+              td.label Usuario
+              td#username -
+              td.actions
+                button.btn-edit(data-field='username') Editar
+
+            tr
+              td.label Rol
+              td#role -
+              td.actions
+                button.btn-edit(data-field='role') Editar
+
+            tr
+              td.label Explorador
+              td#explorerName -
+              td.actions
+                button.btn-edit(data-field='explorerName') Editar
+
+            tr
+              td.label Contraseña
+              td ••••••••
+              td.actions
+                button.btn-edit(data-field='password') Cambiar
+
+            tr
+              td.label Registrado
+              td#createdAt -
+              td -
+
+            tr
+              td.label Estado
+              td#deletedAt Activo
+              td -
+
+    //- Card Pokémon capturados
+    .detail-section.pokemon-slots-section
+      .detail-section
+        h2.section-title Pokémon Capturados
+        .pokemon-card
+          .pokemon-content
+            .pokemon-count
+              span.count-number#pokemonCount 0
+              span.count-label Pokémon únicos capturados
+            .pokemon-actions
+              a.btn-action.btn-primary(id='viewPokedexBtn') Ver Detalles →
+
+      //- Card Slots
+      .detail-section
+        h2.section-title Slots de Partida
+        .pokemon-card
+          .pokemon-content
+            .pokemon-count
+              span.count-number#slotCount 0
+              span.count-label Slots disponibles
+            .pokemon-actions
+              a.btn-action.btn-primary(id='viewSlotsBtn') Ver Slots →
+
+    //- Botones de acción
+    .detail-actions
+      button.btn-danger#deleteBtn Eliminar Usuario
+      button.btn-success#restoreBtn(style='display: none;') Restaurar Usuario
+
+    //- Modal crear usuario
+    #createUserModal.modal(style='display: none;')
+      .modal-content
+        .modal-header
+          h2 Crear Nuevo Usuario
+          button.modal-close(onclick='closeCreateModal()') ✕
+        
+        .modal-body
+          form#createUserForm
+            .form-group
+              label(for='newUsername') Usuario
+              input#newUsername(
+                type='text'
+                placeholder='Usuario (3-15 caracteres)'
+                required
+                minlength='3'
+                maxlength='15'
+              )
+            
+            .form-group
+              label(for='newPassword') Contraseña
+              input#newPassword(
+                type='password'
+                placeholder='Contraseña (mínimo 6 caracteres)'
+                required
+                minlength='6'
+              )
+            
+            .form-group
+              label(for='newRole') Rol
+              select#newRole(required)
+                option(value='user') User
+                option(value='admin') Admin
+        
+        .modal-footer
+          button.btn-secondary(onclick='closeCreateModal()') Cancelar
+          button.btn-primary#createBtn(type='submit') Crear Usuario
+
+    //- Modal confirmación usuario creado
+    #successModal.modal(style='display: none;')
+      .modal-content
+        .modal-header
+          h2 ✓ Usuario Creado
+
+        .modal-body
+          p#successMessage Usuario creado correctamente
+        
+        .modal-footer
+          button.btn-primary(onclick='closeSuccessModal()') OK
+
+block scripts
+  script(src='/js/users-detail.js')

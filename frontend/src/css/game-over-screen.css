@@ -1,0 +1,53 @@
+/* Styles by Luis Alonso */
+
+/* =============================================================================
+   game-over-screen.css — Pantalla de derrota
+   =============================================================================
+   RESPONSABILIDAD: Estilizar la pantalla que aparece cuando el jugador se
+   queda sin HP. Muestra el título "GAME OVER", el mensaje parpadeante para
+   reiniciar y una imagen del entrenador derrotado.
+
+   RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
+   ✅ Manipulación del DOM  → game-over.js la revela con classList.remove('hidden')
+   ============================================================================= */
+
+.game-over-screen {
+
+    /* Título "GAME OVER" — centrado con fondo oscuro */
+    h2 {
+        width: fit-content;
+        margin: 1rem auto;
+        padding: 1rem 1.3rem;
+        mix-blend-mode: multiply; /* se funde con la textura de fondo de pantalla */
+        text-align: center;
+        color: var(--white);
+        background: var(--black-screen);
+    }
+
+    /* Mensaje "PULSA START o PULSA ENTER" — parpadea para guiar al jugador
+       El <span> interior "o" se muestra en una línea propia más pequeña */
+    p {
+        margin: 0;
+        text-align: center;
+        font-size: 0.9rem;
+        animation: blink 1s steps(1) infinite; /* parpadeo retro */
+
+        span {
+            display: block;      /* "o" en su propia línea */
+            padding: 0.4rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Imagen del entrenador derrotado — centrada y pegada a la parte inferior
+       El filtro ajusta la imagen para que encaje visualmente con la pantalla */
+    img {
+        position: absolute;
+        width: 70%;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%); /* centrado horizontal */
+        mix-blend-mode: multiply;
+        filter: opacity(80%) brightness(160%) contrast(80%);
+    }
+}

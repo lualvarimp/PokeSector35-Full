@@ -1,0 +1,130 @@
+/* ============================================================================
+   POKÉSECTOR LOGIN - LOGIN.CSS
+   Estilos específicos para la página de login
+   ============================================================================ */
+
+body.login-page nav.navbar ul {
+  display: none !important;
+}
+
+.login-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.login-card {
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+}
+
+.login-title {
+  font-size: 2rem;
+  color: var(--green-dark);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  color: var(--green-dark);
+  text-align: center;
+  text-shadow: 0 0 0.2rem var(--green-med);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-actions {
+  margin-top: 1rem;
+}
+
+.btn-login {
+  width: 100%;
+  font-family: var(--main-font);
+  font-size: 1.25rem;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+  font-weight: 400;
+  text-shadow: 0 0 0.2rem var(--green-med);
+  padding: 0.875rem 1.5rem;
+  background: none;
+  color: var(--green-dark);
+  border: 0.15rem solid var(--green-med);
+  border-radius: 0.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0.3rem var(--green-dark);
+
+  &:hover {
+    animation: blink-logo 7s linear;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.message-area {
+  margin-top: 1.5rem;
+  min-height: 1rem;
+  padding: 0.75rem 1rem;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+  border-radius: 0.2rem;
+  font-weight: 600;
+  text-align: center;
+
+  &.error {
+    background-color: rgba(151, 16, 16, 0.1);
+    border: 0.15rem solid var(--red);
+    color: var(--red);
+    box-shadow: 0 0 0.3rem var(--red);
+  }
+
+  &.success {
+    background-color: rgba(129, 170, 99, 0.1);
+    border: 0.15rem solid var(--green-med);
+    color: var(--green-dark);
+    box-shadow: 0 0 0.3rem var(--green-med);
+  }
+}
+
+.login-footer {
+  color: var(--green-dark);
+  padding: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 0.1rem var(--green-med);
+
+  p {
+    margin: 0;
+  }
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  font-family: var(--main-font);
+  -webkit-text-fill-color: var(--text-primary);
+  -webkit-box-shadow: 0 0 0 10rem var(--green-white) inset;
+}

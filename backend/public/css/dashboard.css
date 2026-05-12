@@ -1,0 +1,280 @@
+/* ============================================================================
+   POKÉSECTOR DASHBOARD - DASHBOARD.CSS
+   Estilos específicos para el dashboard admin
+   ============================================================================ */
+
+.dashboard-container {
+  width: 100%;
+}
+
+.dashboard-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--green-dark);
+  margin-bottom: 0.5rem;
+}
+
+.stats-flex {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.stat-card {
+  width: 33%;
+  background: var(--white);
+  border: 0.2rem solid var(--green-med);
+  border-radius: 0.2rem;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0.3rem var(--green-med);
+
+  .stat-icon {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    img {
+      width: 80%;
+      mix-blend-mode: multiply;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 18rem;
+  }
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 1rem;
+  color: var(--black);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.5rem;
+}
+
+.stat-change {
+  font-size: 1.1rem;
+  color: var(--green-med);
+  font-weight: 500;
+}
+
+.dashboard-section {
+  margin-bottom: 3rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--green-dark);
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--black);
+  margin: 0;
+}
+
+.section-link {
+  color: var(--green-med);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--green-dark);
+    text-shadow: 0 0 8px var(--green-light);
+  }
+}
+
+.top-players {
+  display: flex;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.player-card {
+  background-color: var(--white);
+  border: 0.2rem solid var(--green-med);
+  box-shadow: 0 0 0.3rem var(--green-med);
+  border-radius: 0.2rem;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  transition: all 0.3s ease;
+  width: 33%;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 18rem;
+  }
+}
+
+.player-rank {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.player-info {
+  flex: 1;
+}
+
+.player-name {
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1rem;
+  color: var(--black);
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.player-stats {
+  font-size: 1.1rem;
+  color: var(--black);
+
+  span {
+    display: block;
+    margin-bottom: 0.3rem;
+
+    &:last-of-type {
+      color: var(--green-med);
+    }
+  }
+
+  span:not(:last-child) {
+    margin-right: 0.5rem;
+  }
+}
+
+.difficulty-flex {
+  display: flex;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+.difficulty-card {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--white);
+  border: 0.2rem solid var(--green-med);
+  box-shadow: 0 0 0.3rem var(--green-med);
+  border-radius: 0.2rem;
+  padding: 1rem 2rem;
+
+  @media (max-width: 768px) {
+    width: 45%;
+    max-width: 15rem;
+  }
+}
+
+.difficulty-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--black);
+  margin-bottom: 0.5rem;
+}
+
+.difficulty-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--green-med);
+  margin-bottom: 1rem;
+}
+
+.difficulty-bar {
+  width: 100%;
+  height: 0.5rem;
+  background-color: var(--white);
+  overflow: hidden;
+}
+
+.difficulty-fill {
+  height: 100%;
+  background: var(--green-med);
+  transition: width 0.5s ease;
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--green-med);
+}
+
+.action-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, var(--green-med), var(--green-dark));
+  color: var(--white);
+  border-radius: 1rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  span:first-child {
+    font-size: 2rem;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, var(--green-dark), var(--green-light));
+    box-shadow: 0 6px 20px rgba(129, 170, 99, 0.4);
+    transform: translateY(-3px);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+  }
+}

@@ -1,0 +1,55 @@
+
+/* Styles by Luis Alonso */
+
+/* =============================================================================
+   goal-screen.css — Pantalla de enhorabuena (meta)
+   =============================================================================
+   RESPONSABILIDAD: Estilizar la pantalla que aparece al llegar a la casilla
+   de meta. El contenido puede desbordar la pantalla cuadrada, por lo que
+   .goal-list se desplaza con translateY mediante el dPad (mismo mecanismo
+   que .stats-list en la pantalla de estadísticas).
+
+   RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
+   ✅ Visualización de datos → muestra el resumen de capturados/escapados/total
+   ✅ Manipulación del DOM   → stats.js aplica translateY a .goal-list para el scroll
+   ============================================================================= */
+
+.goal-screen {
+    overflow: hidden;           /* recorta el contenido que desborda la pantalla cuadrada */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* ancla el contenido arriba, evita el centrado vertical */
+    align-items: stretch;
+
+    h2 {
+        width: fit-content;
+        margin: 1rem auto;
+        padding: 0.4rem 1.2rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--white);
+        mix-blend-mode: multiply;
+        border: 0.15rem solid var(--black-screen);
+        outline: 0.15rem solid var(--black-screen); /* doble borde con outline */
+        outline-offset: 0.3rem;
+        background: var(--black-screen);
+    }
+
+    p {
+        padding: 0 1rem;
+        font-size: 0.95rem;
+        line-height: 1.3rem;
+    }
+
+    /* Contenedor desplazable: stats.js mueve este div con translateY
+       al pulsar arriba/abajo en el dPad cuando la goal-screen está visible.
+       align-self: flex-start ancla el bloque arriba desde el primer frame,
+       evitando el bug de centrado que se producía al inyectar contenido dinámico. */
+    .goal-list {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        mix-blend-mode: multiply;
+        align-self: flex-start; /* siempre pegado arriba, independientemente del contenido */
+    }
+}

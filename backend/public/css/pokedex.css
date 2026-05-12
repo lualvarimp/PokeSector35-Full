@@ -1,0 +1,241 @@
+/* ============================================================================
+   POKÉSECTOR POKÉDEX - POKEDEX.CSS
+   Estilos específicos para la página del Pokédex
+   ============================================================================ */
+
+.pokedex-container {
+  width: 100%;
+  max-width: calc(100vw - 2rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pokedex-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.pokedex-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.1rem;
+  text-transform: uppercase;
+  color: var(--green-dark);
+  margin: 0;
+}
+
+.pokedex-subtitle {
+  font-size: 1rem;
+  color: var(--black);
+  margin: 0;
+}
+
+.pokedex-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.controls-left {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.controls-right {
+  flex-shrink: 0;
+}
+
+.search-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-input {
+  font-family: var(--font-family);
+  font-size: 1rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--white);
+  border-radius: 0.5rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--green-med);
+    box-shadow: 0 0 0 3px rgba(129, 170, 99, 0.2);
+  }
+
+  &::placeholder {
+    color: var(--black);
+    opacity: 0.6;
+  }
+}
+
+.pokedex-table {
+  margin: 0 auto;
+  width: 58rem;
+  min-width: 58rem;
+  border-collapse: collapse;
+  font-size: 1rem;
+
+  thead {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+    font-weight: 400;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+
+    span {
+      &:hover {
+        animation: blink-logo 5s;
+        cursor: pointer;
+      }
+
+      &::after {
+        position: absolute;
+        content: '';
+        left: 0;
+        bottom: -0.3rem;
+        width: 0%;
+        height: 0.15rem;
+        background-color: var(--bg-primary);
+        transition: all 0.1s ease;
+      }
+
+      &:hover::after {
+        width: 100%;
+      }
+    }
+
+    .sort-icon {
+      display: none;
+      margin-left: 1rem;
+      font-weight: 400;
+      font-size: 1.5rem;
+      font-style: normal;
+    }
+
+    span[data-sort-state="up"]~.sort-icon:nth-of-type(1) {
+      display: inline;
+    }
+
+    span[data-sort-state="down"]~.sort-icon:nth-of-type(2) {
+      display: inline;
+    }
+
+    span[data-sort-state="none"]~.sort-icon:nth-of-type(3) {
+      display: inline;
+    }
+  }
+
+  th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 0.1rem solid var(--green-med);
+    color: var(--black);
+  }
+
+  tbody tr {
+    transition: all 0.3s ease;
+
+    &:hover {
+      background-color: rgba(129, 170, 99, 0.2);
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+}
+
+#pokemonTableBody tr td {
+  color: var(--green-dark);
+}
+
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pokedex-footer {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem;
+  font-size: 1rem;
+  color: var(--green-dark);
+  border-top: 2px solid var(--green-med);
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+}
+
+#pokemonSuggestions {
+  position: absolute;
+  background: var(--white);
+  color: var(--black);
+  border: 2px solid var(--green-med);
+  border-radius: 0.5rem;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1001;
+  display: none;
+  min-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#pokemonSuggestions>div {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background-color: rgba(129, 170, 99, 0.1);
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  span {
+    color: #999;
+    font-size: 0.9rem;
+  }
+}
+
+#addPokemonForm div:nth-of-type(4) label {
+  display: flex;
+  gap: 1rem;
+
+  input {
+    width: 1.5rem;
+  }
+
+  span {
+    font-weight: 400;
+  }
+}
+
+#pokemonSuggestions {
+  font-weight: 400 !important;
+}

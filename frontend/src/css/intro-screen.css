@@ -1,0 +1,130 @@
+/* Styles by Luis Alonso */
+
+/* =============================================================================
+   intro-screen.css — Pantalla de inicio y animación de introducción
+   =============================================================================
+   RESPONSABILIDAD: Estilizar la home-screen: el mensaje parpadeante "PULSA
+   START" y la animación de scroll vertical que presenta la historia del juego.
+
+   RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
+   ✅ Interfaz dinámica → animación CSS controlada desde intro.js
+   ============================================================================= */
+
+.home-screen {
+    width: 100%;
+    max-width: 18.75rem;
+    overflow-y: hidden; /* impide que la animación de scroll desborde la pantalla */
+    color: var(--black-screen);
+
+    /* Contenedor del mensaje "PULSA START / PULSA ENTER"
+       Parpadea indefinidamente para llamar la atención del jugador */
+    .home-start {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        animation: blink 1s steps(1) infinite; /* parpadeo brusco estilo retro */
+
+        h2 {
+            font-size: 1.2rem;
+            text-align: center;
+
+            span {
+                display: block;    /* "o" en línea propia entre los dos textos */
+                padding: 0.6rem 0;
+                font-weight: 400;
+            }
+        }
+    }
+
+    /* Contenedor de la animación de intro — arranca oculto (.hidden en HTML)
+       intro.js lo revela y activa animationPlayState = 'running' al pulsar START */
+    .animation-home {
+        position: absolute; /* se superpone a .home-start al aparecer */
+        top: 0;
+        left: 0;
+        width: 100%;
+        mix-blend-mode: multiply;  /* funde el texto con la textura de fondo */
+        image-rendering: pixelated;
+
+        /* Animación de scroll: mueve el contenido hacia arriba durante 34 segundos.
+           'steps(150)' divide el movimiento en 150 saltos discretos para el efecto retro.
+           'forwards' mantiene la posición final al acabar.
+           intro.js pausa/reanuda esta animación y la resetea al saltar la intro. */
+        animation: verticalScroll 34s steps(150) forwards;
+        animation-play-state: paused; /* empieza parada; intro.js la arranca */
+
+        h2,
+        h3 {
+            margin: 0;
+
+            img {
+                width: 100%;
+                opacity: 0.8;
+            }
+        }
+
+        p {
+            padding: 0.6rem;
+            font-size: 0.8rem;
+            line-height: 1.3rem;
+
+            /* Último párrafo ("¡POKÉSECTOR 35!") con estilo destacado:
+               líneas decorativas arriba y abajo que también parpadean */
+            &:last-child {
+                position: relative;
+                width: fit-content;
+                margin: 2rem auto 0;
+                padding-top: 0.8rem;
+                font-size: 1rem;
+                text-align: center;
+                color: var(--black-screen);
+
+                /* Línea superior e inferior como pseudo-elementos */
+                &::before,
+                &::after {
+                    position: absolute;
+                    content: '';
+                    width: 100%;
+                    height: 0.16rem;
+                    background: var(--black-screen);
+                    animation: blink 1s infinite; /* parpadea igual que el texto */
+                }
+
+                &::before {
+                    top: 0;
+                    left: 0;
+                }
+
+                &::after {
+                    bottom: 0;
+                    left: 0;
+                }
+            }
+        }
+
+        /* Espacio en blanco antes del texto narrativo para separarlo del logo */
+        .text-separator {
+            width: 100%;
+            height: 4rem;
+        }
+    }
+}
+
+/* Parpadeo brusco estilo retro: 50% visible, 50% invisible, sin transición */
+@keyframes blink {
+    0%,  50%   { opacity: 1; }
+    50.1%, 100% { opacity: 0; }
+}
+
+/* Animación de scroll vertical de la intro:*/
+@keyframes verticalScroll {
+    0%, 2.4%    { opacity: 0; transform: translateY(0%); }
+    2.5%, 7%    { opacity: 1; transform: translateY(0%); }  
+    7.1%, 9%    { opacity: 0; transform: translateY(0%); }
+    9.1%, 11% { opacity: 0; transform: translateY(-20%); }
+    11.1%, 15%  { opacity: 0.9; transform: translateY(-20%); }
+    25%         { opacity: 1; transform: translateY(-20%); }
+    100%        { transform: translateY(-100%); }
+}

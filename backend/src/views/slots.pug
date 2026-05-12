@@ -1,0 +1,82 @@
+extends layout
+
+block content
+  .slots-container
+    //- Encabezado con botón volver
+    .slots-header
+      .header-top
+        a.btn-back(href='javascript:history.back()') ← Volver
+        h1.slots-title Slots de Partida
+
+    //- Filtros y acciones
+    .slots-controls
+      .controls-left
+        .search-group
+          input#slotSearch.search-input(
+            type='text'
+            placeholder='Buscar slot...'
+          )
+
+      .controls-right
+        button#createSlotBtn.btn-add + Crear Nuevo Slot
+
+    //- Grid de Slots
+    .slots-grid#slotsGrid
+      .slot-card.loading
+        span Cargando slots...
+
+    //- Modal crear/editar slot
+    #slotModal.modal(style='display: none;')
+      .modal-content
+        .modal-header
+          h2#modalTitle Crear Nuevo Slot
+          button.modal-close(type='button' onclick='closeSlotModal()') ✕
+        
+        .modal-body
+          form#slotForm
+            .form-group
+              label(for='slotNumber') Número de Slot (1-3)
+              input#slotNumber(
+                type='number'
+                placeholder='1'
+                required
+                min='1'
+                max='3'
+              )
+            
+            .form-group
+              label(for='explorerName') Nombre del Explorador
+              input#explorerName(
+                type='text'
+                placeholder='Ej: Ash'
+                maxlength='12'
+              )
+
+            .form-group
+              label(for='difficulty') Dificultad
+              select#difficulty.filter-select(required)
+                option(value='') Selecciona dificultad
+                option(value='facil') Fácil
+                option(value='normal') Normal
+                option(value='dificil') Difícil
+                option(value='infernal') Infernal
+
+            .form-group
+              label(for='slotColor') Color de Consola
+              select#slotColor.filter-select(required)
+                option(value='') Selecciona color
+                option(value='#019273') 🟢 Verde
+                option(value='#ecf0f1') ⚪ Blanco
+                option(value='#f2b602') 🟡 Amarillo
+                option(value='#f286a6') 🌸 Rosa
+                option(value='#821E1E') 🔴 Rojo
+                option(value='#1851a6') 🔵 Azul
+                option(value='#afad9e') ⚫ Gris
+                option(value='#3d3a3d') ⬛ Negro
+        
+        .modal-footer
+          button.btn-secondary(type='button' onclick='closeSlotModal()') Cancelar
+          button.btn-primary(type='button' onclick='saveSlot()') Guardar
+
+block scripts
+  script(src='/js/slots.js')

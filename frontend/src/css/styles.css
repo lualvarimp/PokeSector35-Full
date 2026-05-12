@@ -1,0 +1,469 @@
+/* Styles by Luis Alonso */
+
+/* =============================================================================
+   styles.css — Estilos globales y estructura de la consola gameboy
+   =============================================================================
+   RESPONSABILIDAD: Definir las variables de diseño, el reset básico, los
+   estilos compartidos por todas las pantallas (fondos, aspect-ratio, .hidden)
+   y la maquetación completa de la consola gameboy (bezel, botones, menú).
+
+   RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
+   ✅ Interfaz dinámica y responsiva → clamp() adapta tamaños a distintas pantallas
+   ✅ Manipulación del DOM           → .hidden controla qué pantalla es visible
+   ============================================================================= */
+
+
+/* ==================== FUENTE PERSONALIZADA ==================== */
+/* Tipografía pixel-art que da el aspecto retro de Game Boy a todas las pantallas */
+@font-face {
+    font-family: 'pokemonGB';
+    src: url('/assets/fonts/pokemonGB.ttf');
+    font-style: normal;
+    font-display: swap;
+    /* evita FOIT: muestra fuente del sistema mientras carga */
+}
+
+
+/* ==================== VARIABLES CSS ==================== */
+/* Paleta y tipografía centralizadas para facilitar cambios globales de tema */
+:root {
+    --black: #222222;
+    /* fondo del body y color base de botones */
+    --black-screen: #333333;
+    /* color de texto en pantallas y bordes de UI */
+    --dark-black: #0000006f;
+    /* sombra oscura semitransparente para efectos 3D */
+    --white: #fdfdfd;
+    /* texto claro en fondos oscuros */
+    --grey: #aaaaaa;
+    /* fondo de cabeceras de sección en stats */
+    --light-grey: #3838386c;
+    /* gris semitransparente (uso secundario) */
+    --gameboy: #019273;
+        /* verde característico de la consola */
+    --red-light: #86272782;
+    --red-light-on: #ff5353d8;
+    /* color del LED rojo decorativo */
+    --effect-light: #c6565682;
+    /* reflejo del LED (efecto de luz interna) */
+    --light-button: #94949426;
+    /* brillo interior de los botones (inset highlight) */
+    --shadow-button: #383838bf;
+    /* sombra exterior de los botones */
+    --game-font: 'pokemonGB';
+    /* referencia a la fuente pixel-art */
+}
+
+
+/* ==================== RESET BÁSICO ==================== */
+* {
+    box-sizing: border-box;
+    /* padding y border incluidos en el ancho/alto */
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    /* fuente base para elementos no-juego */
+}
+
+html {
+    background: var(--black);
+    /* fondo oscuro alrededor de la consola */
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* centra verticalmente la consola en la ventana */
+    height: 100vh;
+}
+
+/* Separador visual entre la pantalla, los controles y el menú */
+.separator {
+    width: 100%;
+    height: 1.7rem;
+}
+
+
+/* ==================== ESTILOS GLOBALES DE PANTALLAS ==================== */
+/* Todos los estados del juego comparten este bloque: fondo texturizado,
+   aspect-ratio 1:1 y la tipografía pixel-art.
+   La clase .hidden controla cuál está visible en cada momento. */
+.home-screen,
+.menu-screen,
+.game-screen,
+.battle-screen,
+.goal-screen,
+.stats-screen,
+.game-over-screen {
+    position: relative;
+    width: 100%;
+    max-width: 18.75rem;
+    /* 300px: tamaño máximo de la pantalla */
+    aspect-ratio: 1 / 1;
+    /* pantalla cuadrada — el contenido que desborda usa overflow:hidden */
+    font-family: var(--game-font);
+    color: var(--black);
+    z-index: 2;
+
+    /* Fondo texturizado (imagen de ruido/papel) — posicionado con ::before para no
+       interferir con el contenido */
+    &::before {
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 100%;
+        background-image: url(/assets/img/screen-back.png);
+        background-repeat: repeat;
+        z-index: -1;
+        /* detrás del contenido pero delante del color del bezel */
+    }
+
+    /* Overlay de líneas de pantalla LCD — simula el efecto de rejilla de píxeles retro */
+    &::after {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url(/assets/img/screen-lines.png);
+        background-repeat: repeat;
+        opacity: 0.1;
+        /* muy sutil: solo da textura sin tapar el contenido */
+        z-index: 3;
+        /* encima de todo el contenido de la pantalla */
+    }
+}
+
+/* Clase de visibilidad: JS añade/quita .hidden para cambiar de pantalla.
+   !important garantiza que ningún otro estilo pueda mostrar una pantalla oculta */
+.hidden {
+    display: none !important;
+}
+
+
+/* ==================== CONSOLA GAMEBOY ==================== */
+
+.gameboy,
+.bezel {
+    width: 100%;
+    margin: 0 auto;
+    /* centra horizontalmente */
+}
+
+.gameboy {
+    position: relative;
+    max-width: 400px;
+    /* ancho máximo de toda la consola */
+    padding-bottom: 3rem;
+    /* espacio bajo los botones del menú */
+    border-radius: 0 0 3.5rem 0;
+    /* esquina redondeada inferior derecha (diseño GameBoy) */
+    background-color: var(--gameboy);
+
+    h1 {
+        margin: 0;
+        padding: 0.5rem 0 0.2rem;
+        text-align: center;
+
+        img {
+            width: 60%;
+            mix-blend-mode: multiply;
+            /* funde el logo con el fondo verde */
+            opacity: 0.7;
+        }
+    }
+}
+
+/* Marco negro que rodea la pantalla — contiene la pantalla y los decorados */
+.bezel {
+    display: flex;
+    justify-content: center;
+    /* centra la pantalla horizontalmente */
+    max-width: 370px;
+    padding: 1.2rem 0.5rem 2.5rem 0.5rem;
+    border-radius: 0.6rem 0.6rem 2.5rem 0.6rem;
+    background: var(--black);
+    z-index: -3;
+
+    /* LED rojo decorativo — posicionado de forma absoluta respecto al .bezel */
+    .light-position {
+        position: relative;
+
+        .red-light {
+            position: absolute;
+            top: 2rem;
+            left: -1.45rem;
+            width: 0.6rem;
+            height: 0.6rem;
+            border-radius: 50%;
+            background: var(--red-light);
+            border: 0.1rem solid var(--dark-black);
+            /* Sombras interiores que simulan el efecto de luz de un LED real */
+            box-shadow:
+                inset 0.1rem 0.1rem 0.2rem var(--dark-black),
+                inset -0.02rem -0.02rem 0.1rem var(--effect-light);
+            animation: twinkle-light 10s infinite;
+        }
+    }
+    .gameboy-logo-position {
+        position: relative;
+
+        .gameboy-logo {
+            position: absolute;
+            content: '';
+            width: 165px;
+            height: 19px;
+            bottom: -28px;
+            left: 0;
+            background-image: url(/assets/img/gameboy-logo.png);
+            background-size: cover;
+            opacity: 60%;
+        }
+        
+        
+    }
+
+    /* Rejilla de altavoz — imagen decorativa en la esquina inferior derecha */
+    .speaker {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        width: 4rem;
+        height: 4rem;
+        background-image: url(/assets/img/speaker.png);
+        background-size: cover;
+        mix-blend-mode: multiply;
+        filter: brightness(120%);
+    }
+}
+
+
+/* ==================== D-PAD Y BOTONES DE ACCIÓN ==================== */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    /* D-Pad a la izquierda, A/B a la derecha */
+    max-width: 340px;
+    margin: 0 auto;
+
+    /* Estilos base compartidos por todos los botones de dirección y acción */
+    button {
+        aspect-ratio: 1 / 1;
+        border: none;
+        font-weight: 700;
+        font-size: 0;              /* ocultamos cualquier texto — los iconos van en ::after */
+        background: var(--black);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        -webkit-tap-highlight-color: transparent; /* elimina el destello azul en Chrome Android */
+    }
+
+    /* D-Pad: grid 3×3 donde solo 4 celdas tienen botón (up, left, right, down)
+       El tamaño usa clamp() para adaptarse a pantallas pequeñas */
+    .dpad {
+        display: grid;
+        grid-template-columns: repeat(3, clamp(2.4rem, 0.8rem + 8.533vw, 3.2rem));
+        grid-template-rows: repeat(3, clamp(2.4rem, 0.8rem + 8.533vw, 3.2rem));
+
+        /* Cada botón tiene border-radius solo en las esquinas exteriores
+           para formar la cruz característica del D-Pad.
+           El icono se dibuja con clip-path en ::after para evitar que Chrome
+           Android coloree los caracteres Unicode de flecha. */
+        #up-btn {
+            border: 0.2rem solid var(--black);
+            border-radius: 0.6rem 0.6rem 0 0;
+            box-shadow:
+                inset 0.1rem 0.1rem 0 var(--light-button),
+                -0.1rem -0.1rem 0 var(--dark-black),
+                0.2rem 0 0.3rem 0 var(--shadow-button);
+
+            &::after {
+                content: '';
+                display: block;
+                width: 55%;
+                aspect-ratio: 1 / 1;
+                background-color: var(--gameboy);
+                clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+            }
+        }
+
+        #left-btn {
+            border: 0.2rem solid var(--black);
+            border-radius: 0.6rem 0 0 0.6rem;
+            box-shadow:
+                inset 0.1rem 0.1rem var(--light-button),
+                -0.1rem -0.1rem 0 var(--black),
+                0.2rem 0.2rem 0.3rem 0 var(--shadow-button);
+
+            &::after {
+                content: '';
+                display: block;
+                width: 55%;
+                aspect-ratio: 1 / 1;
+                background-color: var(--gameboy);
+                clip-path: polygon(100% 0%, 100% 100%, 0% 50%);
+            }
+        }
+
+        .center {
+            background: var(--black);
+            /* celda central del D-Pad (sin botón) */
+            box-shadow: 0.2rem 0.2rem 0.3rem 0 var(--shadow-button);
+        }
+
+        #right-btn {
+            border: 0.2rem solid var(--black);
+            border-radius: 0 0.6rem 0.6rem 0;
+            box-shadow:
+                0.1rem 0.1rem 0 var(--light-button),
+                inset 0rem 0.1rem 0 var(--light-button),
+                0.2rem 0.2rem 0.3rem 0 var(--shadow-button);
+
+            &::after {
+                content: '';
+                display: block;
+                width: 55%;
+                aspect-ratio: 1 / 1;
+                background-color: var(--gameboy);
+                clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+            }
+        }
+
+        #down-btn {
+            border: 0.2rem solid var(--black);
+            border-radius: 0 0 0.6rem 0.6rem;
+            box-shadow:
+                0.1rem 0.1rem 0px var(--light-button),
+                inset 0.1rem 0 0 var(--light-button),
+                0.2rem 0.2rem 0.3rem 0 var(--shadow-button);
+
+            &::after {
+                content: '';
+                display: block;
+                width: 55%;
+                aspect-ratio: 1 / 1;
+                background-color: var(--gameboy);
+                clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+            }
+        }
+    }
+
+    /* Botones A y B: circulares, inclinados -25° para imitar el diseño original */
+    .actions {
+        width: fit-content;
+        height: fit-content;
+        transform: rotate(-25deg) translate(-1rem, 2.5rem);
+        transform-origin: 0 100%;
+
+        button {
+            width: clamp(3rem, 2rem + 5.333vw, 3.5rem);
+            transform: rotate(25deg);
+            /* contrarrota cada botón para que el texto quede recto */
+            background: var(--black);
+            cursor: pointer;
+            outline: none;
+            padding: 0;
+            border: 0.2rem solid var(--black);
+            border-radius: 100%;
+            /* perfectamente circulares */
+            /* Restauramos font-size y color que el selector .controls button ocultó */
+            font-size: 1.7rem;
+            color: var(--gameboy);
+            display: revert;  /* cancelamos el flex heredado del selector padre */
+            box-shadow:
+                inset 0.1rem 0.1rem 0px #94949426,
+                inset -0.1rem -0.1rem 0px rgba(0, 0, 0, 0.3),
+                0px 0.3rem 0.3rem 0px var(--shadow-button);
+
+            &:first-child {
+                margin-right: 0.3rem;
+                /* separación entre B y A */
+            }
+
+            &:last-child {
+                margin-left: 0.3rem;
+            }
+        }
+    }
+}
+
+
+/* ==================== BOTONES START Y SELECT ==================== */
+.menu {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding-top: 1rem;
+
+    button {
+        width: 5.5rem;
+        padding: 0.4rem 0.6rem;
+        color: var(--gameboy);
+        font-weight: 700;
+        background: var(--black);
+        border: 0.2rem solid var(--black);
+        border-radius: 3rem;
+        /* cápsulas alargadas, estilo GameBoy */
+        box-shadow:
+            inset 0.1rem 0.1rem 0px rgba(148, 148, 148, 0.15),
+            inset -0.1rem -0.1rem 0px rgba(0, 0, 0, 0.3),
+            0px 0.3rem 0.3rem 0px rgba(56, 56, 56, 0.75);
+    }
+}
+
+@keyframes twinkle-light {
+  0%, 50% {
+    background: var(--red-light-on);
+    box-shadow:
+      0 0 1rem #ff5353cc,
+      0 0 2rem #ff535399,
+      0 0 3rem #ff535366;
+  }
+
+  50.1%, 51% {
+    background: var(--red-light-off);
+    box-shadow: none;
+  }
+
+  51.1%, 54% {
+    background: var(--red-light-on);
+    box-shadow:
+      0 0 1rem #ff5353cc,
+      0 0 2rem #ff535399,
+      0 0 3rem #ff535366;
+  }
+
+  54.1%, 56% {
+    background: var(--red-light-off);
+    box-shadow: none;
+  }
+
+  56.1%, 80% {
+    background: var(--red-light-on);
+    box-shadow:
+      0 0 1rem #ff5353cc,
+      0 0 2rem #ff535399,
+      0 0 3rem #ff535366;
+  }
+
+  80.1%, 83% {
+    background: var(--red-light-off);
+    box-shadow: none;
+  }
+
+  83.1%, 100% {
+    background: var(--red-light-on);
+    box-shadow:
+      0 0 1rem #ff5353cc,
+      0 0 2rem #ff535399,
+      0 0 3rem #ff535366;
+  }
+}

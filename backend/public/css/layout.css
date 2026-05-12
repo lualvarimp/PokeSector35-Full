@@ -1,0 +1,722 @@
+/* Styles by Luís Alonso */
+
+/* =============== IMPORTED FONTS =============== */
+@font-face {
+  font-family: 'IBM EGA 8x8';
+  src: url('/fonts/ibm-ega-8x8.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ATI 8x16';
+  src: url('/fonts/ati-8x16.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Toshiba 8x14';
+  src: url('/fonts/toshiba-8x14.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* =============== VARIABLES =============== */
+:root {
+  --font-family: 'JetBrains Mono', monospace;
+  --logo-title: 'IBM EGA 8x8', monospace;
+  --header-title: 'ATI 8x16', monospace;
+  --main-font: 'Toshiba 8x14', monospace;
+  --black: #071105;
+  --white: #d5f4bc;
+  --red: #971010;
+  --green-dark: #3D5230;
+  --green-med: #6F9055;
+  --green-light: #b5db98;
+  --green-white: #d5f4bc;
+  --green-black: #132a0e;
+
+  /* LIGHT THEME */
+  --bg-primary: #e8fbd9;
+  --text-primary: #0f1b0c;
+}
+
+/* DARK THEME */
+html.dark-mode {
+  --bg-primary: #0f1b0c;
+  --text-primary: #e8fbd9;
+  --green-dark: #A1CA82;
+  --green-light: #3D5230;
+  --green-black: #d5f4bc;
+  --green-white: #132a0e;
+}
+
+/* =============== GENERAL STYLES =============== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-primary);
+}
+
+body {
+  width: 100%;
+  max-width: 62rem;
+  font-family: var(--main-font);
+  font-size: 1rem;
+  color: var(--text-primary);
+  overflow-x: hidden;
+  transition: all 0.3s ease;
+  animation: blink-web 45s infinite;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--green-dark);
+  font-family: var(--header-title);
+  font-weight: 400;
+  text-shadow: 0 0 0.3rem var(--green-med);
+  animation: blink 6s infinite;
+}
+
+a {
+  color: var(--green-dark);
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--green-med);
+  }
+}
+
+/* =============== NAVBAR =============== */
+.navbar {
+  color: var(--green-dark);
+  padding: 1rem 1.5rem;
+  position: sticky;
+  top: 0;
+  transition: all 0.3s ease;
+  background: var(--bg-primary);
+  z-index: 100;
+
+  >div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 75rem;
+    margin: 0 auto;
+  }
+
+  .logo-placeholder {
+    font-family: var(--logo-title);
+    color: var(--green-dark);
+    text-shadow: 0 0 0.5rem var(--green-med);
+    animation: blink-logo 5s infinite;
+
+    a {
+      color: inherit;
+
+      &:hover {
+        text-shadow: 0 0 10px var(--green-light);
+      }
+    }
+  }
+
+  button {
+    display: none;
+    flex-direction: column;
+    background: none;
+    border: none;
+    cursor: pointer;
+    gap: 0.5rem;
+    padding: 0.5rem;
+
+    span {
+      width: 1.8rem;
+      height: 0.25rem;
+      background-color: var(--text-primary);
+      border-radius: 0.125rem;
+      transition: all 0.3s ease;
+    }
+
+    &.active span {
+      &:nth-of-type(1) {
+        transform: rotate(45deg) translate(0.45rem, 0.6rem);
+      }
+
+      &:nth-of-type(2) {
+        opacity: 0;
+      }
+
+      &:nth-of-type(3) {
+        transform: rotate(-45deg) translate(0.45rem, -0.6rem);
+      }
+    }
+
+    @media (max-width: 920px) {
+      display: flex;
+      order: 1;
+    }
+  }
+
+  ul {
+    display: flex;
+    list-style: none;
+    gap: 1rem;
+    align-items: center;
+    flex: 1;
+    justify-content: flex-end;
+    margin: 0;
+
+    @media (max-width: 920px) {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: var(--bg-primary);
+      flex-direction: column;
+      gap: 0;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+
+      &.active {
+        max-height: 500px;
+      }
+    }
+
+    li {
+      @media (max-width: 768px) {
+        width: 100%;
+        border-bottom: 1px solid var(--white);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      a {
+        position: relative;
+        text-transform: uppercase;
+        text-shadow: 0 0 0.1rem var(--green-dark);
+        letter-spacing: 0.1rem;
+        color: var(--text-primary);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.3rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+
+        &:hover {
+          animation: blink-logo 5s;
+        }
+
+        &::after {
+          position: absolute;
+          content: '';
+          left: 0.8rem;
+          bottom: 0;
+          width: 0%;
+          height: 0.15rem;
+          background: var(--green-dark);
+          box-shadow: 0 0 0.1rem var(--green-med);
+          transition: all 0.3s ease;
+        }
+
+        &:hover::after {
+          width: calc(100% - 1.6rem);
+          animation: blink-logo 5s;
+        }
+
+        @media (max-width: 768px) {
+          display: block;
+          width: 100%;
+          padding: 1rem;
+          border-radius: 0;
+        }
+      }
+    }
+  }
+
+  .theme-toggle {
+    flex-shrink: 0;
+    margin-left: 1rem;
+    order: 3;
+
+    input {
+      display: none;
+
+      &:checked+label {
+        background-color: var(--green-black);
+        border-color: var(--green-black);
+        box-shadow: 0 0 1rem var(--green-med);
+
+        &::before {
+          transform: translateX(1.75rem);
+          background-color: var(--green-light);
+        }
+
+        &::after {
+          content: '';
+          position: absolute;
+          right: 0.35rem;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+    }
+
+    label {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 3.75rem;
+      height: 1.875rem;
+      background-color: var(--green-dark);
+      border: 0.1rem solid var(--green-dark);
+      border-radius: 0.4rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0 0.5rem;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0.25rem;
+        width: 1.375rem;
+        height: 1.375rem;
+        background-color: var(--white);
+        border-radius: 0.3rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--green-dark);
+        letter-spacing: 0.05rem;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem 0.5rem;
+
+    >div {
+      position: relative;
+    }
+
+    .logo-placeholder {
+      order: 2;
+      flex: 1;
+      text-align: center;
+      width: 6rem;
+      font-size: 0.7rem;
+    }
+  }
+}
+
+/* =============== MAIN CONTENT =============== */
+main.main-content {
+  min-height: calc(100vh - 6rem);
+  padding: 2rem 1rem;
+  max-width: 75rem;
+  margin: 0 auto;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    padding: 1rem 1rem;
+  }
+}
+
+/* =============== TABLE GENERAL =============== */
+.table-wrapper {
+  width: calc(100vw - 4rem);
+  max-width: 58.4rem;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  border-radius: 0;
+  -webkit-overflow-scrolling: touch;
+  background: var(--white);
+  border: 0.2rem solid var(--green-med);
+  border-radius: 0.2rem;
+  box-shadow: 0 0 0.3rem var(--green-med);
+  touch-action: pan-x;
+
+  background: var(--green-white);
+  color: var(--black);
+}
+
+/* =============== BUTTONS - CENTRALIZADOS =============== */
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.8rem;
+  background-color: var(--green-med);
+  color: var(--white);
+  letter-spacing: 0.1rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+
+  &:hover {
+    color: var(--white);
+    animation: blink-logo 5s infinite;
+  }
+}
+
+.btn-add {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--green-med);
+  text-transform: uppercase;
+  color: var(--white);
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--white);
+    animation: blink-logo 5s infinite;
+  }
+}
+
+.btn-small {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 0.1rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-family: var(--font-family);
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-small-delete {
+  padding: 0.5rem 1rem;
+  background-color: var(--red);
+  color: var(--white);
+  border: none;
+  border-radius: 0.2rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: all 0.3s ease;
+
+  &:hover {
+    animation: blink-logo 5s infinite;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  background: var(--black);
+  color: var(--white);
+  border: none;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: all 0.3s ease;
+
+  &:hover {
+    animation: blink-logo 5s infinite;
+    background-color: var(--black);
+    color: var(--white);
+  }
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  background: var(--black);
+  color: var(--white);
+  border: none;
+  text-transform: uppercase;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-family);
+  transition: all 0.3s ease;
+
+  &:hover {
+    animation: blink-logo 5s infinite;
+    background-color: var(--black);
+    color: var(--white);
+  }
+}
+
+/* =============== MODAL - CENTRALIZADOS =============== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  &.active {
+    display: flex;
+  }
+}
+
+.modal-content {
+  background: var(--green-med);
+  border: 2px solid var(--green-med);
+  border-radius: 0.2rem;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+  height: fit-content;
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
+.modal-header {
+  padding: 1.5rem;
+  border-bottom: 2px solid var(--green-med);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--white);
+  }
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--black);
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: var(--green-dark);
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 2px solid var(--white);
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+/* =============== FORM GROUPS - CENTRALIZADOS =============== */
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1rem;
+  }
+
+  input,
+  select {
+    font-family: var(--font-family);
+    font-size: 1rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--white);
+    border-radius: 0.5rem;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: var(--green-med);
+      box-shadow: 0 0 0 3px rgba(129, 170, 99, 0.2);
+    }
+  }
+}
+
+/* =============== FILTER SELECT - CENTRALIZADO =============== */
+.filter-select {
+  font-family: var(--font-family);
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  outline: none !important;
+  border: none !important;
+  background-color: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: none;
+
+  &:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  &:hover {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  &:active {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+/* =============== ANIMATIONS =============== */
+@keyframes blink {
+  0% {
+    opacity: 100%;
+  }
+
+  1% {
+    opacity: 0%;
+  }
+
+  2% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 100%;
+  }
+}
+
+@keyframes blink-logo {
+  0% {
+    opacity: 100%;
+  }
+
+  0.5% {
+    opacity: 0%;
+  }
+
+  1% {
+    opacity: 100%;
+  }
+
+  1.5% {
+    opacity: 0%;
+  }
+
+  2% {
+    opacity: 100%;
+  }
+
+  2.5% {
+    opacity: 0%;
+  }
+
+  5% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 100%;
+  }
+}
+
+@keyframes blink-web {
+  0% {
+    opacity: 100%;
+  }
+
+  0.05% {
+    opacity: 0%;
+    filter: invert(0%);
+  }
+
+  0.10% {
+    opacity: 50%;
+    filter: invert(100%);
+  }
+
+  0.15% {
+    opacity: 0%;
+    filter: invert(0%);
+  }
+
+  0.20% {
+    opacity: 50%;
+  }
+
+  0.25% {
+    opacity: 0%;
+  }
+
+  0.50% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 100%;
+  }
+}

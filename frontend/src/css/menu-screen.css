@@ -1,0 +1,157 @@
+/* Styles by Luis Alonso */
+
+.menu-screen {
+
+    .menu-main,
+    .menu-start,
+    .menu-slots,
+    .menu-info,
+    .menu-customize,
+    .menu-color,
+    .menu-explorer,
+    .menu-difficulty,
+    .menu-ranking,
+    .menu-account,
+    .menu-confirm {
+        padding: 0 1rem;
+    }
+
+    h2 {
+        width: fit-content;
+        margin: 1rem auto;
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        color: var(--white);
+        background: var(--black-screen);
+        mix-blend-mode: multiply;
+    }
+
+    .menu-player-name {
+        text-align: center;
+        font-size: 0.85rem;
+        min-height: 1.2em;
+        margin: -0.5rem 0 0.6rem;
+        letter-spacing: 0.05em;
+        visibility: hidden;
+
+        &:not(:empty) {
+            visibility: visible;
+            opacity: 0.75;
+        }
+    }
+
+    ul {
+        width: 90%;
+        margin: 0 auto;
+        padding: 0;
+
+        li {
+            list-style-type: none;
+            padding: 0.3rem 0;
+            font-size: 0.85rem;
+            line-height: 1.2rem;
+            min-height: 1.2rem;
+        }
+    }
+
+    p {
+        font-size: 0.8rem;
+        line-height: 1.3rem;
+    }
+
+    .menu-hint {
+        padding-left: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .menu-cursor {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 0.8rem;
+        height: 0.8rem;
+
+        svg {
+            width: 0.7rem;
+            height: 0.7rem;
+            color: currentColor;
+        }
+    }
+
+    .menu-explorer-preview {
+        text-align: center;
+        mix-blend-mode: multiply;
+        opacity: 0.9;
+    }
+
+    .menu-preview-color {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+
+    /* Ranking: ocupa exactamente el screen, sin desbordarlo nunca */
+    .menu-ranking {
+        position: absolute;
+        inset: 0;
+        padding: 0 1rem;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        h2 {
+            flex-shrink: 0;
+        }
+
+        .ranking-filter-label {
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 0.85rem;
+            margin: 0 0 0.3rem;
+            letter-spacing: 0.04em;
+        }
+
+        .ranking-viewport {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            min-height: 0; /* necesario para que flex respete el overflow */
+        }
+
+        .ranking-list {
+            position: relative;
+            font-size: 0.8rem;
+            line-height: 1.35;
+            font-family: var(--game-font);
+            font-weight: 400;
+            
+
+            p {
+                font-size: 0.85rem;
+                margin: 0;
+                padding: 0.08rem 0;
+                font-weight: 400;
+            }
+
+            p:first-child {
+                margin-bottom: 0.15rem;
+            }
+        }
+
+        .menu-hint {
+            flex-shrink: 0;
+            margin-top: 0.3rem;
+            font-size: 0.7rem;
+            padding-left: 0;
+            text-align: center;
+        }
+    }
+}
+
+/* Sub-etiqueta de slots (dificultad), alineada con el texto del item */
+.menu-screen .menu-slot-sub {
+    display: block;
+    padding-left: calc(0.8rem + 0.4em);
+    font-size: 0.75rem;
+    opacity: 0.7;
+    line-height: 1.4rem;
+}

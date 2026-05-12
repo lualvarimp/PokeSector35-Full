@@ -1,0 +1,228 @@
+/* Styles by Luis Alonso */
+
+/* =============================================================================
+   game-screen.css — Mapa de juego, HUD y animación del personaje
+   =============================================================================
+   RESPONSABILIDAD: Estilizar el grid del mapa (5 filas × 7 columnas), los
+   distintos tipos de casilla, la barra de estado superior e inferior (HUD)
+   y la animación de movimiento del personaje.
+
+   RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
+   ✅ Interfaz dinámica y responsiva → grid fluido con clamp() y aspect-ratio
+   ✅ Manipulación del DOM           → #player se mueve entre celdas con appendChild()
+   ============================================================================= */
+
+.game-screen {
+
+    /* ── Grid del mapa ─────────────────────────────────────────────────────
+       7 columnas iguales. Las filas .full-top y .full-bottom ocupan toda la
+       anchura (grid-column: 1 / -1) y tienen aspect-ratio 7:1 para mantener
+       la proporción cuadrada de las celdas del mapa. */
+    .screen-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0;
+        position: relative; /* necesario para que #player con position:absolute funcione */
+
+        /* ── Estilos base de cada celda del grid ──────────────────────────
+           Todas las celdas son cuadradas y usan la imagen de hierba como fondo.
+           Las clases .goal, .rock y .wild sobreescriben este fondo. */
+        >div {
+            aspect-ratio: 1 / 1;
+            background-image: url(/assets/img/grass.png);
+            background-size: cover;
+            mix-blend-mode: multiply;       /* funde las imágenes con la textura de pantalla */
+            image-rendering: pixelated;     /* mantiene los píxeles nítidos al escalar */
+            image-rendering: crisp-edges;   /* alternativa para navegadores Webkit */
+
+            /* Casilla de meta: muestra la bandera de llegada */
+            &.goal {
+                background-image: url(/assets/img/flag.png);
+            }
+
+            /* Casilla de roca: obstáculo infranqueable
+               movement.js bloquea el movimiento si la celda destino tiene .rock */
+            &.rock {
+                background-image: url(/assets/img/rock.png);
+            }
+
+            /* Casilla de hierba alta: sin fondo propio, usa ::after para superponer
+               la hierba sobre el jugador (z-index:5 > z-index:2 del jugador).
+               70% probabilidad de encuentro Pokémon (vs 30% en suelo normal). */
+            &.wild {
+                position: relative;
+                background-image: none; /* el suelo bajo la hierba es el fondo de pantalla */
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-image: url(/assets/img/tall-grass.png);
+                    background-size: cover;
+                    pointer-events: none; /* la hierba no captura clics */
+                    z-index: 5;           /* encima del jugador (#player tiene z-index:2) */
+                }
+            }
+        }
+
+        /* ── Barras de estado (top y bottom) ─────────────────────────────
+           Ocupan toda la anchura del grid y tienen aspect-ratio 7:1 para que
+           su altura sea igual a una celda del mapa */
+        .full-top,
+        .full-bottom {
+            grid-column: 1 / -1; /* ocupa las 7 columnas */
+            aspect-ratio: 7 / 1;
+            background-image: none; /* sin fondo de hierba */
+        }
+
+        /* Barra superior: nombre del explorador */
+        .full-top {
+            padding-bottom: 0.2rem;
+
+            >div {
+                width: 100%;
+                height: 100%;
+                padding: 0.2rem 0.3rem;
+                border-bottom: 0.15rem solid var(--black-screen);
+            }
+
+            h2 {
+                display: flex;
+                width: 100%;
+                height: 100%;
+                justify-content: start;
+                align-items: center;
+                margin: 0;
+                padding-left: 1rem;
+                color: var(--white);
+                font-weight: 400;
+                /* clamp: tamaño de fuente adaptable entre pantallas pequeñas y grandes */
+                font-size: clamp(0.45rem, -7.862rem + 50vw, 0.7rem);
+                background: var(--black-screen);
+
+                /* clip-path crea las esquinas cortadas en diagonal (estilo retro pixelado) */
+                clip-path: polygon(
+                    0 0.2rem, 0.2rem 0.2rem, 0.2rem 0,
+                    calc(100% - 0.2rem) 0, calc(100% - 0.2rem) 0.2rem, 100% 0.2rem,
+                    100% calc(100% - 0.2rem), calc(100% - 0.2rem) calc(100% - 0.2rem),
+                    calc(100% - 0.2rem) 100%,
+                    0.2rem 100%, 0.2rem calc(100% - 0.2rem), 0 calc(100% - 0.2rem)
+                );
+            }
+        }
+
+        /* Barra inferior: HP (barra visual + número) y contador de Pokéballs */
+        .full-bottom {
+            padding-top: 0.2rem;
+
+            img {
+                height: 1.1rem;
+                padding-right: 0.6rem; /* icono de corazón */
+            }
+
+            p {
+                font-size: clamp(0.6rem, -0.12rem + 3.84vw, 0.9rem);
+                margin: 0;
+                font-weight: 700;
+            }
+
+            >div {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.2rem;
+                width: 100%;
+                height: 100%;
+                padding: 0.3rem 0.3rem;
+                border-top: 0.15rem solid var(--black-screen);
+
+                /* Columna izquierda: icono corazón + barra HP + número HP */
+                div:nth-of-type(1) {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.3rem;
+
+                    /* Barra de HP: 10 cuadraditos en fila
+                       hud.js añade .lost a los spans del final cuando se pierde HP */
+                    .hp-bar {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        gap: 0.15rem;
+
+                        span {
+                            /* tamaño adaptable con clamp para pantallas pequeñas */
+                            width: clamp(0.55rem, -0.624rem + 7.059vw, 0.7rem);
+                            aspect-ratio: 1 / 1;
+                            border: 0.16rem solid var(--black-screen);
+                            background: var(--black-screen); /* lleno = vida restante */
+
+                            /* .lost: el cuadrado queda vacío (sin relleno) = HP perdido */
+                            &.lost {
+                                background: none;
+                            }
+                        }
+                    }
+
+                    p {
+                        font-weight: 400; /* número de HP en formato "X/10" */
+                    }
+                }
+
+                /* Columna derecha: icono pokeball + "X" + número de Pokéballs */
+                div:nth-of-type(2) {
+                    display: flex;
+                    gap: 0.1rem;
+                    margin-left: auto; /* empuja el contador de bolas a la derecha */
+                    align-items: center;
+
+                    img {
+                        height: 1.1rem;
+                    }
+
+                    p:nth-of-type(2) {
+                        font-weight: 400;
+                        font-size: clamp(0.6rem, -0.12rem + 3.84vw, 0.9rem);
+                    }
+                }
+            }
+        }
+
+        /* ── Elemento jugador (#player) ────────────────────────────────────
+           Posicionado de forma absoluta dentro de su celda padre (data-r, data-c).
+           movement.js lo mueve entre celdas con newPosition.appendChild(player). */
+        div[data-r] {
+            position: relative; /* contexto de posicionamiento para #player */
+            width: 100%;
+            height: 100%;
+        }
+
+        #player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2; /* encima del suelo pero debajo de la hierba alta (z-index:5) */
+
+            /* Animación de entrada al moverse a una nueva celda:
+               el jugador aparece ligeramente más pequeño y sube suavemente */
+            animation: moveEffect 0.1s ease-out;
+
+            img {
+                width: 100%;
+            }
+        }
+    }
+}
+
+/* Efecto de movimiento: el personaje "salta" suavemente al pisar cada celda */
+@keyframes moveEffect {
+    0%   { transform: scale(0.8) translateY(0.2rem); opacity: 0.5; }
+    100% { transform: scale(1)   translateY(0);       opacity: 1; }
+}

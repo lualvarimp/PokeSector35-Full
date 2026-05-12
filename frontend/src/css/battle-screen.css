@@ -1,0 +1,234 @@
+/* Styles by Luis Alonso */
+
+/* =============================================================================
+   battle-screen.css — Pantalla de encuentro con Pokémon salvaje
+   =============================================================================
+   RESPONSABILIDAD: Estilizar la pantalla de combate: barra superior con el
+   nombre del explorador, área central con el sprite del Pokémon y las
+   instrucciones de combate, barra inferior de HUD y la caja de mensaje
+   flotante que muestra el resultado de cada acción.
+
+   RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
+   ✅ Manipulación del DOM  → api.js inyecta nombre y sprite; battle.js muestra #battle-message
+   ✅ Consumo de APIs       → .battle-pokemon-img muestra el sprite de la PokeAPI
+   ============================================================================= */
+
+.battle-screen {
+    display: flex;
+    flex-direction: column; /* apila top → pokemon-battle → bottom verticalmente */
+    gap: 0;
+
+    /* Barras superior e inferior: cada una ocupa un 14.287% de la altura total
+       (1/7 de la pantalla cuadrada, igual que una fila del grid del mapa) */
+    .full-top,
+    .full-bottom {
+        height: 14.287%;
+        mix-blend-mode: multiply;
+    }
+
+    /* Barra superior: nombre del explorador — idéntica a la de game-screen */
+    .full-top {
+        padding-bottom: 0.2rem;
+
+        >div {
+            width: 100%;
+            height: 100%;
+            padding: 0.2rem 0.3rem;
+            border-bottom: 0.15rem solid var(--black-screen);
+        }
+
+        h2 {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            justify-content: start;
+            align-items: center;
+            margin: 0;
+            padding-left: 1rem;
+            color: var(--white);
+            font-weight: 400;
+            font-size: clamp(0.45rem, -7.862rem + 50vw, 0.7rem);
+            background: var(--black-screen);
+            /* Esquinas cortadas en diagonal, igual que en game-screen */
+            clip-path: polygon(
+                0 0.2rem, 0.2rem 0.2rem, 0.2rem 0,
+                calc(100% - 0.2rem) 0, calc(100% - 0.2rem) 0.2rem, 100% 0.2rem,
+                100% calc(100% - 0.2rem), calc(100% - 0.2rem) calc(100% - 0.2rem),
+                calc(100% - 0.2rem) 100%,
+                0.2rem 100%, 0.2rem calc(100% - 0.2rem), 0 calc(100% - 0.2rem)
+            );
+        }
+    }
+
+    /* Barra inferior: HUD con HP y Pokéballs — igual que en game-screen */
+    .full-bottom {
+        padding-top: 0.2rem;
+
+        img {
+            height: 1.1rem;
+            padding-right: 0.6rem;
+        }
+
+        p {
+            font-size: clamp(0.6rem, -0.12rem + 3.84vw, 0.9rem);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        >div {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.2rem;
+            width: 100%;
+            height: 100%;
+            padding: 0.3rem 0.3rem;
+            border-top: 0.15rem solid var(--black-screen);
+
+            /* Columna izquierda: barra HP visual + número HP */
+            div:nth-of-type(1) {
+                display: flex;
+                flex-direction: column;
+                gap: 0.3rem;
+
+                .hp-bar {
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 0.15rem;
+
+                    span {
+                        width: clamp(0.55rem, -0.624rem + 7.059vw, 0.7rem);
+                        aspect-ratio: 1 / 1;
+                        border: 0.16rem solid var(--black-screen);
+                        background: var(--black-screen); /* lleno = vida restante */
+
+                        &.lost {
+                            background: none; /* vacío = HP perdido */
+                        }
+                    }
+                }
+
+                p {
+                    font-weight: 400;
+                }
+            }
+
+            /* Columna derecha: icono pokeball + contador */
+            div:nth-of-type(2) {
+                display: flex;
+                gap: 0.1rem;
+                margin-left: auto;
+                align-items: center;
+
+                img {
+                    height: 1.1rem;
+                }
+
+                p:nth-of-type(2) {
+                    font-weight: 400;
+                    font-size: clamp(0.6rem, -0.12rem + 3.84vw, 0.9rem);
+                }
+            }
+        }
+    }
+
+    /* ── Área central de batalla ──────────────────────────────────────────
+       Ocupa el 71.426% restante (5/7 de la pantalla).
+       Contiene el nombre del Pokémon, su sprite y las instrucciones. */
+    .pokemon-battle {
+        position: relative;   /* contexto para los elementos absolutos dentro */
+        height: 71.426%;
+        mix-blend-mode: multiply;
+        overflow: hidden;     /* recorta el sprite si desborda */
+
+        /* Nombre del Pokémon: posicionado en la esquina superior izquierda
+           api.js inyecta el nombre en .battle-pokemon-name */
+        h2 {
+            position: absolute;
+            top: 0.4rem;
+            left: 0.6rem;
+            margin: 0;
+            font-size: 0.9rem;
+            font-weight: 400;
+            line-height: 1.3rem;
+            white-space: pre-line; /* permite saltos de línea con \n si fuera necesario */
+            z-index: 2;
+
+            span {
+                font-weight: 800; /* el nombre del Pokémon en negrita */
+            }
+        }
+
+        /* Sprite del Pokémon: posicionado a la derecha y centrado verticalmente
+           api.js asigna la URL del sprite de la PokeAPI a .battle-pokemon-img */
+        .pokemon-container {
+            position: absolute;
+            top: 25%;
+            right: 15%;
+            z-index: 1; /* detrás del texto y las instrucciones */
+
+            img {
+                transform: scale(2.2);      /* ampliamos el sprite pequeño de la API */
+                filter: grayscale(100%);    /* escala de grises para el efecto retro */
+                image-rendering: pixelated;
+                image-rendering: crisp-edges;
+            }
+        }
+
+        /* Instrucciones de combate: fijas en la esquina inferior izquierda
+           Siempre visibles durante la batalla */
+        .battle-actions {
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 0.4rem 0 0.4rem 0.6rem;
+            z-index: 2;
+
+            p {
+                margin: 0;
+                font-size: 0.7rem;
+                line-height: 1rem;
+            }
+        }
+    }
+
+    /* ── Caja de mensaje de resultado ────────────────────────────────────
+       Aparece centrada sobre la batalla al capturar/fallar/huir.
+       battle.js la muestra con el resultado y la oculta tras 2 segundos.
+       Usa la misma textura de fondo que las pantallas para integrarse visualmente. */
+    #battle-message {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* centrado perfecto sobre la pantalla */
+        width: 90%;
+        padding: 1rem;
+        border: 0.15rem solid var(--black-screen);
+        font-size: 0.9rem;
+        line-height: 1.3rem;
+        background-image: url(/assets/img/screen-back.png);
+        background-repeat: repeat;
+        z-index: 5; /* encima de todo el contenido de la batalla */
+
+        /* Overlay de líneas LCD sobre el mensaje, igual que en las pantallas */
+        &::after {
+            position: absolute;
+            content: '';
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url(/assets/img/screen-lines.png);
+            background-repeat: repeat;
+            opacity: 0.1;
+            z-index: 10;
+        }
+    }
+}
+
+/* Clase aplicada por hud.js al número de HP cuando queda ≤ 4 puntos.
+   El parpadeo alerta visualmente al jugador del peligro. */
+.critical-hp {
+    animation: blink 1s steps(1) infinite;
+}

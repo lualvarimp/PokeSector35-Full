@@ -1,0 +1,66 @@
+doctype html
+html(lang='es')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    meta(name='description' content='Panel de administración PokéSector 35')
+    title= title || 'PokéSector Admin - Login'
+    link(rel='preconnect' href='https://fonts.googleapis.com')
+    link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin)
+    link(href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap' rel='stylesheet')
+    link(rel='stylesheet' href='/css/layout.css')
+    link(rel='stylesheet' href='/css/login.css')
+  
+  body.login-page
+    //- Navbar reutilizado de layout (sin ul de menú)
+    nav.navbar
+      div
+        .logo-placeholder
+          a(href='/') POKÉSECTOR ADMIN
+        .theme-toggle
+          input#themeSwitch(type='checkbox')
+          label(for='themeSwitch')
+
+    //- Main: Formulario de login centrado
+    main.login-main
+      .login-container
+        .login-card
+          h1.login-title Iniciar Sesión
+          p.login-subtitle Accede al panel de administración
+          
+          form#loginForm.login-form
+            .form-group
+              label(for='username') NOMBRE
+              input#username(
+                type='text'
+                name='username'
+                placeholder='Ingresa tu nombre'
+                required
+                autocomplete='username'
+                maxlength='15'
+              )
+            
+            .form-group
+              label(for='password') CONTRASEÑA
+              input#password(
+                type='password'
+                name='password'
+                placeholder='Ingresa tu contraseña'
+                required
+                autocomplete='current-password'
+                minlength='6'
+              )
+            
+            .form-actions
+              button.btn-login(type='submit') ENTRAR
+          
+          //- Área de mensajes de error/éxito
+          .message-area#messageArea
+
+    //- Footer minimalista
+    footer.login-footer
+      p &copy; 2026 PokéSector 35 | Desarrollado por Luis Alonso
+
+    //- Scripts
+    script(src='/js/layout.js')
+    script(src='/js/login.js')

@@ -214,19 +214,20 @@ async function confirmNewGame(slotNumber, slotOccupied = false) {
     // Avisos de sobreescritura solo si el slot ya tiene una partida
     if (slotOccupied) {
         const aviso1 = confirm(
-            'NUEVA PARTIDA partida borrará TODOS los datos del slot:\n' +
+            '⚠️ NUEVA PARTIDA\n\n' +
+            'Empezar una nueva partida borrará TODOS los datos del slot:\n' +
             '  · Tu pokédex de este slot\n' +
             '  · Tu progreso actual\n' +
-            '  · Tus estadísticas\n' +
-            'Esta acción no se puede deshacer.\n' +
+            '  · Tus estadísticas\n\n' +
+            'Esta acción no se puede deshacer.\n\n' +
             '¿Quieres continuar?'
         );
         if (!aviso1) return;
 
         const aviso2 = confirm(
-            '¿ESTÁS SEGURO/A?\n' +
-            'Comenzarás una partida nueva desde cero.\n' +
-            'Todos los datos anteriores se perderán para siempre.\n' +
+            '🚨 ¿ESTÁS SEGURO/A?\n\n' +
+            'Comenzarás una partida completamente nueva desde cero.\n' +
+            'Todos los datos anteriores se perderán para siempre.\n\n' +
             '¿Confirmas que quieres empezar de nuevo?'
         );
         if (!aviso2) return;
@@ -420,12 +421,16 @@ function restoreFromSlot(slot) {
     // Si el usuario cambió algo en el menú de personalización antes de continuar,
     // esos valores están en localStorage y tienen prioridad sobre la BD (una sola vez).
     // Tras aplicarlos se limpian del localStorage → la BD queda como fuente de verdad.
-    const savedDiffRaw  = localStorage.getItem('pokesector_difficulty');
-    const savedExplorer = localStorage.getItem('pokesector_explorer');
-    const savedColor    = localStorage.getItem('pokesector_color');
+    const savedDiffRaw   = localStorage.getItem('pokesector_difficulty');
+    const savedExplorer  = localStorage.getItem('pokesector_explorer');
+    const colorPending   = localStorage.getItem('pokesector_color_pending');
+    const savedColor     = colorPending ? localStorage.getItem('pokesector_color') : null;
 
     const diffId   = savedDiffRaw ? JSON.parse(savedDiffRaw).id : slot.difficulty_id;
     const explorer = savedExplorer || slot.explorer;
+    // El color del localStorage solo tiene prioridad si el usuario lo cambió
+    // conscientemente desde el menú de personalización (flag pokesector_color_pending).
+    // En caso contrario, la fuente de verdad es siempre la BD.
     const color    = savedColor    || slot.color;
 
     gameState.difficultyId = diffId;
@@ -436,8 +441,15 @@ function restoreFromSlot(slot) {
     gameState.playerName = slot.explorer_name;
     localStorage.setItem('pokesector_explorer_name', gameState.playerName);
 
+    // Aplicar el color visualmente en la consola
+    document.documentElement.style.setProperty('--gameboy', color);
+    // Sincronizar pokesector_color con el color activo del slot cargado.
+    // Así, si el usuario termina esta partida e inicia una nueva sin personalizar,
+    // la nueva partida arrancará con el mismo color que tenía este slot.
+    localStorage.setItem('pokesector_color', color);
+
     // Guardar la personalización en la BD y limpiar la bandeja del localStorage
-    const hasLocalChanges = savedDiffRaw || savedExplorer || savedColor;
+    const hasLocalChanges = savedDiffRaw || savedExplorer || colorPending;
     if (hasLocalChanges && api.isLoggedIn()) {
         api.updateSlot(slot.slot_number, {
             difficulty_id: diffId,
@@ -446,9 +458,10 @@ function restoreFromSlot(slot) {
         }).catch(e => console.warn('No se pudo actualizar personalización en BD:', e.message));
 
         // Limpiar: ya se han aplicado y guardado en BD, el localStorage queda libre
+        // NOTA: pokesector_color NO se borra — es una preferencia permanente del usuario
         localStorage.removeItem('pokesector_difficulty');
         localStorage.removeItem('pokesector_explorer');
-        localStorage.removeItem('pokesector_color');
+        localStorage.removeItem('pokesector_color_pending');
     }
 
     // Apply difficulty config
@@ -599,18 +612,29 @@ function renderColorPreview() {
 }
 
 function handleColor(action) {
-    if (action === 'pressB') { playClick(); showView('customize'); return; }
+    if (action === 'pressB') {
+        playClick();
+        // Al volver atrás sin confirmar, restaurar el color anterior
+        const previousColor = localStorage.getItem('pokesector_color') || COLORS[0].value;
+        document.documentElement.style.setProperty('--gameboy', previousColor);
+        showView('customize');
+        return;
+    }
 
     if (action === 'pressLeft') {
         playClick();
         colorIndex = (colorIndex - 1 + COLORS.length) % COLORS.length;
         renderColorPreview();
+        // Previsualizar el color en tiempo real al navegar
+        document.documentElement.style.setProperty('--gameboy', COLORS[colorIndex].value);
         return;
     }
     if (action === 'pressRight') {
         playClick();
         colorIndex = (colorIndex + 1) % COLORS.length;
         renderColorPreview();
+        // Previsualizar el color en tiempo real al navegar
+        document.documentElement.style.setProperty('--gameboy', COLORS[colorIndex].value);
         return;
     }
 
@@ -619,6 +643,9 @@ function handleColor(action) {
         const chosen = COLORS[colorIndex];
         document.documentElement.style.setProperty('--gameboy', chosen.value);
         localStorage.setItem('pokesector_color', chosen.value);
+        // Marcar que el usuario cambió el color conscientemente desde personalización.
+        // Esta flag es la que indica "este color tiene prioridad sobre la BD".
+        localStorage.setItem('pokesector_color_pending', '1');
         showView('customize');
     }
 }
@@ -1029,9 +1056,10 @@ async function startGame(slotNumber) {
     }
 
     // ── Limpiamos claves individuales ─────────────────────────────────────
+    // NOTA: pokesector_color NO se borra — es una preferencia permanente del usuario
     localStorage.removeItem('pokesector_difficulty');
     localStorage.removeItem('pokesector_explorer');
-    localStorage.removeItem('pokesector_color');
+    localStorage.removeItem('pokesector_color_pending');
     localStorage.removeItem('pokesector_replay');
 
     // ── Transición al mapa ────────────────────────────────────────────────

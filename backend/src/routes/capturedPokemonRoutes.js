@@ -80,7 +80,7 @@ router.get('/:id/pokedex', verifyToken, getPokedexByUser);
  *                 description: ID del slot donde fue capturado (opcional)
  *                 nullable: true
  *                 example: 1
- *               is_global:
+ *
  *                 type: boolean
  *                 description: Si es captura global (true) o local de slot (false)
  *                 example: true

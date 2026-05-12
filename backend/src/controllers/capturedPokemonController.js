@@ -10,7 +10,7 @@ import { CapturedPokemon, GameSlot } from '../models/index.js';
  * @returns {Array} Array de pokémon capturados
  * @example
  * // Respuesta:
- * // [{ id: 1, pokemon_id: 25, pokemon_name: "PIKACHU", is_global: true, captured_at: "2024-04-15T..." }, ...]
+ * // [{ id: 1, pokemon_id: 25, pokemon_name: "PIKACHU", captured_at: "2024-04-15T..." }, ...]
  */
 export async function getPokedexByUser(req, res) {
   try {
@@ -51,13 +51,12 @@ export async function getPokedexByUser(req, res) {
  * @param {number} req.body.pokemon_id - ID del Pokémon (según PokeAPI)
  * @param {string} req.body.pokemon_name - Nombre del Pokémon (ej: "PIKACHU")
  * @param {number} [req.body.slot_id] - ID del slot donde fue capturado (opcional)
- * @param {boolean} [req.body.is_global] - Si es captura global (default: false)
  * @param {Object} res - Express response
  * @returns {Object} Objeto del Pokémon capturado con timestamp
  */
 export async function addCapturedPokemon(req, res) {
   try {
-    const { pokemon_id, pokemon_name, slot_id, is_global } = req.body;
+    const { pokemon_id, pokemon_name, slot_id } = req.body;
 
     if (!pokemon_id || !pokemon_name) {
       return res.status(400).json({ error: 'pokemon_id y pokemon_name son requeridos' });
@@ -76,7 +75,6 @@ export async function addCapturedPokemon(req, res) {
       where: whereClause,
       defaults: {
         pokemon_name,
-        is_global: is_global || false,
         captured_at: new Date()
       }
     });

@@ -379,6 +379,36 @@ function setupModal() {
       await addPokemon();
     });
   }
+
+  // Cargar los slots reales del usuario (con IDs de BD) en el select
+  loadUserSlotsIntoSelect();
+}
+
+async function loadUserSlotsIntoSelect() {
+  const select = document.getElementById('slotId');
+  if (!select) return;
+
+  try {
+    const accessToken = localStorage.getItem('access_token');
+    const resp = await fetch(`/api/users/${userId}/slots`, {
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    });
+    if (!resp.ok) return;
+
+    const slots = await resp.json();
+    // Vaciar opciones actuales y añadir las reales con el ID interno de BD
+    select.innerHTML = '<option value="">Sin asignar</option>';
+    slots
+      .sort((a, b) => a.slot_number - b.slot_number)
+      .forEach(slot => {
+        const opt = document.createElement('option');
+        opt.value = slot.id;  // ID interno de BD (el que necesita el backend)
+        opt.textContent = `Slot ${slot.slot_number} (${slot.difficulty_id || '?'})`;
+        select.appendChild(opt);
+      });
+  } catch (e) {
+    console.warn('No se pudieron cargar los slots:', e.message);
+  }
 }
 
 // ============================================================================
@@ -389,7 +419,6 @@ async function addPokemon() {
   const pokemonId = document.getElementById('pokemonId').value;
   const pokemonName = document.getElementById('pokemonName').value.toUpperCase();
   const slotId = document.getElementById('slotId').value || null;
-  const isGlobal = document.getElementById('isGlobal').checked;
 
   if (!pokemonId || !pokemonName) {
     alert('Por favor, rellena ID y nombre del Pokémon');
@@ -427,8 +456,7 @@ async function addPokemon() {
       body: JSON.stringify({
         pokemon_id: numId,
         pokemon_name: pokemonName,
-        slot_id: slotId ? parseInt(slotId) : null,
-        is_global: isGlobal
+        slot_id: slotId ? parseInt(slotId) : null
       })
     });
 

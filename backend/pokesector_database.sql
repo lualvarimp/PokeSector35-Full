@@ -65,7 +65,6 @@ CREATE TABLE captured_pokemon (
     slot_id INTEGER REFERENCES game_slots(id) ON DELETE CASCADE,
     pokemon_id INTEGER NOT NULL,
     pokemon_name VARCHAR(50) NOT NULL,
-    is_global BOOLEAN NOT NULL DEFAULT FALSE,
     captured_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

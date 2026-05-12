@@ -23,10 +23,6 @@ const CapturedPokemon = sequelize.define('CapturedPokemon', {
     type: DataTypes.STRING(50),
     allowNull: false
   },
-  is_global: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  }
 }, {
   tableName: 'captured_pokemon',
   timestamps: true,

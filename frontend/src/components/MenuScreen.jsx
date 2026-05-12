@@ -28,9 +28,9 @@ export default function MenuScreen() {
         <h2>MENÚ PRINCIPAL</h2>
         <p className="menu-player-name"></p>
         <ul className="menu-list">
-          <li data-start="continue"  className="menu-item active"> CONTINUAR</li>
-          <li data-start="new-game"  className="menu-item"> NUEVA PARTIDA</li>
-          <li data-start="back"      className="menu-item"> ATRÁS</li>
+          <li data-start="continue" className="menu-item active"> CONTINUAR</li>
+          <li data-start="new-game" className="menu-item"> NUEVA PARTIDA</li>
+          <li data-start="back" className="menu-item"> ATRÁS</li>
         </ul>
       </div>
 
@@ -69,12 +69,15 @@ export default function MenuScreen() {
       {/* Vista: Selector de color */}
       <div className="menu-color hidden">
         <h2>COLOR CONSOLA</h2>
+        <p>&nbsp;</p>
         <p className="menu-preview-color"></p>
         <p className="menu-hint">
           <strong>
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.7em',height:'0.7em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="10,0 0,5 10,10"/></svg>
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.7em',height:'0.7em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="0,0 10,5 0,10"/></svg>
-            :</strong> Cambiar &nbsp; <strong>A/SPACE:</strong> Confirmar &nbsp;
+            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
+            &nbsp;
+            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
+            :</strong> Cambiar</p>
+        <p><strong>A/SPACE:</strong> Confirmar <br />
           <strong>B/ESC:</strong> Volver
         </p>
       </div>
@@ -87,8 +90,8 @@ export default function MenuScreen() {
         </div>
         <p className="menu-hint">
           <strong>
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.7em',height:'0.7em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="10,0 0,5 10,10"/></svg>
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.7em',height:'0.7em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="0,0 10,5 0,10"/></svg>
+            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
+            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
             :</strong> Cambiar &nbsp; <strong>A/SPACE:</strong> Confirmar &nbsp;
           <strong>B/ESC:</strong> Volver
         </p>
@@ -120,11 +123,11 @@ export default function MenuScreen() {
       <div className="menu-account hidden">
         <h2>CUENTA</h2>
         <ul className="menu-list">
-          <li data-account="login"    className="menu-item active"> INICIAR SESIÓN</li>
-          <li data-account="logout"   className="menu-item"> CERRAR SESIÓN</li>
+          <li data-account="login" className="menu-item active"> INICIAR SESIÓN</li>
+          <li data-account="logout" className="menu-item"> CERRAR SESIÓN</li>
           <li data-account="register" className="menu-item"> CREAR CUENTA</li>
-          <li data-account="delete"   className="menu-item"> BORRAR CUENTA</li>
-          <li data-account="back"     className="menu-item"> VOLVER</li>
+          <li data-account="delete" className="menu-item"> BORRAR CUENTA</li>
+          <li data-account="back" className="menu-item"> VOLVER</li>
         </ul>
       </div>
 
@@ -135,6 +138,6 @@ export default function MenuScreen() {
         <p><strong>B/ESC:</strong> Cancelar</p>
       </div>
 
-    </div>
+    </div >
   );
 }

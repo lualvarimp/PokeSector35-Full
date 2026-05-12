@@ -149,7 +149,7 @@ export function resetGameData() {
     localStorage.removeItem('pokesector_replay');
     localStorage.removeItem('pokesector_difficulty');
     localStorage.removeItem('pokesector_explorer');
-    localStorage.removeItem('pokesector_color');
+    // NO borramos pokesector_color: el color elegido persiste entre partidas
     gameState.pokemonCaptured = [];
     gameState.pokemonEscaped  = [];
     gameState.statsScroll     = 0;

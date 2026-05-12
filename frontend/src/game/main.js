@@ -95,6 +95,13 @@ async function loadGame() {
         if (parsedData.color) {
             document.documentElement.style.setProperty('--gameboy', parsedData.color);
             gameState.color = parsedData.color;
+        } else {
+            // El save no tiene color → usar el elegido en personalización si existe
+            const savedColor = localStorage.getItem('pokesector_color');
+            if (savedColor) {
+                document.documentElement.style.setProperty('--gameboy', savedColor);
+                gameState.color = savedColor;
+            }
         }
 
         if (gameState.isGameOver) {
@@ -117,6 +124,13 @@ async function loadGame() {
         // Esto evita que una pulsación rápida de dirección antes de START
         // dispare un encuentro Pokémon con la game-screen aún no visible.
         gameState.isIntro = true;
+
+        // Aplicar color guardado en personalización (persiste entre sesiones)
+        const savedColor = localStorage.getItem('pokesector_color');
+        if (savedColor) {
+            document.documentElement.style.setProperty('--gameboy', savedColor);
+            gameState.color = savedColor;
+        }
     }
 
     // 3. Controles

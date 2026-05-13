@@ -20,7 +20,7 @@
     h2 {
         width: fit-content;
         margin: 1rem auto;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.2rem;
         font-size: 1rem;
         color: var(--white);
         background: var(--black-screen);
@@ -92,9 +92,15 @@
         }
     }
 
-    .menu-preview-color {
-        font-size: 1.1rem;
-        text-align: center;
+    .menu-color {
+        .menu-preview-color {
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        .menu-hint {
+            padding: 0 0 2rem!important;
+            text-align: center;
+        }
     }
 
     /* Ranking: ocupa exactamente el screen, sin desbordarlo nunca */
@@ -143,9 +149,9 @@
         .menu-hint {
             flex-shrink: 0;
             margin-top: 0.3rem;
-            font-size: 0.7rem;
-            padding-left: 0;
-            text-align: center;
+            font-size: 0.85rem;
+            padding-left: 0.5rem;
+            text-align: left;
         }
     }
 
@@ -218,13 +224,9 @@
             padding: 0.2rem 0;
         }
     }
-}
 
-/* Sub-etiqueta de slots (dificultad), alineada con el texto del item */
-.menu-screen .menu-slot-sub {
-    display: block;
-    padding-left: calc(0.8rem + 0.4em);
-    font-size: 0.75rem;
-    opacity: 0.7;
-    line-height: 1.4rem;
+    .menu-slot-sub {
+        opacity: 0.6;
+        text-transform: capitalize;
+    }
 }

@@ -253,6 +253,7 @@ async function loadPokemon() {
     renderPokemon(allPokemon);
     updateCount(allPokemon.length);
     setupSearchAndControls();
+    populateSlotFilter();
 
   } catch (error) {
     console.error('Error cargando Pokémon:', error);
@@ -297,21 +298,62 @@ function renderPokemon(pokemon) {
 // SETUP BÚSQUEDA Y CONTROLES
 // ============================================================================
 
+function applyFilters() {
+  const searchTerm = (document.getElementById('pokemonSearch')?.value || '').toLowerCase();
+  const slotValue  = document.getElementById('slotFilter')?.value || '';
+
+  sorter.filter(p => {
+    const matchesSearch = p.pokemon_name.toLowerCase().includes(searchTerm) ||
+                          p.pokemon_id.toString().includes(searchTerm);
+    const matchesSlot   = slotValue === '' ||
+                          (slotValue === 'none'
+                            ? (p.slot_number === null || p.slot_number === undefined)
+                            : String(p.slot_number) === slotValue);
+    return matchesSearch && matchesSlot;
+  });
+
+  updateCount(sorter.getFilteredData().length);
+}
+
+function populateSlotFilter() {
+  const select = document.getElementById('slotFilter');
+  if (!select) return;
+
+  const slots = [...new Set(
+    allPokemon
+      .map(p => p.slot_number)
+      .filter(s => s !== null && s !== undefined)
+  )].sort((a, b) => a - b);
+
+  select.innerHTML = '<option value="">Todos los slots</option>';
+
+  slots.forEach(slotNum => {
+    const opt = document.createElement('option');
+    opt.value = slotNum;
+    opt.textContent = `Slot ${slotNum}`;
+    select.appendChild(opt);
+  });
+
+  const hasUnassigned = allPokemon.some(p => p.slot_number === null || p.slot_number === undefined);
+  if (hasUnassigned) {
+    const opt = document.createElement('option');
+    opt.value = 'none';
+    opt.textContent = 'Sin slot';
+    select.appendChild(opt);
+  }
+}
+
 function setupSearchAndControls() {
   const searchInput = document.getElementById('pokemonSearch');
-  const addBtn = document.getElementById('addPokemonBtn');
+  const slotFilter  = document.getElementById('slotFilter');
+  const addBtn      = document.getElementById('addPokemonBtn');
 
   if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      const searchTerm = e.target.value.toLowerCase();
-      
-      sorter.filter(p => {
-        return p.pokemon_name.toLowerCase().includes(searchTerm) || 
-               p.pokemon_id.toString().includes(searchTerm);
-      });
+    searchInput.addEventListener('input', applyFilters);
+  }
 
-      updateCount(sorter.getFilteredData().length);
-    });
+  if (slotFilter) {
+    slotFilter.addEventListener('change', applyFilters);
   }
 
   if (addBtn) {
@@ -337,8 +379,14 @@ async function deletePokemon(pokemonId) {
     });
 
     if (response.ok) {
+      const currentSlot = document.getElementById('slotFilter')?.value || '';
       alert('Pokémon eliminado');
-      loadPokemon();
+      await loadPokemon();
+      const slotFilter = document.getElementById('slotFilter');
+      if (slotFilter && currentSlot) {
+        slotFilter.value = currentSlot;
+        applyFilters();
+      }
     } else {
       alert('Error al eliminar Pokémon');
     }

@@ -8,7 +8,7 @@ block content
         a.btn-back(href='javascript:history.back()') ← Volver
         h1.pokedex-title Pokédex del Usuario
 
-    //- Filtros y acciones (solo búsqueda)
+    //- Filtros y acciones
     .pokedex-controls
       .controls-left
         .search-group
@@ -16,6 +16,9 @@ block content
             type='text'
             placeholder='Buscar Pokémon...'
           )
+        .filter-group
+          select#slotFilter.filter-select
+            option(value='') Todos los slots
 
       .controls-right
         button#addPokemonBtn.btn-add + Añadir Pokémon
@@ -35,11 +38,7 @@ block content
               .sort-icon ↑
               .sort-icon ↓
               .sort-icon ↕
-            th
-              span(data-sort-state='none') Slot
-              .sort-icon ↑
-              .sort-icon ↓
-              .sort-icon ↕
+            th Slot
             th Capturado
             th Acciones
 

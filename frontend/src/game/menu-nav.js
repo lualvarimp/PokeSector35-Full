@@ -190,6 +190,9 @@ function handleMain(action) {
             case 'ranking':
                 import('./menu-ranking.js').then(m => m.onRanking());
                 break;
+            case 'pokedex':
+                import('./menu-pokedex.js').then(m => m.onPokedex());
+                break;
             case 'account':
                 showView('account');
                 break;
@@ -221,7 +224,7 @@ export function showInfoMessage(text, showContinueOption) {
     const goAccount      = document.createElement('li');
     goAccount.className  = 'menu-item active';
     goAccount.dataset.action = 'go-account';
-    goAccount.textContent    = 'CREAR CUENTA';
+    goAccount.textContent    = 'IR A LA CUENTA';
     list.appendChild(goAccount);
 
     if (showContinueOption) {

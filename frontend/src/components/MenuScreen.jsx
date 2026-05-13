@@ -73,11 +73,10 @@ export default function MenuScreen() {
         <p>&nbsp;</p>
         <p className="menu-preview-color"></p>
         <p className="menu-hint">
-          <strong>
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
-            &nbsp;
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
-            :</strong> Cambiar</p>
+          <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
+          &nbsp;Seleccionar&nbsp;
+          <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
+        </p>
         <p><strong>A/SPACE:</strong> Confirmar <br />
           <strong>B/ESC:</strong> Volver
         </p>
@@ -91,7 +90,7 @@ export default function MenuScreen() {
         </div>
         <p className="menu-hint">
           <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.9em', height: '0.9em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
-          &nbsp;SELECCIONAR&nbsp; 
+          &nbsp;Seleccionar&nbsp;
           <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
         </p>
         <br />
@@ -119,7 +118,7 @@ export default function MenuScreen() {
         <div className="pokedex-viewport">
           <div className="game-list"></div>
         </div>
-        <p className="menu-hint"><strong>▲▼</strong> scroll &nbsp;|&nbsp; <strong>◀▶</strong> filtrar &nbsp;|&nbsp; <strong>B</strong> volver</p>
+        <p className="menu-hint"><strong>B/ESC:</strong> Volver</p>
       </div>
 
       <div className="menu-ranking hidden">

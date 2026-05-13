@@ -172,7 +172,7 @@ class PokedexSort extends MultiColumnSort {
     const columnMap = {
       0: () => item.pokemon_id,
       1: () => item.pokemon_name,
-      2: () => item.slot_id || 0,
+      // Columna 2 (Slot) - NO ordenable
       // Columna 3 (Capturado) - NO ordenable
       4: () => ''
     };

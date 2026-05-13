@@ -1,4 +1,3 @@
-
 // =============================================================================
 //  pokemon.js — Clases Pokemon y Pokedex (POO)
 // =============================================================================
@@ -61,6 +60,7 @@ export class Pokedex {
         // Convertimos el array de objetos planos {id,name} en instancias Pokemon
         this.entries      = pokemonDataArray.map(data => new Pokemon(data));
         this.activeFilter = null; // null = sin filtro activo (muestra todos)
+        this.sortById(); // garantizar orden por ID independientemente del orden de la BD
     }
 
     // Añade un Pokémon a la colección si aún no existe (comprobación por ID)

@@ -239,3 +239,24 @@
 #pokemonSuggestions {
   font-weight: 400 !important;
 }
+.filter-group {
+  flex-shrink: 0;
+}
+
+.filter-select {
+  font-family: var(--font-family);
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--white);
+  border-radius: 0.5rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:focus {
+    outline: none;
+    border-color: var(--green-med);
+    box-shadow: 0 0 0 3px rgba(129, 170, 99, 0.2);
+  }
+}

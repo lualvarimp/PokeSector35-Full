@@ -17,7 +17,7 @@
 /* Tipografía pixel-art que da el aspecto retro de Game Boy a todas las pantallas */
 @font-face {
     font-family: 'pokemonGB';
-    src: url('/assets/fonts/pokemonGB.ttf');
+    src: url('/fonts/pokemonGB.ttf');
     font-style: normal;
     font-display: swap;
     /* evita FOIT: muestra fuente del sistema mientras carga */
@@ -100,7 +100,8 @@ body {
 .battle-screen,
 .goal-screen,
 .stats-screen,
-.game-over-screen {
+.game-over-screen,
+.results-screen {
     position: relative;
     width: 100%;
     max-width: 18.75rem;
@@ -118,7 +119,7 @@ body {
         content: '';
         width: 100%;
         height: 100%;
-        background-image: url(/assets/img/screen-back.png);
+        background-image: url(/img/screen-back.png);
         background-repeat: repeat;
         z-index: -1;
         /* detrás del contenido pero delante del color del bezel */
@@ -132,7 +133,7 @@ body {
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url(/assets/img/screen-lines.png);
+        background-image: url(/img/screen-lines.png);
         background-repeat: repeat;
         opacity: 0.1;
         /* muy sutil: solo da textura sin tapar el contenido */
@@ -222,7 +223,7 @@ body {
             height: 19px;
             bottom: -28px;
             left: 0;
-            background-image: url(/assets/img/gameboy-logo.png);
+            background-image: url(/img/gameboy-logo.png);
             background-size: cover;
             opacity: 60%;
         }
@@ -237,7 +238,7 @@ body {
         right: 1rem;
         width: 4rem;
         height: 4rem;
-        background-image: url(/assets/img/speaker.png);
+        background-image: url(/img/speaker.png);
         background-size: cover;
         mix-blend-mode: multiply;
         filter: brightness(120%);

@@ -18,6 +18,8 @@ import { gameState, sanitizeExplorerName, updateExplorerHUD } from './game-state
 import { updateHUD } from './hud.js';
 import { initControls } from './controls.js';
 import { updateGoalScreen } from './movement.js';
+import { melodySound } from './sounds.js';
+import { openGoalMenu } from './game-over.js';
 
 async function loadGame() {
     // 1. Datos globales persistentes (nombre + colección total)
@@ -105,16 +107,32 @@ async function loadGame() {
         }
 
         if (gameState.isGameOver) {
+            melodySound.pause();
+            melodySound.currentTime = 0;
             homeScreen.classList.add('hidden');
             document.querySelector('.game-over-screen').classList.remove('hidden');
         } else if (gameState.isGoal) {
+            melodySound.pause();
+            melodySound.currentTime = 0;
             homeScreen.classList.add('hidden');
             updateGoalScreen();
             document.querySelector('.goal-screen').classList.remove('hidden');
+            openGoalMenu();
         } else {
             // Partida en curso normal: el juego está listo, no bloqueamos
             homeScreen.classList.add('hidden');
             document.querySelector('.game-screen').classList.remove('hidden');
+            // Los navegadores bloquean autoplay sin interacción previa del usuario.
+            // Intentamos reproducir; si falla (política de autoplay), esperamos al
+            // primer keydown para arrancarlo.
+            melodySound.currentTime = 0;
+            melodySound.play().catch(() => {
+                const unlock = () => {
+                    melodySound.play().catch(() => {});
+                    window.removeEventListener('keydown', unlock);
+                };
+                window.addEventListener('keydown', unlock);
+            });
         }
 
     } else {

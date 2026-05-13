@@ -1,19 +1,18 @@
-
 // =============================================================================
 //  menu-config.js — Datos de configuración del menú
 // =============================================================================
-//  Paths adjusted for Vite: assets served from /public/assets/
+//  Paths adjusted for Vite: assets served from /public/
 // =============================================================================
 
 export const EXPLORERS = [
-    { id: 'boy',  src: '/assets/img/character-boy-front.png',  label: 'EXPLORADOR' },
-    { id: 'girl', src: '/assets/img/character-girl-front.png', label: 'EXPLORADORA' },
-    { id: 'professor', src: '/assets/img/character-professor-front.png', label: 'PROFESOR' },
-    { id: 'nurse', src: '/assets/img/character-nurse-front.png', label: 'ENFERMERA' },
-    { id: 'brock', src: '/assets/img/character-brock-front.png', label: 'BROCK' },
-    { id: 'police', src: '/assets/img/character-police-front.png', label: 'POLICIA' },
-    { id: 'rocket-boy', src: '/assets/img/character-team-rocket-boy-front.png', label: 'T-ROCKET BOY' },
-    { id: 'rocket-girl', src: '/assets/img/character-team-rocket-girl-front.png', label: 'T-ROCKET GIRL' },
+    { id: 'boy',  src: '/img/character-boy-front.png',  label: 'EXPLORADOR' },
+    { id: 'girl', src: '/img/character-girl-front.png', label: 'EXPLORADORA' },
+    { id: 'professor', src: '/img/character-professor-front.png', label: 'PROFESOR' },
+    { id: 'nurse', src: '/img/character-nurse-front.png', label: 'ENFERMERA' },
+    { id: 'brock', src: '/img/character-brock-front.png', label: 'BROCK' },
+    { id: 'police', src: '/img/character-police-front.png', label: 'POLICIA' },
+    { id: 'rocket-boy', src: '/img/character-team-rocket-boy-front.png', label: 'T-ROCKET BOY' },
+    { id: 'rocket-girl', src: '/img/character-team-rocket-girl-front.png', label: 'T-ROCKET GIRL' },
 ];
 
 export const COLORS = [

@@ -28,7 +28,7 @@ export default function BattleScreen() {
 
       <div className="full-bottom">
         <div>
-          <img src="/assets/img/heart.png" alt="heart" />
+          <img src="/img/heart.png" alt="heart" />
           <p>HP:</p>
           <div>
             <div className="hp-bar">
@@ -38,7 +38,7 @@ export default function BattleScreen() {
             <p className="player-hp"><span>10</span>/10</p>
           </div>
           <div>
-            <span><img src="/assets/img/pokeball.png" alt="pokeball" /></span>
+            <span><img src="/img/pokeball.png" alt="pokeball" /></span>
             <p>X</p>
             <p className="player-balls"></p>
           </div>

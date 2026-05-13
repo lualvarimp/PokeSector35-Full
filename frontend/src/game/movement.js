@@ -7,8 +7,9 @@
 
 import { gameState, saveGame, saveGlobalData, saveToBackend } from './game-state.js';
 import { triggerPokemonEncounter }             from './api.js';
-import { stepSound, crashSound, goalSound }    from './sounds.js';
+import { stepSound, crashSound, goalSound, melodySound } from './sounds.js';
 import { updateHUD }                           from './hud.js';
+import { openGoalMenu }                        from './game-over.js';
 
 export function updatePosition(direction) {
 
@@ -57,6 +58,8 @@ export async function checkSquare(square) {
         gameState.isGoal = true;
 
         goalSound.currentTime = 0;
+        melodySound.pause();
+        melodySound.currentTime = 0;
         goalSound.play();
 
         saveGlobalData();
@@ -71,6 +74,7 @@ export async function checkSquare(square) {
 
         requestAnimationFrame(() => {
             updateGoalScreen();
+            openGoalMenu();
             updateHUD();
         });
 
@@ -96,23 +100,8 @@ export async function checkSquare(square) {
 }
 
 export function updateGoalScreen() {
-    const capturedThisGame = gameState.pokemonCaptured.length;
-    const escapedThisGame  = gameState.pokemonEscaped.length;
-
-    const globalRaw   = localStorage.getItem('pokesector_global');
-    const allCaptured = globalRaw ? (JSON.parse(globalRaw).allCaptured || []) : [];
-    const totalUnique = allCaptured.length;
-
-    const goalText = document.getElementById('goal-text');
-    if (goalText) {
-        goalText.innerHTML = `
-            <p><strong>Has capturado:</strong><br>
-            ${capturedThisGame} Pokémon</p>
-            <p><strong>Han escapado:</strong><br>
-            ${escapedThisGame} Pokémon</p>
-            <p><strong>Total capturas:</strong><br>
-            ${totalUnique} Pokémon</p>
-            <p style="text-align: center;">------------</p>
-        `;
-    }
+    // El resumen de capturados/escapados ya no se muestra aquí:
+    // está disponible en "Ver resultados" dentro del menú de meta.
+    // Esta función se mantiene por si en el futuro se necesita
+    // inyectar contenido adicional en la goal-screen.
 }

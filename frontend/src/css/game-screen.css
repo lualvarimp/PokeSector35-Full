@@ -29,7 +29,7 @@
            Las clases .goal, .rock y .wild sobreescriben este fondo. */
         >div {
             aspect-ratio: 1 / 1;
-            background-image: url(/assets/img/grass.png);
+            background-image: url(/img/grass.png);
             background-size: cover;
             mix-blend-mode: multiply;       /* funde las imágenes con la textura de pantalla */
             image-rendering: pixelated;     /* mantiene los píxeles nítidos al escalar */
@@ -37,13 +37,13 @@
 
             /* Casilla de meta: muestra la bandera de llegada */
             &.goal {
-                background-image: url(/assets/img/flag.png);
+                background-image: url(/img/flag.png);
             }
 
             /* Casilla de roca: obstáculo infranqueable
                movement.js bloquea el movimiento si la celda destino tiene .rock */
             &.rock {
-                background-image: url(/assets/img/rock.png);
+                background-image: url(/img/rock.png);
             }
 
             /* Casilla de hierba alta: sin fondo propio, usa ::after para superponer
@@ -60,7 +60,7 @@
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background-image: url(/assets/img/tall-grass.png);
+                    background-image: url(/img/tall-grass.png);
                     background-size: cover;
                     pointer-events: none; /* la hierba no captura clics */
                     z-index: 5;           /* encima del jugador (#player tiene z-index:2) */

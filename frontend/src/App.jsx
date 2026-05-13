@@ -45,7 +45,7 @@ export default function App() {
 
       <h1>
         <img
-          src="/assets/img/pokesector-35-console.png"
+          src="/img/pokesector-35-console.png"
           alt="PokéSector 35 - El misterio de los Pokémon salvajes"
         />
       </h1>
@@ -69,13 +69,13 @@ export default function App() {
           <div className="animation-home hidden">
             <h2>
               <img
-                src="/assets/img/game-freak-nintendo-screen.png"
+                src="/img/game-freak-nintendo-screen.png"
                 alt="Gracias, Game Freak y Nintendo, por un juego tan divertido"
               />
             </h2>
             <h3>
               <img
-                src="/assets/img/pokesector-35-screen.png"
+                src="/img/pokesector-35-screen.png"
                 alt="PokéSector 35 - El misterio de los Pokémon salvajes"
               />
             </h3>

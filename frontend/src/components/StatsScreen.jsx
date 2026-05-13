@@ -1,9 +1,9 @@
 // =============================================================================
-//  StatsScreen.jsx — Pantalla de estadísticas y Pokédex
+//  StatsScreen.jsx — Pantalla de estadísticas, Pokédex y meta
 // =============================================================================
-//  Muestra las estadísticas de la partida (capturados/perdidos) y la Pokédex.
-//  Incluye también la pantalla de meta (goal-screen).
-//  La lógica de renderizado la gestiona stats.js y stats-pokedex.js.
+//  Incluye la goal-screen (meta), la results-screen (resultados de partida)
+//  y la stats-screen (estadísticas globales y Pokédex).
+//  La lógica la gestiona stats.js y stats-pokedex.js.
 // =============================================================================
 
 export default function StatsScreen() {
@@ -13,9 +13,20 @@ export default function StatsScreen() {
       <div className="goal-screen hidden">
         <div className="goal-list">
           <h2>¡Enhorabuena!</h2>
-          <p><span id="goal-text"></span></p>
-          <p><strong>SELECT/SHIFT:</strong> Ver estadísticas.</p>
-          <p><strong>START/ENTER:</strong> Comenzar nueva partida.</p>
+          <nav id="goal-menu">
+            <p data-option="0"><span className="end-cursor">►</span> Jugar de nuevo</p>
+            <p data-option="1"><span className="end-cursor">►</span> Ver resultados</p>
+            <p data-option="2"><span className="end-cursor">►</span> Volver al menú</p>
+            <p data-option="3"><span className="end-cursor">►</span> Cerrar sesión</p>
+          </nav>
+        </div>
+      </div>
+
+      {/* Pantalla de resultados — lista de capturados/escapados de esta partida */}
+      <div className="results-screen hidden">
+        <div className="results-list">
+          <h2>Resultados</h2>
+          <div id="results-text"></div>
         </div>
       </div>
 

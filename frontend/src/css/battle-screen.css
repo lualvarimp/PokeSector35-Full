@@ -207,7 +207,7 @@
         border: 0.15rem solid var(--black-screen);
         font-size: 0.9rem;
         line-height: 1.3rem;
-        background-image: url(/assets/img/screen-back.png);
+        background-image: url(/img/screen-back.png);
         background-repeat: repeat;
         z-index: 5; /* encima de todo el contenido de la batalla */
 
@@ -219,7 +219,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url(/assets/img/screen-lines.png);
+            background-image: url(/img/screen-lines.png);
             background-repeat: repeat;
             opacity: 0.1;
             z-index: 10;

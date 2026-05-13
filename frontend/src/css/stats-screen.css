@@ -110,7 +110,7 @@
         line-height: 1.4rem;
         text-align: center;
         color: var(--black-screen);
-        background-image: url(/assets/img/screen-back.png); /* misma textura que la pantalla */
+        background-image: url(/img/screen-back.png); /* misma textura que la pantalla */
         z-index: 10; /* encima de todo el contenido de stats */
 
         p {

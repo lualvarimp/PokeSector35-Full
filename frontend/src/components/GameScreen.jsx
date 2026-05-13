@@ -18,7 +18,7 @@ export default function GameScreen() {
 
         {/* Fila 0 */}
         <div data-r="0" data-c="0">
-          <div id="player"><img src="/assets/img/character-boy-front.png" alt="Pokémon explorer" /></div>
+          <div id="player"><img src="/img/character-boy-front.png" alt="Pokémon explorer" /></div>
         </div>
         <div data-r="0" data-c="1" className="wild"></div>
         <div data-r="0" data-c="2"></div>
@@ -66,7 +66,7 @@ export default function GameScreen() {
         {/* HUD inferior */}
         <div data-row="bottom" className="full-bottom">
           <div>
-            <img src="/assets/img/heart.png" alt="heart" />
+            <img src="/img/heart.png" alt="heart" />
             <p>HP:</p>
             <div>
               <div className="hp-bar">
@@ -76,7 +76,7 @@ export default function GameScreen() {
               <p className="player-hp"><span>10</span>/10</p>
             </div>
             <div>
-              <span><img src="/assets/img/pokeball.png" alt="pokeball" /></span>
+              <span><img src="/img/pokeball.png" alt="pokeball" /></span>
               <p>X</p>
               <p className="player-balls"></p>
             </div>

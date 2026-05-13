@@ -26,7 +26,7 @@
 
     /* Mensaje "PULSA START o PULSA ENTER" — parpadea para guiar al jugador
        El <span> interior "o" se muestra en una línea propia más pequeña */
-    p {
+    .game-over-prompt {
         margin: 0;
         text-align: center;
         font-size: 0.9rem;
@@ -49,5 +49,24 @@
         transform: translateX(-50%); /* centrado horizontal */
         mix-blend-mode: multiply;
         filter: opacity(80%) brightness(160%) contrast(80%);
+    }
+    /* Menú post-game-over */
+    #gameover-menu {
+        position: relative;
+        z-index: 2;
+        margin: 0.8rem 0.5rem 0;
+
+        p {
+            font-size: 0.85rem;
+            line-height: 1.6rem;
+            margin: 0;
+            text-transform: uppercase;
+            animation: none;
+        }
+
+        .end-cursor {
+            visibility: hidden;
+            margin-right: 0.4rem;
+        }
     }
 }

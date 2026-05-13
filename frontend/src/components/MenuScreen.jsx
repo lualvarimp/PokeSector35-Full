@@ -17,8 +17,9 @@ export default function MenuScreen() {
         <ul className="menu-list">
           <li data-option="start" className="menu-item active">INICIAR PARTIDA</li>
           <li data-option="customize" className="menu-item"> PERSONALIZAR</li>
-          <li data-option="ranking" className="menu-item"> RANKING</li>
+          <li data-option="pokedex" className="menu-item"> POKÉDEX</li>
           <li data-option="account" className="menu-item"> CUENTA</li>
+          <li data-option="ranking" className="menu-item"> RANKING</li>
         </ul>
         <p className="menu-hint"><strong>▲▼:</strong> Seleccionar <br /><strong>A/SPACE:</strong> Elegir</p>
       </div>
@@ -110,6 +111,15 @@ export default function MenuScreen() {
       </div>
 
       {/* Vista: Ranking — pantalla fija, scroll interno con ▲▼, cambio dificultad con ◀▶ */}
+      <div className="menu-pokedex hidden">
+        <h2>POKÉDEX</h2>
+        <p className="pokedex-filter-label"></p>
+        <div className="pokedex-viewport">
+          <div className="game-list"></div>
+        </div>
+        <p className="menu-hint"><strong>▲▼</strong> scroll &nbsp;|&nbsp; <strong>◀▶</strong> filtrar &nbsp;|&nbsp; <strong>B</strong> volver</p>
+      </div>
+
       <div className="menu-ranking hidden">
         <h2>RANKING</h2>
         <p className="ranking-filter-label"></p>

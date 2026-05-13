@@ -19,6 +19,7 @@ export const gameState = {
     isBattle: false,
     isGoal: false,
     isGameOver: false,
+    isResultsOpen: false,
     isIntro: false,
     isStatsOpen: false,
     isConfirmingErase: false,

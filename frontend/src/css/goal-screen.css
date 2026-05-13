@@ -1,4 +1,3 @@
-
 /* Styles by Luis Alonso */
 
 /* =============================================================================
@@ -15,10 +14,12 @@
    ============================================================================= */
 
 .goal-screen {
-    overflow: hidden;           /* recorta el contenido que desborda la pantalla cuadrada */
+    overflow: hidden;
+    /* recorta el contenido que desborda la pantalla cuadrada */
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* ancla el contenido arriba, evita el centrado vertical */
+    justify-content: flex-start;
+    /* ancla el contenido arriba, evita el centrado vertical */
     align-items: stretch;
 
     h2 {
@@ -30,7 +31,8 @@
         color: var(--white);
         mix-blend-mode: multiply;
         border: 0.15rem solid var(--black-screen);
-        outline: 0.15rem solid var(--black-screen); /* doble borde con outline */
+        outline: 0.15rem solid var(--black-screen);
+        /* doble borde con outline */
         outline-offset: 0.3rem;
         background: var(--black-screen);
     }
@@ -50,6 +52,104 @@
         width: 100%;
         box-sizing: border-box;
         mix-blend-mode: multiply;
-        align-self: flex-start; /* siempre pegado arriba, independientemente del contenido */
+        align-self: flex-start;
+        /* siempre pegado arriba, independientemente del contenido */
+    }
+}
+
+/* Menú de opciones de meta */
+#goal-menu {
+    margin: 1.5rem 0.5rem 0;
+
+    p {
+        font-size: 0.85rem;
+        line-height: 1.6rem;
+        margin: 0;
+        text-transform: uppercase;
+    }
+
+    .end-cursor {
+        visibility: hidden;
+        margin-right: 0.4rem;
+    }
+}
+
+
+/* =============================================================================
+   results-screen — Pantalla de resultados detallados de la partida
+   Mismo patrón visual que goal-screen y stats-screen.
+   ============================================================================= */
+
+.results-screen {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    h2 {
+        width: fit-content;
+        margin: 1rem auto 0.5rem;
+        padding: 0.4rem 1.2rem;
+        font-size: 1rem;
+        font-weight: 400;
+        color: var(--white);
+        mix-blend-mode: multiply;
+        border: 0.15rem solid var(--black-screen);
+        outline: 0.15rem solid var(--black-screen);
+        outline-offset: 0.3rem;
+        background: var(--black-screen);
+    }
+
+    .results-list {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        mix-blend-mode: multiply;
+        align-self: flex-start;
+
+        p {
+            padding: 0 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.4rem;
+            margin: 0;
+        }
+
+        h2 {
+            margin: 1rem auto;
+            font-size: 1rem;
+            padding: 0.3rem 1.2rem;
+            outline-offset: 0.2rem;
+        }
+
+        .results-section {
+            padding: 0.6rem 1rem 0.1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .results-item {
+            padding: 0 1.5rem;
+            font-size: 0.85rem;
+            line-height: 1.4rem;
+            margin: 0;
+        }
+
+        .results-back {
+            margin-top: 0.6rem;
+            text-align: left;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        #results-text {
+            .text-head {
+                display: block;
+                padding: 0.8rem 1rem 0.5rem;
+            }
+
+        }
     }
 }

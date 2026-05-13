@@ -21,6 +21,7 @@ import { gameState, eraseAllData }         from './game-state.js';
 import { clickSound, eraseSound }          from './sounds.js';
 import { renderSummaryView }               from './stats-summary.js';
 import { renderPokedexView, initPokedex, pokedex } from './stats-pokedex.js';
+import { openGoalMenu, closeResultsScreen } from './game-over.js';
 
 let statsView = 'summary'; // estado interno: vista activa ('summary' | 'pokedex')
 
@@ -134,26 +135,34 @@ export function updateStatsScreen(action) {
         }
     }
 
-    // ── Scroll en goal-screen con el dPad ─────────────────────────────────
-    // Permite leer el mensaje de enhorabuena si el contenido desborda la pantalla
-    if (gameState.isGoal && !gameState.isStatsOpen && goalList && goalScreen) {
-        const maxGoalScroll = goalList.scrollHeight - goalScreen.clientHeight;
+    // ── B en results-screen: volver a la goal-screen ──────────────────────
+    if (action === 'pressB' && gameState.isResultsOpen) {
+        closeResultsScreen();
+        return;
+    }
 
-        if (action === 'pressDown' && gameState.statsScroll < maxGoalScroll) {
-            clickSound.currentTime = 0;
-            clickSound.play();
-            gameState.statsScroll += scrollStep;
-            goalList.style.transform = `translateY(-${gameState.statsScroll}px)`;
-        } else if (action === 'pressUp' && gameState.statsScroll > 0) {
-            clickSound.currentTime = 0;
-            clickSound.play();
-            gameState.statsScroll -= scrollStep;
-            goalList.style.transform = `translateY(-${gameState.statsScroll}px)`;
+    // ── Scroll en results-screen con el dPad ──────────────────────────────
+    if (gameState.isResultsOpen) {
+        const resultsList   = document.querySelector('.results-list');
+        const resultsScreen = document.querySelector('.results-screen');
+        if (resultsList && resultsScreen) {
+            const maxScroll = resultsList.scrollHeight - resultsScreen.clientHeight;
+            if (action === 'pressDown' && gameState.statsScroll < maxScroll) {
+                clickSound.currentTime = 0;
+                clickSound.play();
+                gameState.statsScroll += scrollStep;
+                resultsList.style.transform = `translateY(-${gameState.statsScroll}px)`;
+            } else if (action === 'pressUp' && gameState.statsScroll > 0) {
+                clickSound.currentTime = 0;
+                clickSound.play();
+                gameState.statsScroll -= scrollStep;
+                resultsList.style.transform = `translateY(-${gameState.statsScroll}px)`;
+            }
         }
+        return;
     }
 
     // ── Scroll en stats-screen con el dPad ────────────────────────────────
-    // Permite ver toda la lista de capturados/perdidos si desborda la pantalla
     if (gameState.isStatsOpen && statsList && statsScreen) {
         const maxStatsScroll = statsList.scrollHeight - statsScreen.clientHeight;
 
@@ -173,18 +182,12 @@ export function updateStatsScreen(action) {
     // ── SELECT: abrir la pantalla de stats desde la meta ──────────────────
     if (action === 'pressSelect' && gameState.isGoal) {
         if (!gameState.isStatsOpen) {
-            goalScreen.classList.add('hidden');    // ocultamos la pantalla de meta
-            statsScreen.classList.remove('hidden'); // mostramos estadísticas
+            goalScreen.classList.add('hidden');
+            statsScreen.classList.remove('hidden');
             gameState.statsScroll = 0;
             if (statsList) statsList.style.transform = 'translateY(0)';
             gameState.isStatsOpen = true;
-            pokemonList(); // inicializamos la pantalla con los datos actuales
+            pokemonList();
         }
-    }
-
-    // ── START: comenzar nueva partida desde la pantalla de meta/stats ──────
-    if (action === 'pressStart' && gameState.isGoal) {
-        localStorage.removeItem('pokesector_save'); // borramos la partida terminada
-        location.reload();                          // recargamos para empezar de cero
     }
 }

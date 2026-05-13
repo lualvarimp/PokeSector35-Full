@@ -44,6 +44,8 @@ async function loadGame() {
         gameState.pokemonEscaped  = parsedData.pokemonEscaped  || [];
         gameState.isGoal          = parsedData.isGoal     || false;
         gameState.isGameOver      = parsedData.isGameOver || false;
+        gameState.slotNumber      = parsedData.slotNumber  || null;
+        gameState.slotDbId        = parsedData.slotDbId    || null;
 
         if (parsedData.currentPosition) {
             const { r, c } = parsedData.currentPosition;
@@ -107,13 +109,9 @@ async function loadGame() {
         }
 
         if (gameState.isGameOver) {
-            melodySound.pause();
-            melodySound.currentTime = 0;
             homeScreen.classList.add('hidden');
             document.querySelector('.game-over-screen').classList.remove('hidden');
         } else if (gameState.isGoal) {
-            melodySound.pause();
-            melodySound.currentTime = 0;
             homeScreen.classList.add('hidden');
             updateGoalScreen();
             document.querySelector('.goal-screen').classList.remove('hidden');

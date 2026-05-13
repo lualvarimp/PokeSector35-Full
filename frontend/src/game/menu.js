@@ -48,7 +48,6 @@ export function updateMenu(action) {
         case 'color':      handleColor(action);      break;
         case 'explorer':   handleExplorer(action);   break;
         case 'difficulty': handleDifficulty(action); break;
-        case 'pokedex':    handlePokedex(action);    break;
         case 'ranking':    handleRanking(action);    break;
         case 'account':    handleAccount(action);    break;
         case 'confirm':    handleConfirm(action);    break;
@@ -63,7 +62,7 @@ function showView(view) {
     const views = [
         '.menu-main', '.menu-start', '.menu-slots', '.menu-info', '.menu-customize',
         '.menu-color', '.menu-explorer', '.menu-difficulty',
-        '.menu-ranking', '.menu-account', '.menu-confirm', '.menu-pokedex'
+        '.menu-ranking', '.menu-account', '.menu-confirm'
     ];
     views.forEach(selector => {
         const el = document.querySelector(selector);
@@ -166,7 +165,6 @@ function handleMain(action) {
         switch (selected) {
             case 'start':     onStart();     break;
             case 'customize': onCustomize(); break;
-            case 'pokedex':   onPokedex();   break;
             case 'ranking':   onRanking();   break;
             case 'account':   onAccount();   break;
             case 'logout':    onLogout();    break;
@@ -270,91 +268,6 @@ function onContinue() {
 
 function onCustomize() { showView('customize'); }
 
-
-let pokedexScroll = 0;
-
-function renderPokedexMenu() {
-    import('./stats-pokedex.js').then(({ pokedex: pdx }) => {
-        const gameList    = document.querySelector('.menu-pokedex .game-list');
-        const filterLabel = document.querySelector('.pokedex-filter-label');
-        if (!gameList) return;
-
-        // Etiqueta fija de filtro (fuera del scroll)
-        if (filterLabel) {
-            const filtered    = pdx.getFilteredEntries();
-            const isFiltered  = pdx.activeFilter !== null;
-            const labelText   = isFiltered ? `LETRA ${pdx.activeFilter.toUpperCase()}` : 'TODOS';
-            const counter     = isFiltered ? `${filtered.length}/${pdx.total}` : `${pdx.total}/151`;
-            filterLabel.innerHTML = `◀ ${labelText} ▶ &nbsp; ${counter}`;
-        }
-
-        gameList.textContent = '';
-
-        const filtered = pdx.getFilteredEntries();
-
-        // Lista de Pokémon
-        if (filtered.length === 0) {
-            const p = document.createElement('p');
-            p.textContent = pdx.total === 0 ? 'Ninguno todavía' : 'Sin resultados';
-            gameList.appendChild(p);
-        } else {
-            filtered.forEach((pokemon, i) => {
-                const p = document.createElement('p');
-                p.textContent = `${i + 1}. ${pokemon.toString()}`;
-                gameList.appendChild(p);
-            });
-        }
-
-        gameList.style.transform = `translateY(-${pokedexScroll}px)`;
-    });
-}
-
-function onPokedex() {
-    const slotNum = gameState.slotNumber;
-    const h2 = document.querySelector('.menu-pokedex h2');
-    if (h2) h2.textContent = slotNum ? `POKÉDEX SLOT ${slotNum}` : 'POKÉDEX';
-    showView('pokedex');
-    pokedexScroll = 0;
-    if (!api.isLoggedIn()) {
-        const list = document.querySelector('.menu-pokedex .game-list');
-        if (list) list.innerHTML = '<p style="padding:0.5rem 0;line-height:1.5rem;">Inicia sesión o crea una cuenta para ver tu Pokédex.</p>';
-        return;
-    }
-    import('./stats-pokedex.js').then(({ initPokedex, pokedex: pdx }) => {
-        initPokedex().then(() => {
-            pdx.filterByLetter(null);
-            renderPokedexMenu();
-        });
-    });
-}
-
-function handlePokedex(action) {
-    if (action === 'pressB') {
-        playClick();
-        pokedexScroll = 0;
-        showView('main');
-        return;
-    }
-    if (!api.isLoggedIn()) return;
-    const scrollStep = 40;
-    import('./stats-pokedex.js').then(({ pokedex: pdx }) => {
-        if (action === 'pressLeft')  { playClick(); pdx.prevFilter(); pokedexScroll = 0; renderPokedexMenu(); return; }
-        if (action === 'pressRight') { playClick(); pdx.nextFilter(); pokedexScroll = 0; renderPokedexMenu(); return; }
-        const viewport = document.querySelector('.pokedex-viewport');
-        const list     = document.querySelector('.menu-pokedex .game-list');
-        if (!viewport || !list) return;
-        const maxScroll = list.scrollHeight - viewport.clientHeight;
-        if (action === 'pressDown' && pokedexScroll < maxScroll) {
-            pokedexScroll = Math.min(pokedexScroll + scrollStep, maxScroll);
-            list.style.transform = `translateY(-${pokedexScroll}px)`;
-        }
-        if (action === 'pressUp' && pokedexScroll > 0) {
-            pokedexScroll = Math.max(pokedexScroll - scrollStep, 0);
-            list.style.transform = `translateY(-${pokedexScroll}px)`;
-        }
-    });
-}
-
 function onRanking() {
     if (!api.isLoggedIn()) {
         showInfoMessage(
@@ -374,8 +287,11 @@ function onLogout() {
     gameState.playerName = 'Ash';
     gameState.slotNumber = null;
     gameState.slotDbId   = null;
-    // Limpiar el explorer_name al hacer logout para no arrastrarlo a otra cuenta
+    // Limpiar TODO el localStorage relacionado con la partida y el usuario
+    // para que el próximo usuario no registrado no arrastre datos anteriores
     localStorage.removeItem('pokesector_explorer_name');
+    localStorage.removeItem('pokesector_save');
+    localStorage.removeItem('pokesector_global');
     updateExplorerHUD();
     syncMenuVisibility();
     showView('main');
@@ -1073,6 +989,12 @@ async function askDeleteConfirm() {
 //  INICIAR PARTIDA
 // =============================================================================
 async function startGame(slotNumber) {
+    // Usuario no registrado: siempre arranca como Ash, sin arrastrar nombres anteriores
+    if (!api.isLoggedIn()) {
+        gameState.playerName = 'Ash';
+        updateExplorerHUD();
+    }
+
     const diffRaw       = localStorage.getItem('pokesector_difficulty');
     const savedExplorer = localStorage.getItem('pokesector_explorer');
     const savedColor    = localStorage.getItem('pokesector_color');

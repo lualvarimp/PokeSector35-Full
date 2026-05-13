@@ -4,30 +4,40 @@
 //  RESPONSABILIDAD: Capturar todas las entradas del usuario (botones en
 //  pantalla y teclado), aplicar un sistema de bloqueo temporal (debounce)
 //  para evitar pulsaciones accidentales múltiples, y enrutar cada acción
-//  al módulo correspondiente.
+//  al módulo correspondiente mediante un dispatcher centralizado.
 //
 //  FUNCIONES EXPORTADAS:
 //    · initControls() — registra todos los event listeners al arrancar el juego
 //
-//  RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
-//    ✅ Manipulación del DOM  → eventos sobre botones del HTML
-//    ✅ Interfaz responsiva   → mismas acciones disponibles en botón y teclado
+//  FLUJO DE PRIORIDADES DEL DISPATCH:
+//    1. Menú principal abierto      → updateMenu()
+//    2. Menú de fin de partida      → handleEndMenuNav()
+//    3. Results screen abierta      → updateStatsScreen() (que delega a handleResultsScroll)
+//    4. Game over / goal sin menú   → handleGameOverStart() (solo START)
+//    5. Stats screen                → updateStatsScreen()
+//    6. Batalla                     → updateBattle()
+//    7. Movimiento en el mapa       → updatePosition()
+//    8. Intro                       → startIntro() (solo START)
 // =============================================================================
 
-import { updatePosition }        from './movement.js';
-import { startIntro }            from './intro.js';
-import { updateStatsScreen }     from './stats.js';
-import { updateBattle }          from './battle.js';
-import { handleGameOverStart, handleEndMenuNav, isEndMenuOpen, isResultsScreenOpen } from './game-over.js';
+import { updatePosition }     from './movement.js';
+import { startIntro }         from './intro.js';
+import { updateStatsScreen }  from './stats.js';
+import { updateBattle }       from './battle.js';
+import {
+    handleGameOverStart, handleEndMenuNav,
+    isEndMenuOpen, isResultsScreenOpen,
+} from './game-over.js';
 import { updateMenu, isMenuOpen } from './menu.js';
 
+// ─── Debounce ────────────────────────────────────────────────────────────────
 const LOCK_MOVE   = 300;
 const LOCK_BATTLE = 350;
 const LOCK_MENU   = 250;
 const LOCK_INTRO  = 800;
 
 let inputLocked = false;
-let lockTimeout  = null;
+let lockTimeout = null;
 
 function lock(ms) {
     inputLocked = true;
@@ -35,53 +45,46 @@ function lock(ms) {
     lockTimeout = setTimeout(() => { inputLocked = false; }, ms);
 }
 
-export function initControls() {
-    const startBtn  = document.getElementById('start-btn');
-    const selectBtn = document.getElementById('select-btn');
-    const aBtn      = document.getElementById('a-btn');
-    const bBtn      = document.getElementById('b-btn');
-    const upBtn     = document.getElementById('up-btn');
-    const leftBtn   = document.getElementById('left-btn');
-    const rightBtn  = document.getElementById('right-btn');
-    const downBtn   = document.getElementById('down-btn');
+// Determina el tiempo de bloqueo según el tipo de acción
+function lockTimeFor(action) {
+    switch (action) {
+        case 'pressStart':              return LOCK_INTRO;
+        case 'pressA': case 'pressB':   return LOCK_BATTLE;
+        case 'pressUp': case 'pressDown': return LOCK_MOVE;
+        default:                        return LOCK_MENU;
+    }
+}
 
-    upBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_MOVE);
-        if (isMenuOpen())    { updateMenu('pressUp'); return; }
-        if (isEndMenuOpen()) { handleEndMenuNav('pressUp'); return; }
-        updatePosition('pressUp');
-        updateStatsScreen('pressUp');
-    });
+// =============================================================================
+//  DISPATCH — Enrutador centralizado de acciones
+// =============================================================================
+// Cada acción pasa por la cadena de prioridades UNA SOLA VEZ.
+// Los botones y el teclado llaman ambos a dispatch(), eliminando
+// la duplicación que existía anteriormente.
 
-    downBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_MOVE);
-        if (isMenuOpen())    { updateMenu('pressDown'); return; }
-        if (isEndMenuOpen()) { handleEndMenuNav('pressDown'); return; }
-        updatePosition('pressDown');
-        updateStatsScreen('pressDown');
-    });
+function dispatch(action) {
+    if (inputLocked) return;
+    lock(lockTimeFor(action));
 
-    leftBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_MENU);
-        if (isMenuOpen()) { updateMenu('pressLeft'); return; }
-        updateStatsScreen('pressLeft');
-        updatePosition('pressLeft');
-    });
+    // ── D-Pad: arriba, abajo ─────────────────────────────────────────────
+    if (action === 'pressUp' || action === 'pressDown') {
+        if (isMenuOpen())    { updateMenu(action); return; }
+        if (isEndMenuOpen()) { handleEndMenuNav(action); return; }
+        updatePosition(action);
+        updateStatsScreen(action);
+        return;
+    }
 
-    rightBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_MENU);
-        if (isMenuOpen()) { updateMenu('pressRight'); return; }
-        updateStatsScreen('pressRight');
-        updatePosition('pressRight');
-    });
+    // ── D-Pad: izquierda, derecha ────────────────────────────────────────
+    if (action === 'pressLeft' || action === 'pressRight') {
+        if (isMenuOpen()) { updateMenu(action); return; }
+        updateStatsScreen(action);
+        updatePosition(action);
+        return;
+    }
 
-    startBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_INTRO);
+    // ── START ────────────────────────────────────────────────────────────
+    if (action === 'pressStart') {
         if (isMenuOpen())    return;
         if (isEndMenuOpen()) { handleEndMenuNav('pressStart'); return; }
         if (isResultsScreenOpen()) return;
@@ -90,98 +93,78 @@ export function initControls() {
             startIntro();
             updateStatsScreen('pressStart');
         }
-    });
+        return;
+    }
 
-    selectBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_MENU);
-        if (isMenuOpen()) return; // SELECT no hace nada dentro del menú
+    // ── SELECT ───────────────────────────────────────────────────────────
+    if (action === 'pressSelect') {
+        if (isMenuOpen()) return;
         updateStatsScreen('pressSelect');
-    });
+        return;
+    }
 
-    aBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_BATTLE);
+    // ── A ────────────────────────────────────────────────────────────────
+    if (action === 'pressA') {
         if (isMenuOpen())    { updateMenu('pressA'); return; }
         if (isEndMenuOpen()) { handleEndMenuNav('pressA'); return; }
         updateStatsScreen('pressA');
         updateBattle('pressA');
-    });
+        return;
+    }
 
-    bBtn.addEventListener('click', () => {
-        if (inputLocked) return;
-        lock(LOCK_BATTLE);
+    // ── B ────────────────────────────────────────────────────────────────
+    if (action === 'pressB') {
         if (isMenuOpen())    { updateMenu('pressB'); return; }
-        if (isEndMenuOpen()) return; // B no hace nada en el menú de fin
+        if (isEndMenuOpen()) return;
         updateStatsScreen('pressB');
         updateBattle('pressB');
+        return;
+    }
+}
+
+// =============================================================================
+//  MAPA DE TECLAS → ACCIONES
+// =============================================================================
+const KEY_MAP = {
+    'ArrowUp':    'pressUp',
+    'ArrowDown':  'pressDown',
+    'ArrowLeft':  'pressLeft',
+    'ArrowRight': 'pressRight',
+    'Enter':      'pressStart',
+    'Shift':      'pressSelect',
+    ' ':          'pressA',
+    'Escape':     'pressB',
+};
+
+// Teclas cuyo comportamiento por defecto debe cancelarse
+const PREVENT_DEFAULT_KEYS = new Set(['ArrowUp', 'ArrowDown', ' ', 'Escape']);
+
+// =============================================================================
+//  INIT CONTROLS — Punto de entrada
+// =============================================================================
+export function initControls() {
+    // ── Botones físicos (pantalla) ───────────────────────────────────────
+    const buttons = {
+        'up-btn':     'pressUp',
+        'down-btn':   'pressDown',
+        'left-btn':   'pressLeft',
+        'right-btn':  'pressRight',
+        'start-btn':  'pressStart',
+        'select-btn': 'pressSelect',
+        'a-btn':      'pressA',
+        'b-btn':      'pressB',
+    };
+
+    Object.entries(buttons).forEach(([id, action]) => {
+        const btn = document.getElementById(id);
+        if (btn) btn.addEventListener('click', () => dispatch(action));
     });
 
+    // ── Teclado ──────────────────────────────────────────────────────────
     window.addEventListener('keydown', (event) => {
-        if (inputLocked) return;
-
-        switch (event.key) {
-            case 'ArrowLeft':
-                lock(LOCK_MENU);
-                if (isMenuOpen()) { updateMenu('pressLeft'); return; }
-                updateStatsScreen('pressLeft');
-                updatePosition('pressLeft');
-                break;
-            case 'ArrowRight':
-                lock(LOCK_MENU);
-                if (isMenuOpen()) { updateMenu('pressRight'); return; }
-                updateStatsScreen('pressRight');
-                updatePosition('pressRight');
-                break;
-            case 'ArrowUp':
-                event.preventDefault();
-                lock(LOCK_MOVE);
-                if (isMenuOpen())    { updateMenu('pressUp'); return; }
-                if (isEndMenuOpen()) { handleEndMenuNav('pressUp'); return; }
-                updatePosition('pressUp');
-                updateStatsScreen('pressUp');
-                break;
-            case 'ArrowDown':
-                event.preventDefault();
-                lock(LOCK_MOVE);
-                if (isMenuOpen())    { updateMenu('pressDown'); return; }
-                if (isEndMenuOpen()) { handleEndMenuNav('pressDown'); return; }
-                updatePosition('pressDown');
-                updateStatsScreen('pressDown');
-                break;
-            case 'Enter': {
-                lock(LOCK_INTRO);
-                if (isMenuOpen())    return;
-                if (isEndMenuOpen()) { handleEndMenuNav('pressStart'); break; }
-                if (isResultsScreenOpen()) break;
-                const handled = handleGameOverStart();
-                if (!handled) {
-                    startIntro();
-                    updateStatsScreen('pressStart');
-                }
-                break;
-            }
-            case 'Shift':
-                lock(LOCK_MENU);
-                if (isMenuOpen()) return;
-                updateStatsScreen('pressSelect');
-                break;
-            case ' ':
-                event.preventDefault();
-                lock(LOCK_BATTLE);
-                if (isMenuOpen())    { updateMenu('pressA'); return; }
-                if (isEndMenuOpen()) { handleEndMenuNav('pressA'); return; }
-                updateStatsScreen('pressA');
-                updateBattle('pressA');
-                break;
-            case 'Escape':
-                event.preventDefault();
-                lock(LOCK_BATTLE);
-                if (isMenuOpen())    { updateMenu('pressB'); return; }
-                if (isEndMenuOpen()) return;
-                updateStatsScreen('pressB');
-                updateBattle('pressB');
-                break;
-        }
+        const action = KEY_MAP[event.key];
+        if (!action) return;
+        if (PREVENT_DEFAULT_KEYS.has(event.key)) event.preventDefault();
+        dispatch(action);
     });
 }

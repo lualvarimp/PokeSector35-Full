@@ -37,7 +37,7 @@ export function setInfoStats(view) {
             backHint           = document.createElement('p');
             backHint.id        = 'pokedex-back-hint';
             backHint.className = 'info-stats'; // misma clase para herencia de estilos
-            backHint.innerHTML = '<strong>B/ESC:</strong> Volver atrás.';
+            backHint.innerHTML = '<strong>B/ESC:</strong> Volver';
 
             // Lo insertamos justo antes de .game-list para que quede en la cabecera
             const gameList = document.querySelector('.game-list');

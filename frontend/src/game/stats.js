@@ -3,45 +3,40 @@
 // =============================================================================
 //  RESPONSABILIDAD: Actuar como controlador central de la pantalla de stats.
 //  Recibe las acciones del jugador desde controls.js, decide qué vista mostrar
-//  (resumen o Pokédex), gestiona el scroll de ambas pantallas (stats y meta),
-//  y controla el diálogo de confirmación de borrado de datos.
+//  (resumen o Pokédex), gestiona el scroll de la pantalla de stats, y controla
+//  el diálogo de confirmación de borrado de datos.
 //
 //  FUNCIONES EXPORTADAS:
-//    · pokemonList()          — inicializa la pantalla de stats (abre vista resumen)
-//    · updateStatsScreen(action) — procesa cada acción del jugador en stats/meta
+//    · pokemonList()              — inicializa la pantalla de stats
+//    · updateStatsScreen(action)  — procesa cada acción del jugador en stats
 //
-//  RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
-//    ✅ Manipulación del DOM    → cambia vistas, scroll, muestra/oculta diálogos
-//    ✅ Filtrado de información  → delega en Pokedex.nextFilter()/prevFilter()
-//    ✅ localStorage             → eraseAllData() borra todos los datos persistidos
-//    ✅ Visualización de datos   → coordina las dos vistas de estadísticas
+//  NOTA: La lógica de scroll de results-screen se ha movido a
+//  results-screen.js → handleResultsScroll(). controls.js debe llamarla
+//  cuando isResultsScreenOpen() sea true.
 // =============================================================================
 
-import { gameState, eraseAllData }         from './game-state.js';
-import { clickSound, eraseSound }          from './sounds.js';
-import { renderSummaryView }               from './stats-summary.js';
-import { renderPokedexView, initPokedex, pokedex } from './stats-pokedex.js';
-import { openGoalMenu, closeResultsScreen } from './game-over.js';
+import { gameState, eraseAllData }                        from './game-state.js';
+import { clickSound, eraseSound }                         from './sounds.js';
+import { renderSummaryView }                              from './stats-summary.js';
+import { renderPokedexView, initPokedex, pokedex }        from './stats-pokedex.js';
+import { handleResultsScroll }                            from './game-over.js';
 
-let statsView = 'summary'; // estado interno: vista activa ('summary' | 'pokedex')
+let statsView = 'summary'; // vista activa: 'summary' | 'pokedex'
 
 // ─── Inicialización ────────────────────────────────────────────────────────
 // Se llama al abrir la pantalla de stats desde la meta (SELECT).
 // Reconstruye la Pokédex con los datos actuales y muestra la vista resumen.
 export async function pokemonList() {
-    await initPokedex();    // reconstruimos la instancia Pokedex (BD si logueado, localStorage si no)
-    statsView = 'summary';  // siempre empezamos por el resumen
+    await initPokedex();
+    statsView = 'summary';
     renderSummaryView();
 }
 
 // ─── Diálogo de confirmación de borrado ───────────────────────────────────
-// Crea el diálogo la primera vez (lazy creation) y lo muestra u oculta.
-// Mientras está visible, solo A (confirmar) y B (cancelar) tienen efecto.
 function showEraseConfirm(visible) {
     let dialog = document.getElementById('erase-confirm');
 
     if (!dialog) {
-        // Creamos el diálogo la primera vez que se necesita
         dialog = document.createElement('div');
         dialog.id = 'erase-confirm';
         dialog.innerHTML = `
@@ -52,56 +47,52 @@ function showEraseConfirm(visible) {
         document.querySelector('.stats-screen').appendChild(dialog);
     }
 
-    gameState.isConfirmingErase = visible;                     // actualizamos el flag global
-    dialog.classList.toggle('hidden', !visible);               // mostramos u ocultamos
+    gameState.isConfirmingErase = visible;
+    dialog.classList.toggle('hidden', !visible);
 }
 
 // ─── Controlador principal ─────────────────────────────────────────────────
-// Recibe una acción ('pressA', 'pressB', 'pressUp', etc.) y ejecuta la lógica
-// correspondiente según el contexto: diálogo activo, vista Pokédex, resumen,
-// scroll en stats o en meta, apertura de stats, o nueva partida.
 export function updateStatsScreen(action) {
-    const scrollStep = 60; // píxeles de desplazamiento por pulsación de arriba/abajo
+    const scrollStep = 60;
 
-    const goalList    = document.querySelector('.goal-list');   // inner div de goal-screen
     const goalScreen  = document.querySelector('.goal-screen');
-    const statsList   = document.querySelector('.stats-list');  // inner div de stats-screen
+    const statsList   = document.querySelector('.stats-list');
     const statsScreen = document.querySelector('.stats-screen');
 
-    // ── Prioridad 1: diálogo de confirmación activo ────────────────────────
-    // Mientras el diálogo está visible bloqueamos todas las acciones excepto A y B
+    // ── Prioridad 0: results-screen (delegado a results-screen.js) ────────
+    if (handleResultsScroll(action)) return;
+
+    // ── Prioridad 1: diálogo de confirmación activo ───────────────────────
     if (gameState.isConfirmingErase) {
         if (action === 'pressA') {
-            eraseAllData();               // borra pokesector_save y pokesector_global
+            eraseAllData();
             eraseSound.currentTime = 0;
             eraseSound.play();
-            showEraseConfirm(false);      // cerramos el diálogo
+            showEraseConfirm(false);
             statsView = 'summary';
-            renderSummaryView();          // volvemos al resumen (ahora vacío)
+            renderSummaryView();
             gameState.statsScroll = 0;
             if (statsList) statsList.style.transform = 'translateY(0)';
         } else if (action === 'pressB') {
-            showEraseConfirm(false);      // cancelamos sin borrar
+            showEraseConfirm(false);
         }
-        return; // bloqueamos el resto de acciones mientras el diálogo está activo
+        return;
     }
 
-    // ── Prioridad 2: vista Pokédex ─────────────────────────────────────────
+    // ── Prioridad 2: vista Pokédex ────────────────────────────────────────
     if (gameState.isStatsOpen && statsView === 'pokedex') {
 
-        // ◀ ▶ cambian el filtro de letra inicial en la Pokédex
         if (action === 'pressLeft' || action === 'pressRight') {
             clickSound.currentTime = 0;
             clickSound.play();
-            if (action === 'pressLeft') pokedex.prevFilter(); // letra anterior
-            else                        pokedex.nextFilter(); // letra siguiente
-            renderPokedexView();  // redibujamos con el nuevo filtro
+            if (action === 'pressLeft') pokedex.prevFilter();
+            else                        pokedex.nextFilter();
+            renderPokedexView();
             gameState.statsScroll = 0;
-            if (statsList) statsList.style.transform = 'translateY(0)'; // reseteamos scroll
+            if (statsList) statsList.style.transform = 'translateY(0)';
             return;
         }
 
-        // B vuelve a la vista resumen desde la Pokédex
         if (action === 'pressB') {
             clickSound.currentTime = 0;
             clickSound.play();
@@ -113,56 +104,27 @@ export function updateStatsScreen(action) {
         }
     }
 
-    // ── Prioridad 3: vista resumen ─────────────────────────────────────────
+    // ── Prioridad 3: vista resumen ────────────────────────────────────────
     if (gameState.isStatsOpen && statsView === 'summary') {
 
-        // A abre la Pokédex desde el resumen
         if (action === 'pressA') {
             clickSound.currentTime = 0;
             clickSound.play();
             statsView = 'pokedex';
-            pokedex.filterByLetter(null); // reseteamos el filtro al entrar
+            pokedex.filterByLetter(null);
             renderPokedexView();
             gameState.statsScroll = 0;
             if (statsList) statsList.style.transform = 'translateY(0)';
             return;
         }
 
-        // B en el resumen abre el diálogo de confirmación de borrado
         if (action === 'pressB') {
             showEraseConfirm(true);
             return;
         }
     }
 
-    // ── B en results-screen: volver a la goal-screen ──────────────────────
-    if (action === 'pressB' && gameState.isResultsOpen) {
-        closeResultsScreen();
-        return;
-    }
-
-    // ── Scroll en results-screen con el dPad ──────────────────────────────
-    if (gameState.isResultsOpen) {
-        const resultsList   = document.querySelector('.results-list');
-        const resultsScreen = document.querySelector('.results-screen');
-        if (resultsList && resultsScreen) {
-            const maxScroll = resultsList.scrollHeight - resultsScreen.clientHeight;
-            if (action === 'pressDown' && gameState.statsScroll < maxScroll) {
-                clickSound.currentTime = 0;
-                clickSound.play();
-                gameState.statsScroll += scrollStep;
-                resultsList.style.transform = `translateY(-${gameState.statsScroll}px)`;
-            } else if (action === 'pressUp' && gameState.statsScroll > 0) {
-                clickSound.currentTime = 0;
-                clickSound.play();
-                gameState.statsScroll -= scrollStep;
-                resultsList.style.transform = `translateY(-${gameState.statsScroll}px)`;
-            }
-        }
-        return;
-    }
-
-    // ── Scroll en stats-screen con el dPad ────────────────────────────────
+    // ── Scroll en stats-screen con el D-Pad ──────────────────────────────
     if (gameState.isStatsOpen && statsList && statsScreen) {
         const maxStatsScroll = statsList.scrollHeight - statsScreen.clientHeight;
 
@@ -179,11 +141,11 @@ export function updateStatsScreen(action) {
         }
     }
 
-    // ── SELECT: abrir la pantalla de stats desde la meta ──────────────────
+    // ── SELECT: abrir la pantalla de stats desde la meta ─────────────────
     if (action === 'pressSelect' && gameState.isGoal) {
         if (!gameState.isStatsOpen) {
-            goalScreen.classList.add('hidden');
-            statsScreen.classList.remove('hidden');
+            if (goalScreen)  goalScreen.classList.add('hidden');
+            if (statsScreen) statsScreen.classList.remove('hidden');
             gameState.statsScroll = 0;
             if (statsList) statsList.style.transform = 'translateY(0)';
             gameState.isStatsOpen = true;

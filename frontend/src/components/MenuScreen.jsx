@@ -31,7 +31,7 @@ export default function MenuScreen() {
         <ul className="menu-list">
           <li data-start="continue" className="menu-item active"> CONTINUAR</li>
           <li data-start="new-game" className="menu-item"> NUEVA PARTIDA</li>
-          <li data-start="back" className="menu-item"> ATRÁS</li>
+          <li data-start="back" className="menu-item"> VOLVER</li>
         </ul>
       </div>
 
@@ -50,9 +50,9 @@ export default function MenuScreen() {
       <div className="menu-info hidden">
         <p className="menu-info-text"></p>
         <ul className="menu-list">
+          <li data-action="continue-local" className="menu-item">CONTINUAR</li>
           <li data-action="go-account" className="menu-item active">CREAR CUENTA</li>
-          <li data-action="continue-local" className="menu-item"> CONTINUAR SIN CUENTA</li>
-          <li data-action="back" className="menu-item"> VOLVER</li>
+          <li data-action="back" className="menu-item">VOLVER</li>
         </ul>
       </div>
 
@@ -90,10 +90,12 @@ export default function MenuScreen() {
           <img id="explorer-preview-img" src="" alt="Explorador" />
         </div>
         <p className="menu-hint">
-          <strong>
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
-            <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
-            :</strong> Cambiar &nbsp; <strong>A/SPACE:</strong> Confirmar &nbsp;
+          <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.9em', height: '0.9em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
+          &nbsp;SELECCIONAR&nbsp; 
+          <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
+        </p>
+        <br />
+        <p><strong>A/SPACE:</strong> Confirmar<br />
           <strong>B/ESC:</strong> Volver
         </p>
       </div>

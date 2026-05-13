@@ -79,10 +79,17 @@
         }
     }
 
-    .menu-explorer-preview {
-        text-align: center;
-        mix-blend-mode: multiply;
-        opacity: 0.9;
+    .menu-explorer {
+        .menu-explorer-preview {
+            text-align: center;
+            mix-blend-mode: multiply;
+            opacity: 0.9;
+        }
+
+        .menu-hint {
+            text-align: center;
+            margin: 0;
+        }
     }
 
     .menu-preview-color {
@@ -166,7 +173,8 @@
             flex: 1;
             overflow: hidden;
             position: relative;
-            min-height: 0; /* necesario para que flex respete el overflow */
+            min-height: 0;
+            /* necesario para que flex respete el overflow */
         }
 
         .ranking-list {
@@ -175,7 +183,7 @@
             line-height: 1.35;
             font-family: var(--game-font);
             font-weight: 400;
-            
+
 
             p {
                 font-size: 0.85rem;
@@ -195,6 +203,19 @@
             font-size: 0.7rem;
             padding-left: 0;
             text-align: center;
+        }
+    }
+
+    .menu-list {
+        span {
+            margin-right: 0.6rem;
+        }
+
+        li {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            padding: 0.2rem 0;
         }
     }
 }

@@ -58,7 +58,9 @@
 /* ==================== RESET BÁSICO ==================== */
 * {
     box-sizing: border-box;
-    /* padding y border incluidos en el ancho/alto */
+    /* Para respetar los saltos de línea \n de JavaScript */
+    white-space: pre-line;
+    
 }
 
 html,

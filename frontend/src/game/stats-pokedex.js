@@ -109,7 +109,8 @@ export function renderPokedexView() {
         // Cada entrada usa pokemon.toString() que devuelve "#007 Squirtle"
         filtered.forEach((pokemon, i) => {
             const p = document.createElement('p');
-            p.textContent = `${i + 1}. ${pokemon.toString()}`;
+            // p.textContent = `${i + 1}. ${pokemon.toString()}`; ------------------------------------------------------------------------------------
+            p.textContent = pokemon.toString();
             gameList.appendChild(p);
         });
     }

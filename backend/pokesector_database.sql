@@ -79,6 +79,7 @@ CREATE TABLE ranking (
     captured_count INTEGER NOT NULL,
     escaped_count INTEGER NOT NULL,
     difficulty_id VARCHAR(20) NOT NULL,
+    explorer_name VARCHAR(12),
     completed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

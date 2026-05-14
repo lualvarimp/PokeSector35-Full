@@ -464,13 +464,23 @@ async function loadUserSlotsIntoSelect() {
 // ============================================================================
 
 async function addPokemon() {
-  const pokemonId = document.getElementById('pokemonId').value;
+  const pokemonId   = document.getElementById('pokemonId').value;
   const pokemonName = document.getElementById('pokemonName').value.toUpperCase();
-  const slotId = document.getElementById('slotId').value || null;
+  const slotId      = document.getElementById('slotId').value || null;
+  const slotError   = document.getElementById('slotError');
 
   if (!pokemonId || !pokemonName) {
     alert('Por favor, rellena ID y nombre del Pokémon');
     return;
+  }
+
+  // Validar slot obligatorio
+  if (!slotId) {
+    slotError.style.display = 'block';
+    document.getElementById('slotId').focus();
+    return;
+  } else {
+    slotError.style.display = 'none';
   }
 
   const numId = parseInt(pokemonId);
@@ -504,7 +514,7 @@ async function addPokemon() {
       body: JSON.stringify({
         pokemon_id: numId,
         pokemon_name: pokemonName,
-        slot_id: slotId ? parseInt(slotId) : null
+        slot_id: parseInt(slotId)
       })
     });
 

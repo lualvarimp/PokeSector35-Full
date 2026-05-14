@@ -9,11 +9,11 @@
 //  registrado llega a la meta.
 // =============================================================================
 
-import { updateSlot, getSlot }    from './slots.js';
-import { addCapturedPokemon }     from './pokedex.js';
-import { createRanking }          from './ranking.js';
-import { createReplay }           from './replays.js';
-import { getUserId }              from './http.js';
+import { updateSlot, getSlot } from './slots.js';
+import { addCapturedPokemon } from './pokedex.js';
+import { createRanking } from './ranking.js';
+import { createReplay } from './replays.js';
+import { getUserId } from './http.js';
 
 export async function saveGameToBackend(gameState, slotNumber) {
   const userId = getUserId();
@@ -22,11 +22,11 @@ export async function saveGameToBackend(gameState, slotNumber) {
   try {
     // 1. Update slot with final state
     await updateSlot(slotNumber, {
-      hp:          gameState.hp,
-      pokeball:    gameState.pokeball,
-      position_r:  gameState.currentPosition.r,
-      position_c:  gameState.currentPosition.c,
-      is_goal:     gameState.isGoal,
+      hp: gameState.hp,
+      pokeball: gameState.pokeball,
+      position_r: gameState.currentPosition.r,
+      position_c: gameState.currentPosition.c,
+      is_goal: gameState.isGoal,
       is_game_over: gameState.isGameOver,
     });
 
@@ -34,9 +34,9 @@ export async function saveGameToBackend(gameState, slotNumber) {
     for (const pokemon of gameState.pokemonCaptured) {
       try {
         await addCapturedPokemon({
-          pokemon_id:   pokemon.id,
+          pokemon_id: pokemon.id,
           pokemon_name: pokemon.name,
-          slot_id:      gameState.slotDbId || null,
+          slot_id: gameState.slotDbId || null,
         });
       } catch (e) {
         // Pokemon might already exist in pokedex, ignore
@@ -50,8 +50,9 @@ export async function saveGameToBackend(gameState, slotNumber) {
       try {
         await createRanking({
           captured_count: gameState.pokemonCaptured.length,
-          escaped_count:  gameState.pokemonEscaped.length,
-          difficulty_id:  gameState.difficultyId || 'normal',
+          escaped_count: gameState.pokemonEscaped.length,
+          difficulty_id: gameState.difficultyId || 'normal',
+          explorer_name: gameState.playerName || null,
         });
       } catch (e) {
         console.warn('Error saving ranking:', e.message);

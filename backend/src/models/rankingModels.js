@@ -22,6 +22,10 @@ const Ranking = sequelize.define('Ranking', {
   difficulty_id: {
     type: DataTypes.STRING(20),
     allowNull: false
+  },
+  explorer_name: {
+    type: DataTypes.STRING(30),
+    allowNull: true
   }
 }, {
   tableName: 'ranking',

@@ -364,7 +364,8 @@ body {
         width: fit-content;
         height: fit-content;
         transform: rotate(-25deg) translate(-1rem, 2.5rem);
-        transform-origin: 0 100%;
+        transform-origin: 0 100%;        
+        padding-left: 1rem;
 
         button {
             width: clamp(3rem, 2rem + 5.333vw, 3.5rem);
@@ -392,7 +393,7 @@ body {
             }
 
             &:last-child {
-                margin-left: 0.3rem;
+                margin-left: 0.8rem;
             }
         }
     }

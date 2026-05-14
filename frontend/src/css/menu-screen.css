@@ -97,8 +97,9 @@
             font-size: 1.1rem;
             text-align: center;
         }
+
         .menu-hint {
-            padding: 0 0 2rem!important;
+            padding: 0 0 2rem !important;
             text-align: center;
         }
     }
@@ -114,6 +115,8 @@
 
         h2 {
             flex-shrink: 0;
+            padding: 0.65rem 1.1rem;
+            font-size: 0.95rem;
         }
 
         .pokedex-filter-label {
@@ -129,6 +132,28 @@
             overflow: hidden;
             position: relative;
             min-height: 0;
+
+            .menu-list {
+                width: 100%;
+                margin: 0;
+
+                .menu-item {
+                    span:not(.menu-cursor) {
+                        margin-left: 0.5rem;
+                        opacity: 0.7;
+                        font-size: 0.8rem;
+                    }
+                }
+            }
+
+            .game-list {
+                p:nth-of-type(1) {
+                    padding: 0.5rem 0;
+                    font-size: 0.9rem;
+                    text-align: center;
+                    opacity: 1;
+                }
+            }
         }
 
         .game-list {
@@ -143,6 +168,7 @@
                 margin: 0;
                 padding: 0.08rem 0;
                 font-weight: 400;
+                opacity: 0.75;
             }
         }
 
@@ -150,8 +176,24 @@
             flex-shrink: 0;
             margin-top: 0.3rem;
             font-size: 0.85rem;
+            padding-top: 0.2rem;
             padding-left: 0.5rem;
             text-align: left;
+        }
+    }
+
+    .menu-slots {
+        .menu-list {
+            width: 100%;
+            margin: 0;
+
+            .menu-item {
+                span:not(.menu-cursor) {
+                    margin-left: 0.5rem;
+                    opacity: 0.7;
+                    font-size: 0.8rem;
+                }
+            }
         }
     }
 
@@ -185,11 +227,8 @@
 
         .ranking-list {
             position: relative;
-            font-size: 0.8rem;
-            line-height: 1.35;
             font-family: var(--game-font);
             font-weight: 400;
-
 
             p {
                 font-size: 0.85rem;
@@ -198,17 +237,58 @@
                 font-weight: 400;
             }
 
-            p:first-child {
-                margin-bottom: 0.15rem;
+            ol {
+                list-style: none;
+                padding-left: 0;
+                margin: 0;
+                counter-reset: ranking;
+            }
+
+            li {
+                display: list-item;
+                padding: 0.35rem 0 0.35rem 2.5rem;
+                position: relative;
+                counter-increment: ranking;
+                border-bottom: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+
+                &::before {
+                    content: counter(ranking) '.';
+                    position: absolute;
+                    left: 0;
+                    font-size: 0.8rem;
+                    opacity: 0.65;
+                }
+
+                &:last-child {
+                    border-bottom: none;
+                }
+
+                span {
+                    display: block;
+                }
+            }
+
+            .ranking-name {
+                font-size: 0.9rem;
+                font-weight: 400;
+                letter-spacing: 0.03em;
+            }
+
+            .ranking-stat {
+                font-size: 0.72rem;
+                opacity: 0.7;
+                margin-top: 0.1rem;
+                letter-spacing: 0.02em;
             }
         }
 
         .menu-hint {
             flex-shrink: 0;
             margin-top: 0.3rem;
-            font-size: 0.7rem;
-            padding-left: 0;
-            text-align: center;
+            font-size: 0.85rem;
+            padding-left: 0.5rem;
+            padding-top: 0.3rem;
+            text-align: left;
         }
     }
 

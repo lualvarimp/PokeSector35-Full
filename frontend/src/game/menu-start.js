@@ -78,31 +78,34 @@ async function confirmNewGame(slotNumber, slotOccupied = false) {
         const aviso1 = confirm(
             'NUEVA PARTIDA\n' +
             'Esta acción borrará TODOS los datos de este slot:\n' +
-            '  · Tu pokédex\n' +
-            '  · Tu progreso actual\n' +
-            '  · Tus estadísticas\n' +
+            '  · Progreso actual, estadísticas y pokédex\n' +
             '¿Quieres continuar?'
         );
         if (!aviso1) return;
 
         const aviso2 = confirm(
             '¿ESTÁS SEGURO/A?\n' +
-            'Comenzarás una partida nueva desde cero.\n' +
-            'Los datos anteriores se perderán para siempre.\n' +
+            'Los datos del slot se perderán\n' +
             '¿Confirmas que quieres empezar de nuevo?'
         );
         if (!aviso2) return;
     }
 
-    const explorerInput = prompt(
-        '¿Cómo se llama tu explorador?\n(Máx. 12 caracteres)',
-        gameState.playerName || 'Ash'
-    );
-    if (explorerInput === null) return;
+    if (api.isLoggedIn()) {
+        const explorerInput = prompt(
+            'NOMBRE DE TU EXPLORADOR\n(Máx. 12 caracteres)',
+            gameState.playerName || 'Ash'
+        );
+        if (explorerInput === null) return;
 
-    gameState.playerName = sanitizeExplorerName(explorerInput.trim() || gameState.playerName || 'Ash');
-    localStorage.setItem('pokesector_explorer_name', gameState.playerName);
-    updateExplorerHUD();
+        gameState.playerName = sanitizeExplorerName(explorerInput.trim() || gameState.playerName || 'Ash');
+        localStorage.setItem('pokesector_explorer_name', gameState.playerName);
+        updateExplorerHUD();
+    } else {
+        gameState.playerName = 'Ash';
+        localStorage.setItem('pokesector_explorer_name', 'Ash');
+        updateExplorerHUD();
+    }
 
     startGame(slotNumber);
 }
@@ -120,7 +123,7 @@ function onContinue() {
         );
     } else {
         showInfoMessage(
-            'No tienes ninguna partida guardada.\n¿Quieres crear una cuenta para guardar tu progreso?',
+            'No tienes partidas guardadas.\nCrea una cuenta y guarda tu progreso.',
             true
         );
     }

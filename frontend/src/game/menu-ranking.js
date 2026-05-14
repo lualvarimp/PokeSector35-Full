@@ -30,7 +30,7 @@ registerHandler('ranking', handleRanking);
 export function onRanking() {
     if (!api.isLoggedIn()) {
         showInfoMessage(
-            'El ranking es exclusivo para exploradores registrados.\n¿Quieres crear una cuenta?',
+            'Entra en tu cuenta para acceder al ranking.',
             false
         );
         return;
@@ -69,15 +69,12 @@ function renderRankingByDifficulty() {
     const diff    = DIFFICULTIES[rankingDiffIndex];
     const entries = rankingData.filter(e => e.difficulty_id === diff);
 
-    // Etiqueta de la dificultad activa
     if (label) {
-        label.textContent = `[ ◀  ${diff.toUpperCase()}  ▶ ]`;
+        label.textContent = `◀  ${diff.toUpperCase()}  ▶`;
     }
 
-    // Reset scroll al cambiar dificultad
     rankingScroll = 0;
     list.style.transform = 'translateY(0)';
-
     list.innerHTML = '';
 
     if (entries.length === 0) {
@@ -87,14 +84,34 @@ function renderRankingByDifficulty() {
         return;
     }
 
-    entries.forEach((entry, i) => {
-        const name = (entry.explorer_name || entry.User?.username || '???').substring(0, 12).padEnd(12);
-        const cap  = String(entry.captured_count).padStart(3);
-        const esc  = String(entry.escaped_count).padStart(3);
-        const p    = document.createElement('p');
-        p.textContent = `${String(i + 1).padStart(2)}. ${name} ${cap}  ${esc}`;
-        list.appendChild(p);
+    const ol = document.createElement('ol');
+
+    entries.forEach(entry => {
+        const efficiency = entry.efficiency != null
+            ? `${parseFloat(entry.efficiency).toFixed(2)}%`
+            : '0.00%';
+
+        const li = document.createElement('li');
+
+        const spanName = document.createElement('span');
+        spanName.className = 'ranking-name';
+        spanName.textContent = (entry.explorer_name || '???').substring(0, 12);
+
+        const spanCap = document.createElement('span');
+        spanCap.className = 'ranking-stat';
+        spanCap.textContent = `CAPTURADOS: ${entry.captured_count}`;
+
+        const spanEff = document.createElement('span');
+        spanEff.className = 'ranking-stat';
+        spanEff.textContent = `EFICACIA: ${efficiency}`;
+
+        li.appendChild(spanName);
+        li.appendChild(spanCap);
+        li.appendChild(spanEff);
+        ol.appendChild(li);
     });
+
+    list.appendChild(ol);
 }
 
 // =============================================================================

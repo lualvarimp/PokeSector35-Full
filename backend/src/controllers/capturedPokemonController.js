@@ -62,13 +62,15 @@ export async function addCapturedPokemon(req, res) {
       return res.status(400).json({ error: 'pokemon_id y pokemon_name son requeridos' });
     }
 
+    if (!slot_id) {
+      return res.status(400).json({ error: 'slot_id es requerido' });
+    }
+
     // Evitar duplicados: un mismo pokémon no puede aparecer dos veces en el mismo slot.
-    // Si slot_id está definido, buscamos por (user_id, pokemon_id, slot_id).
-    // Sin slot_id (pokédex global sin slot), buscamos por (user_id, pokemon_id) sin slot.
     const whereClause = {
       user_id: req.params.id,
       pokemon_id,
-      slot_id: slot_id || null
+      slot_id
     };
 
     const [captured, created] = await CapturedPokemon.findOrCreate({

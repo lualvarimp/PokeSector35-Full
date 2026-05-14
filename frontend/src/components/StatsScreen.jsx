@@ -24,23 +24,14 @@ export default function StatsScreen() {
 
       {/* Pantalla de resultados — lista de capturados/escapados de esta partida */}
       <div className="results-screen hidden">
-        <div className="results-list">
-          <h2>Resultados</h2>
-          <div id="results-text"></div>
+        <h2>Resultados</h2>
+        <div className="results-viewport">
+          <div className="results-list">
+            
+            <div id="results-text"></div>
+          </div>
         </div>
-      </div>
-
-      {/* Pantalla de estadísticas y Pokédex */}
-      <div className="stats-screen hidden">
-        <div className="stats-list">
-          <h2>Estadísticas</h2>
-          <p className="info-stats"><strong>START/ENTER:</strong> Comenzar juego.</p>
-          <p className="info-stats"><strong>A/SPACE:</strong> Mirar Pokédex.</p>
-          <p className="info-stats"><strong>B/ESC:</strong> Borrar estadísticas.<br />
-            <span style={{textAlign: 'center'}}>---------------</span>
-          </p>
-          <div className="game-list"></div>
-        </div>
+        <p className="results-back"><strong>B/ESC:</strong> Volver</p>
       </div>
     </>
   );

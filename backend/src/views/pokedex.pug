@@ -81,9 +81,10 @@ block content
               #pokemonSuggestions
 
             .form-group
-              label(for='slotId') Slot de Partida (opcional)
-              select#slotId.filter-select
-                option(value='') Sin asignar
+              label(for='slotId') Slot de Partida
+              select#slotId.filter-select(required)
+                option(value='') Selecciona un slot
+              small#slotError(style='color: #020202; font-size: 1.1rem; margin-top: 0.5rem; display: none;') Debes seleccionar un slot de partida
 
             .form-group
         

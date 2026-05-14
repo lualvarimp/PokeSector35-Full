@@ -16,8 +16,11 @@ export async function getRanking(difficulty = null) {
     ? `${API_BASE}/ranking?difficulty=${difficulty}`
     : `${API_BASE}/ranking`;
   const resp = await authFetch(url);
+  console.log('[ranking] status:', resp.status, '| url:', url);
   if (!resp.ok) return [];
-  return await resp.json();
+  const data = await resp.json();
+  console.log('[ranking] data:', data);
+  return data;
 }
 
 export async function getRankingByPercentage(difficulty = null) {

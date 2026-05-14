@@ -25,14 +25,10 @@ let endMenuContext = null;    // 'gameover' | 'goal'
 
 export function isEndMenuOpen() { return endMenuActive; }
 
-// Resetea el estado del menú Y el DOM visual de game-over-screen.
-// Se llama al iniciar nueva partida para que el próximo game over
-// muestre siempre el prompt y la imagen, nunca el menú directamente.
 export function resetEndMenu() {
     endMenuActive  = false;
     endMenuIndex   = 0;
     endMenuContext = null;
-    // Restaurar DOM visual de game-over-screen al estado inicial
     const menu   = document.getElementById('gameover-menu');
     const prompt = document.querySelector('.game-over-prompt');
     const img    = document.querySelector('.game-over-screen img');
@@ -42,15 +38,15 @@ export function resetEndMenu() {
 }
 
 // ─── Cursor compartido ──────────────────────────────────────────────────────
-// Aplica el cursor ► a la opción activa del menú indicado por su id.
 function setEndMenuCursor(menuId, index) {
     endMenuIndex = index;
-    const options = document.querySelectorAll(`#${menuId} [data-option]`);
+    const options = [...document.querySelectorAll(`#${menuId} [data-option]`)]
+        .filter(el => el.style.display !== 'none');
     options.forEach(el => {
         const cursor = el.querySelector('.end-cursor');
         if (cursor) cursor.style.visibility = 'hidden';
     });
-    const active = document.querySelector(`#${menuId} [data-option="${index}"]`);
+    const active = options[index];
     if (active) {
         const cursor = active.querySelector('.end-cursor');
         if (cursor) cursor.style.visibility = 'visible';
@@ -107,24 +103,32 @@ export function openGameOverMenu() {
     if (img)    img.classList.add('hidden');
     menu.classList.remove('hidden');
 
+    // Ocultar "Cerrar sesión" si el usuario no está logueado
+    const logoutOptionGO = menu.querySelector('[data-option="2"]');
+    if (logoutOptionGO) logoutOptionGO.style.display = api.isLoggedIn() ? '' : 'none';
+
     endMenuActive  = true;
     endMenuContext = 'gameover';
     setEndMenuCursor('gameover-menu', 0);
 }
 
 export function openGoalMenu() {
+    // Ocultar "Cerrar sesión" si el usuario no está logueado
+    const logoutOptionGoal = document.querySelector('#goal-menu [data-option="3"]');
+    if (logoutOptionGoal) logoutOptionGoal.style.display = api.isLoggedIn() ? '' : 'none';
+
     endMenuActive  = true;
     endMenuContext = 'goal';
     setEndMenuCursor('goal-menu', 0);
 }
 
 // ─── Navegación del menú activo ─────────────────────────────────────────────
-// Recibe acciones de controls.js cuando isEndMenuOpen() es true.
 export function handleEndMenuNav(action) {
     if (!endMenuActive) return;
 
     const menuId      = endMenuContext === 'gameover' ? 'gameover-menu' : 'goal-menu';
-    const optionCount = document.querySelectorAll(`#${menuId} [data-option]`).length;
+    const optionCount = [...document.querySelectorAll(`#${menuId} [data-option]`)]
+        .filter(el => el.style.display !== 'none').length;
 
     if (action === 'pressUp') {
         clickSound.currentTime = 0;
@@ -144,21 +148,26 @@ export function handleEndMenuNav(action) {
         clickSound.currentTime = 0;
         clickSound.play();
 
+        // Obtenemos solo las opciones visibles y resolvemos la acción por data-option
+        const visibleOptions = [...document.querySelectorAll(`#${menuId} [data-option]`)]
+            .filter(el => el.style.display !== 'none');
+        const selectedOption = visibleOptions[endMenuIndex];
+        const optionKey = selectedOption ? selectedOption.dataset.option : null;
+
         if (endMenuContext === 'gameover') {
-            // Opciones: 0=Jugar de nuevo, 1=Volver al menú, 2=Cerrar sesión
-            if (endMenuIndex === 0) doRestart();
-            if (endMenuIndex === 1) doGoToMenu();
-            if (endMenuIndex === 2) doLogout();
+            // data-option: 0=Jugar de nuevo, 1=Volver al menú, 2=Cerrar sesión
+            if (optionKey === '0') doRestart();
+            if (optionKey === '1') doGoToMenu();
+            if (optionKey === '2') doLogout();
         } else {
-            // Opciones: 0=Jugar de nuevo, 1=Ver resultados, 2=Volver al menú, 3=Cerrar sesión
-            if (endMenuIndex === 0) doRestart();
-            if (endMenuIndex === 1) {
+            // data-option: 0=Jugar de nuevo, 1=Ver resultados, 2=Volver al menú, 3=Cerrar sesión
+            if (optionKey === '0') doRestart();
+            if (optionKey === '1') {
                 endMenuActive = false;
-                // Import dinámico para evitar circular con results-screen
                 import('./results-screen.js').then(m => m.showResultsScreen());
             }
-            if (endMenuIndex === 2) doGoToMenu();
-            if (endMenuIndex === 3) doLogout();
+            if (optionKey === '2') doGoToMenu();
+            if (optionKey === '3') doLogout();
         }
     }
 }

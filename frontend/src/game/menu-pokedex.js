@@ -40,7 +40,7 @@ registerHandler('pokedex', handlePokedex);
 export async function onPokedex() {
     if (!api.isLoggedIn()) {
         showInfoMessage(
-            'Iniciar sesión para tener acceso a la Pokédex.',
+            'Inicia sesión para acceder a la Pokédex.',
             false
         );
         return;
@@ -59,7 +59,7 @@ export async function onPokedex() {
     if (!targetSlotDbId) {
         await showSlotSelector();
     } else {
-        await loadPokedex(targetSlotDbId);
+        await loadPokedex(targetSlotDbId, gameState.slotNumber);
     }
 }
 
@@ -114,7 +114,8 @@ function renderSlotSelector() {
 
         const cursor = i === slotCursor ? SVG_CURSOR : '';
 
-        li.innerHTML = `<span class="menu-cursor">${cursor}</span> SLOT ${slot.slot_number}`;
+        const diff = slot.difficulty_id ? slot.difficulty_id.toUpperCase() : '?';
+        li.innerHTML = `<span class="menu-cursor">${cursor}</span> SLOT ${slot.slot_number} <span>(${diff})</span>`;
 
         ul.appendChild(li);
     });
@@ -125,10 +126,13 @@ function renderSlotSelector() {
 // =============================================================================
 //  MODO POKEDEX — carga y renderiza la Pokédex del slot
 // =============================================================================
-async function loadPokedex(slotDbId) {
+async function loadPokedex(slotDbId, slotNumber) {
     const list  = document.querySelector('.menu-pokedex .game-list');
     const label = document.querySelector('.pokedex-filter-label');
+    const title = document.getElementById('pokedex-title');
     if (!list) return;
+
+    if (title && slotNumber != null) title.textContent = `POKÉDEX: SLOT ${slotNumber}`;
 
     list.innerHTML = '<p>Cargando...</p>';
     pokedexScroll = 0;
@@ -177,7 +181,7 @@ function renderList() {
     const filtered   = menuPokedex.getFilteredEntries();
     const isFiltered = menuPokedex.activeFilter !== null;
     const header     = document.createElement('p');
-    header.innerHTML = `<strong>POKÉDEX</strong> <span style="font-weight:400">${isFiltered ? `${filtered.length}/${menuPokedex.total}` : `${menuPokedex.total}/151`}</span>`;
+    header.innerHTML = `<strong>POKÉDEX: </strong> <span style="font-weight:400">${isFiltered ? `${filtered.length}/${menuPokedex.total}` : `${menuPokedex.total}/151`}</span>`;
     list.appendChild(header);
 
     if (filtered.length === 0) {
@@ -185,9 +189,9 @@ function renderList() {
         p.textContent = menuPokedex.total === 0 ? 'Ninguno todavía' : 'Sin resultados';
         list.appendChild(p);
     } else {
-        filtered.forEach((pokemon, i) => {
+        filtered.forEach((pokemon) => {
             const p = document.createElement('p');
-            p.textContent = `${i + 1}. ${pokemon.toString()}`;
+            p.textContent = pokemon.toString();
             list.appendChild(p);
         });
     }
@@ -206,6 +210,8 @@ function handlePokedex(action) {
         mode           = 'pokedex';
         availableSlots = [];
         slotCursor     = 0;
+        const title = document.getElementById('pokedex-title');
+        if (title) title.textContent = 'POKÉDEX';
         showView('main');
         return;
     }
@@ -227,7 +233,7 @@ function handlePokedex(action) {
         if (action === 'pressA') {
             playClick();
             const selectedSlot = availableSlots[slotCursor];
-            if (selectedSlot) loadPokedex(selectedSlot.id);
+            if (selectedSlot) loadPokedex(selectedSlot.id, selectedSlot.slot_number);
             return;
         }
         return;

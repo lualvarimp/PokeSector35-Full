@@ -36,15 +36,19 @@ export function showResultsScreen() {
     const container = document.getElementById('results-text');
     if (container) {
         container.innerHTML = `
-            <p><strong>${captured.length} Pokémon capturados</strong></p>
-            <p><strong>${escaped.length} Pokémon escapados</strong></p>
-            <h2 class="results-subtitle">CAPTURADOS</h2>
+            <p>Capturados: ${captured.length}
+            <br>
+            Escapados: ${escaped.length}</p>
+            <h3>CAPTURADOS</h3>
             ${fmt(captured)}
-            <h2 class="results-subtitle">ESCAPADOS</h2>
+            <h3>ESCAPADOS</h3>
             ${fmt(escaped)}
-            <p class="results-back">◄ B/ESC: volver</p>
         `;
     }
+
+    gameState.statsScroll = 0;
+    const resultsList = document.querySelector('.results-list');
+    if (resultsList) resultsList.style.transform = 'translateY(0)';
 
     gameState.isResultsOpen = true;
 }
@@ -55,31 +59,27 @@ export function closeResultsScreen() {
     if (resultsScreen) resultsScreen.classList.add('hidden');
     if (goalScreen)    goalScreen.classList.remove('hidden');
     gameState.isResultsOpen = false;
-    // Reabrir menú de meta
     openGoalMenu();
 }
 
 // =============================================================================
 //  SCROLL Y CIERRE — Gestiona D-Pad y B dentro de results-screen
 // =============================================================================
-// Devuelve true si la acción fue consumida, false si no aplica.
 export function handleResultsScroll(action) {
     if (!gameState.isResultsOpen) return false;
 
     const scrollStep = 60;
 
-    // B — volver a la goal-screen
     if (action === 'pressB') {
         closeResultsScreen();
         return true;
     }
 
-    // ▲ ▼ — scroll
-    const resultsList   = document.querySelector('.results-list');
-    const resultsScreen = document.querySelector('.results-screen');
-    if (!resultsList || !resultsScreen) return true;
+    const resultsList    = document.querySelector('.results-list');
+    const resultsViewport = document.querySelector('.results-viewport');
+    if (!resultsList || !resultsViewport) return true;
 
-    const maxScroll = resultsList.scrollHeight - resultsScreen.clientHeight;
+    const maxScroll = resultsList.scrollHeight - resultsViewport.clientHeight;
 
     if (action === 'pressDown' && gameState.statsScroll < maxScroll) {
         clickSound.currentTime = 0;

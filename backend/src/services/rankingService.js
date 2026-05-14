@@ -8,13 +8,27 @@ import sequelize from '../config/database.js';
  * @returns {Promise<Array>} Array de rankings ordenados por capturas descendente
  */
 export async function getRankingGlobal(difficulty = null) {
-  let query = 'SELECT * FROM ranking_view';
+  let query = `
+    SELECT
+      r.id,
+      r.user_id,
+      r.explorer_name,
+      r.captured_count,
+      r.escaped_count,
+      r.difficulty_id,
+      r.completed_at,
+      ROUND((r.captured_count * 100.0 / NULLIF(r.captured_count + r.escaped_count, 0))::numeric, 2) AS efficiency
+    FROM ranking r
+    JOIN users u ON r.user_id = u.id
+    WHERE u.deleted_at IS NULL
+      AND (r.captured_count + r.escaped_count) >= 10
+  `;
 
   if (difficulty) {
-    query += ` WHERE difficulty_id = '${difficulty}'`;
+    query += ` AND r.difficulty_id = '${difficulty}'`;
   }
 
-  query += ' ORDER BY captured_count DESC';
+  query += ` ORDER BY r.captured_count DESC, efficiency DESC, r.completed_at ASC LIMIT 51`;
 
   const ranking = await sequelize.query(query);
   return ranking[0];

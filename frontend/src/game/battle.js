@@ -1,4 +1,3 @@
-
 // =============================================================================
 //  battle.js — Lógica de combate
 // =============================================================================
@@ -59,6 +58,10 @@ export function updateBattle(action) {
                 messageBattle = `Has capturado a ${pokemon.name}`;
                 // Guardamos el objeto completo {id, name} para poder ordenar por ID en la Pokédex
                 gameState.pokemonCaptured.push({ id: pokemon.id, name: pokemon.name });
+                // También lo añadimos a la Pokédex del slot para detectar duplicados
+                if (!gameState.slotPokedex.some(p => p.id === pokemon.id)) {
+                    gameState.slotPokedex.push({ id: pokemon.id, name: pokemon.name });
+                }
                 capturedSound.play();
 
             } else {

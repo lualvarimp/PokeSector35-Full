@@ -40,7 +40,7 @@
     --light-grey: #3838386c;
     /* gris semitransparente (uso secundario) */
     --gameboy: #019273;
-        /* verde característico de la consola */
+    /* verde característico de la consola */
     --red-light: #86272782;
     --red-light-on: #ff5353d8;
     /* color del LED rojo decorativo */
@@ -60,7 +60,7 @@
     box-sizing: border-box;
     /* Para respetar los saltos de línea \n de JavaScript */
     white-space: pre-line;
-    
+
 }
 
 html,
@@ -164,22 +164,56 @@ body {
     position: relative;
     max-width: 400px;
     /* ancho máximo de toda la consola */
-    padding-bottom: 3rem;
+    padding-top: 2rem;
     /* espacio bajo los botones del menú */
-    border-radius: 0 0 3.5rem 0;
-    /* esquina redondeada inferior derecha (diseño GameBoy) */
+    padding-bottom: 3rem;
+    border-radius: 0.5rem 0.5rem 3.5rem 0.5rem;
+    box-shadow:
+    /* línea de luz fina en el borde superior */
+    0 -0.05rem 0 rgba(255, 255, 255, 0.5),
+    /* sombra exterior compacta y muy oscura — más estrecha abajo y derecha */
+    0 0.3rem 0.5rem rgba(0, 0, 0, 0.98),
+    0.2rem 0.5rem 0.8rem rgba(0, 0, 0, 0.9),
+    /* highlight interior superior e izquierda — más intenso */
+    inset 0 0.2rem 0.3rem rgba(255, 255, 255, 0.15),
+    inset 0.2rem 0 0.3rem rgba(255, 255, 255, 0.15),
+    /* sombra interior abajo y derecha — más estrecha */
+    inset -0.2rem -0.2rem 0.4rem rgba(0, 0, 0, 0.7);
+
     background-color: var(--gameboy);
 
     h1 {
-        margin: 0;
-        padding: 0.5rem 0 0.2rem;
-        text-align: center;
+        display: none;
+    }
+
+    div {
+        &.logo {
+            margin: 0;
+            padding: 0.5rem 1rem 0.2rem;
+            text-align: left;
+
+            img {
+                width: 50%;
+                mix-blend-mode: multiply;
+                /* funde el logo con el fondo verde */
+                opacity: 0.8;
+            }
+        }
+    }
+
+    .sticker {
+        position: absolute;
+        bottom: 8rem;
+        right: 1rem;
+        height: 13rem;
+        width: 13rem;
+        z-index: 0;
+        mix-blend-mode: multiply;
+        opacity: 0.8;
+        filter: grayscale(100%) brightness(80%) blur(0.02rem);
 
         img {
-            width: 60%;
-            mix-blend-mode: multiply;
-            /* funde el logo con el fondo verde */
-            opacity: 0.7;
+            width: 100%;
         }
     }
 }
@@ -215,6 +249,7 @@ body {
             animation: twinkle-light 10s infinite;
         }
     }
+
     .gameboy-logo-position {
         position: relative;
 
@@ -229,8 +264,6 @@ body {
             background-size: cover;
             opacity: 60%;
         }
-        
-        
     }
 
     /* Rejilla de altavoz — imagen decorativa en la esquina inferior derecha */
@@ -250,6 +283,7 @@ body {
 
 /* ==================== D-PAD Y BOTONES DE ACCIÓN ==================== */
 .controls {
+    z-index: 100;
     display: flex;
     justify-content: space-between;
     /* D-Pad a la izquierda, A/B a la derecha */
@@ -261,17 +295,20 @@ body {
         aspect-ratio: 1 / 1;
         border: none;
         font-weight: 700;
-        font-size: 0;              /* ocultamos cualquier texto — los iconos van en ::after */
+        font-size: 0;
+        /* ocultamos cualquier texto — los iconos van en ::after */
         background: var(--black);
         display: flex;
         justify-content: center;
         align-items: center;
-        -webkit-tap-highlight-color: transparent; /* elimina el destello azul en Chrome Android */
+        -webkit-tap-highlight-color: transparent;
+        /* elimina el destello azul en Chrome Android */
     }
 
     /* D-Pad: grid 3×3 donde solo 4 celdas tienen botón (up, left, right, down)
        El tamaño usa clamp() para adaptarse a pantallas pequeñas */
     .dpad {
+        z-index: 100;
         display: grid;
         grid-template-columns: repeat(3, clamp(2.4rem, 0.8rem + 8.533vw, 3.2rem));
         grid-template-rows: repeat(3, clamp(2.4rem, 0.8rem + 8.533vw, 3.2rem));
@@ -361,10 +398,11 @@ body {
 
     /* Botones A y B: circulares, inclinados -25° para imitar el diseño original */
     .actions {
+        z-index: 100;
         width: fit-content;
         height: fit-content;
         transform: rotate(-25deg) translate(-1rem, 2.5rem);
-        transform-origin: 0 100%;        
+        transform-origin: 0 100%;
         padding-left: 1rem;
 
         button {
@@ -381,7 +419,8 @@ body {
             /* Restauramos font-size y color que el selector .controls button ocultó */
             font-size: 1.7rem;
             color: var(--gameboy);
-            display: revert;  /* cancelamos el flex heredado del selector padre */
+            display: revert;
+            /* cancelamos el flex heredado del selector padre */
             box-shadow:
                 inset 0.1rem 0.1rem 0px #94949426,
                 inset -0.1rem -0.1rem 0px rgba(0, 0, 0, 0.3),
@@ -407,7 +446,9 @@ body {
     gap: 2rem;
     padding-top: 1rem;
 
+
     button {
+        z-index: 100;
         width: 5.5rem;
         padding: 0.4rem 0.6rem;
         color: var(--gameboy);
@@ -423,51 +464,111 @@ body {
     }
 }
 
+
+
+
+/* ==================== EFECTO DE PULSACIÓN — FEEDBACK VISUAL ==================== */
+/* D-Pad: el botón se hunde con desplazamiento + sombra interior direccional */
+.dpad {
+    #up-btn.pressed {
+        transform: translateY(0.1rem);
+        box-shadow:
+            inset 0 0.15rem 0.2rem rgba(0, 0, 0, 0.5);
+    }
+
+    #down-btn.pressed {
+        transform: translateY(-0.1rem);
+        box-shadow:
+            inset 0 -0.15rem 0.2rem rgba(0, 0, 0, 0.5);
+    }
+
+    #left-btn.pressed {
+        transform: translateX(0.1rem);
+        box-shadow:
+            inset 0.15rem 0 0.2rem rgba(0, 0, 0, 0.5);
+    }
+
+    #right-btn.pressed {
+        transform: translateX(-0.1rem);
+        box-shadow:
+            inset -0.15rem 0 0.2rem rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* A y B: se hunden con sombra interior profunda, sin sombra exterior */
+.actions button.pressed {
+    transform: rotate(25deg) translateY(0.15rem) !important;
+    box-shadow:
+        inset 0.15rem 0.15rem 0.3rem rgba(0, 0, 0, 0.6),
+        inset -0.1rem -0.1rem 0.2rem rgba(0, 0, 0, 0.3),
+        0px 0rem 0rem 0px var(--shadow-button) !important;
+}
+
+/* START y SELECT: se hunden con sombra interior, sin sombra exterior */
+.menu button.pressed {
+    transform: translateY(0.12rem);
+    box-shadow:
+        inset 0.1rem 0.1rem 0.25rem rgba(0, 0, 0, 0.55),
+        inset -0.1rem -0.1rem 0.15rem rgba(0, 0, 0, 0.25),
+        0px 0rem 0rem 0px rgba(56, 56, 56, 0) !important;
+}
+
+
+
+
 @keyframes twinkle-light {
-  0%, 50% {
-    background: var(--red-light-on);
-    box-shadow:
-      0 0 1rem #ff5353cc,
-      0 0 2rem #ff535399,
-      0 0 3rem #ff535366;
-  }
 
-  50.1%, 51% {
-    background: var(--red-light-off);
-    box-shadow: none;
-  }
+    0%,
+    50% {
+        background: var(--red-light-on);
+        box-shadow:
+            0 0 1rem #ff5353cc,
+            0 0 2rem #ff535399,
+            0 0 3rem #ff535366;
+    }
 
-  51.1%, 54% {
-    background: var(--red-light-on);
-    box-shadow:
-      0 0 1rem #ff5353cc,
-      0 0 2rem #ff535399,
-      0 0 3rem #ff535366;
-  }
+    50.1%,
+    51% {
+        background: var(--red-light-off);
+        box-shadow: none;
+    }
 
-  54.1%, 56% {
-    background: var(--red-light-off);
-    box-shadow: none;
-  }
+    51.1%,
+    54% {
+        background: var(--red-light-on);
+        box-shadow:
+            0 0 1rem #ff5353cc,
+            0 0 2rem #ff535399,
+            0 0 3rem #ff535366;
+    }
 
-  56.1%, 80% {
-    background: var(--red-light-on);
-    box-shadow:
-      0 0 1rem #ff5353cc,
-      0 0 2rem #ff535399,
-      0 0 3rem #ff535366;
-  }
+    54.1%,
+    56% {
+        background: var(--red-light-off);
+        box-shadow: none;
+    }
 
-  80.1%, 83% {
-    background: var(--red-light-off);
-    box-shadow: none;
-  }
+    56.1%,
+    80% {
+        background: var(--red-light-on);
+        box-shadow:
+            0 0 1rem #ff5353cc,
+            0 0 2rem #ff535399,
+            0 0 3rem #ff535366;
+    }
 
-  83.1%, 100% {
-    background: var(--red-light-on);
-    box-shadow:
-      0 0 1rem #ff5353cc,
-      0 0 2rem #ff535399,
-      0 0 3rem #ff535366;
-  }
+    80.1%,
+    83% {
+        background: var(--red-light-off);
+        box-shadow: none;
+    }
+
+    83.1%,
+    100% {
+        background: var(--red-light-on);
+        box-shadow:
+            0 0 1rem #ff5353cc,
+            0 0 2rem #ff535399,
+            0 0 3rem #ff535366;
+    }
 }

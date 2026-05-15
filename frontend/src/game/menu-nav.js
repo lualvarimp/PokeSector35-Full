@@ -77,7 +77,7 @@ export function updateMenu(action) {
 // =============================================================================
 const VIEW_SELECTORS = [
     '.menu-main', '.menu-start', '.menu-slots', '.menu-info', '.menu-customize',
-    '.menu-color', '.menu-explorer', '.menu-difficulty',
+    '.menu-color', '.menu-explorer', '.menu-difficulty', '.menu-sticker',
     '.menu-ranking', '.menu-pokedex', '.menu-account', '.menu-confirm',
 ];
 

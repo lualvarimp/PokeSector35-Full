@@ -191,6 +191,34 @@
                 line-height: 1rem;
             }
         }
+
+    .battle-already-caught {
+        position: relative;
+        top: 3.5rem;
+        left: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        gap: 0.2rem;
+        margin: 0.3rem 0;
+        animation: blink 0.9s infinite;
+
+        img {
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+
+        span {
+            font-size: 0.65rem;
+            opacity: 0.8;
+            line-height: 1rem;
+            text-transform: uppercase;
+        }
+    }
+
+
+
+
     }
 
     /* ── Caja de mensaje de resultado ────────────────────────────────────

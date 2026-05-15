@@ -21,7 +21,7 @@
 // =============================================================================
 
 import { updatePosition }     from './movement.js';
-import { startIntro }         from './intro.js';
+import { startIntro, isIntroInProgress } from './intro.js';
 import { updateStatsScreen }  from './stats.js';
 import { updateBattle }       from './battle.js';
 import {
@@ -56,6 +56,29 @@ function lockTimeFor(action) {
 }
 
 // =============================================================================
+//  FEEDBACK VISUAL — Efecto de pulsación en los botones de la consola
+// =============================================================================
+const ACTION_TO_BTN = {
+    pressUp:     'up-btn',
+    pressDown:   'down-btn',
+    pressLeft:   'left-btn',
+    pressRight:  'right-btn',
+    pressStart:  'start-btn',
+    pressSelect: 'select-btn',
+    pressA:      'a-btn',
+    pressB:      'b-btn',
+};
+
+function flashButton(action) {
+    const id = ACTION_TO_BTN[action];
+    if (!id) return;
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.add('pressed');
+    setTimeout(() => btn.classList.remove('pressed'), 120);
+}
+
+// =============================================================================
 //  DISPATCH — Enrutador centralizado de acciones
 // =============================================================================
 // Cada acción pasa por la cadena de prioridades UNA SOLA VEZ.
@@ -65,6 +88,9 @@ function lockTimeFor(action) {
 function dispatch(action) {
     if (inputLocked) return;
     lock(lockTimeFor(action));
+
+    // Feedback visual en el botón correspondiente
+    flashButton(action);
 
     // ── D-Pad: arriba, abajo ─────────────────────────────────────────────
     if (action === 'pressUp' || action === 'pressDown') {
@@ -90,6 +116,11 @@ function dispatch(action) {
         if (isResultsScreenOpen()) return;
         const handled = handleGameOverStart();
         if (!handled) {
+            // Si hay partida en curso (mapa o combate), Start no hace nada
+            const gameScreen   = document.querySelector('.game-screen');
+            const battleScreen = document.querySelector('.battle-screen');
+            if ((gameScreen && !gameScreen.classList.contains('hidden')) ||
+                (battleScreen && !battleScreen.classList.contains('hidden'))) return;
             startIntro();
             updateStatsScreen('pressStart');
         }
@@ -105,6 +136,7 @@ function dispatch(action) {
 
     // ── A ────────────────────────────────────────────────────────────────
     if (action === 'pressA') {
+        if (isIntroInProgress()) { startIntro(); return; }
         if (isMenuOpen())    { updateMenu('pressA'); return; }
         if (isEndMenuOpen()) { handleEndMenuNav('pressA'); return; }
         updateStatsScreen('pressA');
@@ -134,6 +166,10 @@ const KEY_MAP = {
     'Shift':      'pressSelect',
     ' ':          'pressA',
     'Escape':     'pressB',
+    'a':          'pressA',
+    'A':          'pressA',
+    'b':          'pressB',
+    'B':          'pressB',
 };
 
 // Teclas cuyo comportamiento por defecto debe cancelarse
@@ -157,7 +193,10 @@ export function initControls() {
 
     Object.entries(buttons).forEach(([id, action]) => {
         const btn = document.getElementById(id);
-        if (btn) btn.addEventListener('click', () => dispatch(action));
+        if (btn) {
+            btn.addEventListener('mousedown', (e) => { e.preventDefault(); dispatch(action); });
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); dispatch(action); }, { passive: false });
+        }
     });
 
     // ── Teclado ──────────────────────────────────────────────────────────

@@ -26,6 +26,10 @@ export async function triggerPokemonEncounter() {
     if (battleName) battleName.textContent = "";
     if (battleImg)  battleImg.src = "";
 
+    // Ocultamos el indicador de "ya capturado" antes de cada encuentro
+    const alreadyCaught = document.querySelector('.battle-already-caught');
+    if (alreadyCaught) alreadyCaught.classList.add('hidden');
+
     // Generamos un ID aleatorio entre 1 y 151 (primera generación Pokémon)
     const pokemonId = Math.floor(Math.random() * 151) + 1;
 
@@ -48,6 +52,14 @@ export async function triggerPokemonEncounter() {
 
         if (battleNameEl) battleNameEl.textContent = pokemonName;
         if (battleImgEl)  battleImgEl.src = pokemonSprite;
+
+        // Comprobamos si este Pokémon ya está en la Pokédex del slot
+        // (incluye capturas de partidas anteriores + la partida actual)
+        const isAlreadyCaptured = gameState.slotPokedex.some(p => p.id === pokemonId)
+            || gameState.pokemonCaptured.some(p => p.id === pokemonId);
+        if (isAlreadyCaptured && alreadyCaught) {
+            alreadyCaught.classList.remove('hidden');
+        }
 
         // Cambiamos de pantalla: ocultamos el mapa y mostramos la batalla
         const gameScreen   = document.querySelector('.game-screen');

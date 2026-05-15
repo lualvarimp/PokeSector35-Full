@@ -35,6 +35,8 @@ export default function GameControls() {
         <button id="start-btn">START</button>
         <button id="select-btn">SELECT</button>
       </section>
+
     </>
+    
   );
 }

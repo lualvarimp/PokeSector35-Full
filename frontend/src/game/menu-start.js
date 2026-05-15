@@ -123,7 +123,7 @@ function onContinue() {
         );
     } else {
         showInfoMessage(
-            'No tienes partidas guardadas.\nCrea una cuenta y guarda tu progreso.',
+            'No tienes ninguna partida guardada.\n¿Quieres crear una cuenta para guardar tu progreso?',
             true
         );
     }
@@ -217,7 +217,7 @@ function handleSlots(action) {
 // =============================================================================
 //  RESTORE FROM SLOT — Restaurar partida desde la BD
 // =============================================================================
-function restoreFromSlot(slot) {
+async function restoreFromSlot(slot) {
     const originalName = slot.explorer_name;
     slot.explorer_name = sanitizeExplorerName(slot.explorer_name);
 
@@ -244,6 +244,17 @@ function restoreFromSlot(slot) {
 
     gameState.slotNumber = slot.slot_number;
     gameState.slotDbId   = slot.id;
+
+    // Cargar pokémon ya capturados en este slot desde la BD
+    // Se guardan en slotPokedex (acumulado del slot), separado de
+    // pokemonCaptured (solo los de esta partida, para estadísticas)
+    try {
+        const savedPokemon = await api.getPokedex(slot.id);
+        gameState.slotPokedex = savedPokemon.map(p => ({ id: p.pokemon_id, name: p.pokemon_name }));
+    } catch (e) {
+        console.warn('No se pudieron cargar los pokémon del slot:', e.message);
+        gameState.slotPokedex = [];
+    }
 
     // Personalización: bandeja de cambios pendientes
     const savedDiffRaw   = localStorage.getItem('pokesector_difficulty');
@@ -454,6 +465,7 @@ async function startGame(slotNumber) {
     // Reset game state for new game
     gameState.pokemonCaptured = [];
     gameState.pokemonEscaped  = [];
+    gameState.slotPokedex     = [];
     gameState.currentPosition = { r: 0, c: 0 };
     gameState.isGoal          = false;
     gameState.isGameOver      = false;

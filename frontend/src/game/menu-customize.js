@@ -1,19 +1,20 @@
 // =============================================================================
-//  menu-customize.js — Personalización: color, explorador, dificultad
+//  menu-customize.js — Personalización: color, explorador, dificultad, sticker
 // =============================================================================
-//  RESPONSABILIDAD: Gestionar las tres vistas de personalización del menú:
-//  selección de color de consola, selección de explorador y selección de
-//  dificultad. Cada una con su propia lógica de navegación.
+//  RESPONSABILIDAD: Gestionar las vistas de personalización del menú:
+//  selección de color de consola, selección de explorador, selección de
+//  dificultad y selección de sticker. Cada una con su propia lógica de navegación.
 //
 //  REGISTRA HANDLERS PARA:
 //    · 'customize'  — vista raíz de personalización
 //    · 'color'      — selector de color (◀ ▶)
 //    · 'explorer'   — selector de explorador (◀ ▶)
 //    · 'difficulty'  — selector de dificultad (cursor)
+//    · 'sticker'    — selector de sticker (◀ ▶)
 // =============================================================================
 
-import { gameState }                         from './game-state.js';
-import { EXPLORERS, COLORS, DIFFICULTY_CONFIG } from './menu-config.js';
+import { gameState }                                      from './game-state.js';
+import { EXPLORERS, COLORS, DIFFICULTY_CONFIG, STICKERS } from './menu-config.js';
 import {
     showView, moveCursorUp, moveCursorDown, playClick,
     getCursorIndex, registerHandler,
@@ -21,12 +22,14 @@ import {
 
 let explorerIndex = 0;
 let colorIndex    = 0;
+let stickerIndex  = 0;
 
 // ── Registrar handlers ──────────────────────────────────────────────────────
 registerHandler('customize',  handleCustomize);
 registerHandler('color',      handleColor);
 registerHandler('explorer',   handleExplorer);
 registerHandler('difficulty', handleDifficulty);
+registerHandler('sticker',    handleSticker);
 
 // =============================================================================
 //  VISTA: PERSONALIZAR (raíz)
@@ -46,6 +49,7 @@ function handleCustomize(action) {
             case 'color':      openColorSelector();    break;
             case 'explorer':   openExplorerSelector(); break;
             case 'difficulty': showView('difficulty'); break;
+            case 'sticker':    openStickerSelector();  break;
             case 'back':       showView('main');       break;
         }
     }
@@ -178,6 +182,62 @@ function handleDifficulty(action) {
             items[getCursorIndex()].classList.add('selected');
         }
 
+        showView('customize');
+    }
+}
+
+// =============================================================================
+//  VISTA: STICKER
+// =============================================================================
+function openStickerSelector() {
+    const saved = localStorage.getItem('pokesector_sticker') || STICKERS[0].src;
+    stickerIndex = STICKERS.findIndex(s => s.src === saved);
+    if (stickerIndex < 0) stickerIndex = 0;
+    renderStickerPreview();
+    showView('sticker');
+}
+
+function renderStickerPreview() {
+    const preview = document.querySelector('.menu-preview-sticker');
+    if (!preview) return;
+    const sticker = STICKERS[stickerIndex];
+    preview.textContent = sticker.label;
+
+    // Previsualizar en tiempo real en la consola
+    const stickerImg = document.querySelector('.sticker img');
+    if (stickerImg) stickerImg.src = sticker.src;
+}
+
+function handleSticker(action) {
+    if (action === 'pressB') {
+        playClick();
+        // Restaurar el sticker anterior si cancela
+        const saved = localStorage.getItem('pokesector_sticker') || STICKERS[0].src;
+        const stickerImg = document.querySelector('.sticker img');
+        if (stickerImg) stickerImg.src = saved;
+        showView('customize');
+        return;
+    }
+
+    if (action === 'pressLeft') {
+        playClick();
+        stickerIndex = (stickerIndex - 1 + STICKERS.length) % STICKERS.length;
+        renderStickerPreview();
+        return;
+    }
+    if (action === 'pressRight') {
+        playClick();
+        stickerIndex = (stickerIndex + 1) % STICKERS.length;
+        renderStickerPreview();
+        return;
+    }
+
+    if (action === 'pressA') {
+        playClick();
+        const chosen = STICKERS[stickerIndex];
+        const stickerImg = document.querySelector('.sticker img');
+        if (stickerImg) stickerImg.src = chosen.src;
+        localStorage.setItem('pokesector_sticker', chosen.src);
         showView('customize');
     }
 }

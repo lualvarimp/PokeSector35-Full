@@ -17,6 +17,10 @@ export default function BattleScreen() {
 
       <div className="pokemon-battle">
         <h2>Ha aparecido <span className="battle-pokemon-name"></span></h2>
+        <div className="battle-already-caught hidden">
+          <img src="/img/pokeball.png" alt="pokeball" />
+          <span>Ya lo has<br /> capturado</span>
+        </div>
         <div className="pokemon-container">
           <img className="battle-pokemon-img" src="" alt="Pokemon salvaje" />
         </div>

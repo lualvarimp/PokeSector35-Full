@@ -30,6 +30,7 @@ export const gameState = {
     currentWildPokemon: null,
     pokemonCaptured: [],
     pokemonEscaped: [],
+    slotPokedex: [],
     difficultyId: null,
     difficulty:   null,
     explorer:     null,

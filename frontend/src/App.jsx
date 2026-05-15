@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useGameInit }         from './hooks/useGameInit.js';
-import MenuScreen              from './components/MenuScreen.jsx';
-import GameScreen              from './components/GameScreen.jsx';
-import BattleScreen            from './components/BattleScreen.jsx';
-import StatsScreen             from './components/StatsScreen.jsx';
-import GameOverScreen          from './components/GameOverScreen.jsx';
-import GameControls            from './components/GameControls.jsx';
+import { useGameInit } from './hooks/useGameInit.js';
+import MenuScreen from './components/MenuScreen.jsx';
+import GameScreen from './components/GameScreen.jsx';
+import BattleScreen from './components/BattleScreen.jsx';
+import StatsScreen from './components/StatsScreen.jsx';
+import GameOverScreen from './components/GameOverScreen.jsx';
+import GameControls from './components/GameControls.jsx';
 
 // =============================================================================
 //  App.jsx — Componente principal React
@@ -25,34 +25,28 @@ import GameControls            from './components/GameControls.jsx';
 // =============================================================================
 
 export default function App() {
-  // Hook personalizado: inicializa el motor del juego (main.js) una sola vez
   const { ready, error } = useGameInit();
-
-  // Estado React: nombre del explorador para mostrarlo mientras carga
-  // El juego lo gestiona luego directamente via DOM (menu.js / updateExplorerHUD)
   const [playerName, setPlayerName] = useState('');
 
-  // Sincronizar playerName con localStorage al montar el componente
   useEffect(() => {
     const saved = localStorage.getItem('pokesector_explorer_name');
     if (saved && saved.trim() !== '') {
       setPlayerName(saved.trim());
     }
+
+    // Cargar sticker guardado, o nosticker por defecto
+    const savedSticker = localStorage.getItem('pokesector_sticker') || '/img/stickers/nosticker.webp';
+    const stickerImg = document.querySelector('.sticker img');
+    if (stickerImg) stickerImg.src = savedSticker;
   }, []);
 
   return (
     <main className="gameboy">
 
-      <h1>
-        <img
-          src="/img/pokesector-35-console.png"
-          alt="PokéSector 35 - El misterio de los Pokémon salvajes"
-        />
-      </h1>
+      <h1 className='logo'>PokéSector 35 - El misterio de los Pokémon salvajes</h1>
 
       <section className="bezel">
 
-        {/* Detalles decorativos de la consola */}
         <div className="speaker"></div>
         <div className="light-position">
           <div className="red-light"></div>
@@ -61,10 +55,12 @@ export default function App() {
           <div className="gameboy-logo"></div>
         </div>
 
-        {/* Pantalla de inicio */}
         <div className="home-screen">
           <div className="home-start">
             <h2>PULSA START<span>o</span>PULSA ENTER</h2>
+          </div>
+          <div className="intro-skip">
+            <p className="intro-skip-hint hidden"><strong>A/SPACE: </strong>Saltar intro</p>
           </div>
           <div className="animation-home hidden">
             <h2>
@@ -95,7 +91,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* ── Pantallas del juego — cada una en su propio componente ── */}
         <MenuScreen />
         <GameScreen />
         <BattleScreen />
@@ -104,7 +99,16 @@ export default function App() {
 
       </section>
 
-      {/* Controles físicos de la consola */}
+      <div className='logo'>
+        <img
+          src="/img/pokesector-35-console.png"
+          alt="PokéSector 35 - El misterio de los Pokémon salvajes"
+        />
+      </div>
+      <div className='sticker'>
+        <img src='/img/stickers/nosticker.webp' alt='' />
+      </div>
+
       <GameControls />
 
     </main>

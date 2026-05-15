@@ -1,4 +1,3 @@
-
 // =============================================================================
 //  intro.js — Animación de introducción
 // =============================================================================
@@ -9,35 +8,36 @@
 //  de ir directamente al juego. showMenu() desactivará isIntro al terminar.
 //
 //  FUNCIONES EXPORTADAS:
-//    · startIntro() — inicia la intro o la salta si ya está en curso
-//
-//  RELACIÓN CON LOS REQUISITOS DEL PROYECTO:
-//    ✅ Manipulación del DOM  → muestra/oculta elementos, controla animación CSS
-//    ✅ Interfaz dinámica     → transición fluida entre home-screen y menu-screen
+//    · startIntro()        — inicia la intro o la salta si ya está en curso
+//    · isIntroInProgress() — true si la intro está activa
 // =============================================================================
 
 import { gameState }  from './game-state.js';
 import { themeSound } from './sounds.js';
-import { showMenu }   from './menu.js';   // ← ahora redirigimos al menú, no al juego
+import { showMenu }   from './menu.js';
 
 let introInProgress = false;
 let introTimeout;
+let hintTimeout;
+let hintHideTimeout;
+
+export function isIntroInProgress() { return introInProgress; }
 
 export function startIntro() {
     const homeStart     = document.querySelector('.home-start');
     const animationHome = document.querySelector('.animation-home');
     const homeScreen    = document.querySelector('.home-screen');
 
-    // CASO A: la intro ya está en curso → la saltamos al pulsar Start de nuevo
+    // CASO A: la intro ya está en curso → la saltamos
     if (introInProgress) {
         skipIntro(homeScreen);
         return;
     }
 
-    // CASO B: la intro aún no ha comenzado → la iniciamos
+    // CASO B: iniciamos la intro
     if (homeStart && !homeStart.classList.contains('hidden')) {
         introInProgress   = true;
-        gameState.isIntro = true; // bloqueamos el movimiento durante toda la intro
+        gameState.isIntro = true;
 
         homeStart.classList.add('hidden');
         animationHome.classList.remove('hidden');
@@ -47,6 +47,19 @@ export function startIntro() {
         themeSound.loop = false;
         themeSound.play();
 
+        // Mostrar el hint a los 5 segundos
+        hintTimeout = setTimeout(() => {
+            const hint = document.querySelector('.intro-skip-hint');
+            if (hint) hint.classList.remove('hidden');
+        }, 5000);
+
+        // Ocultar el hint a los 34 segundos
+        hintHideTimeout = setTimeout(() => {
+            const hint = document.querySelector('.intro-skip-hint');
+            if (hint) hint.classList.add('hidden');
+        }, 34000);
+
+        // Fin natural de la intro
         introTimeout = setTimeout(() => {
             if (introInProgress) {
                 skipIntro(homeScreen);
@@ -57,11 +70,13 @@ export function startIntro() {
 
 function skipIntro(home) {
     introInProgress = false;
-    // NOTA: NO desactivamos isIntro aquí. Lo desactivará showMenu() → startGame()
-    // cuando el jugador confirme el inicio de partida, para que el bloqueo cubra
-    // también el tiempo de navegación en el menú.
 
     clearTimeout(introTimeout);
+    clearTimeout(hintTimeout);
+    clearTimeout(hintHideTimeout);
+
+    const hint = document.querySelector('.intro-skip-hint');
+    if (hint) hint.classList.add('hidden');
 
     themeSound.pause();
     themeSound.currentTime = 0;
@@ -76,7 +91,6 @@ function skipIntro(home) {
 
     if (home) {
         home.classList.add('hidden');
-        // Mostramos el menú principal en lugar de ir directamente al juego
         showMenu();
     }
 }

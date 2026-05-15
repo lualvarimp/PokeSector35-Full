@@ -13,7 +13,8 @@
 .home-screen {
     width: 100%;
     max-width: 18.75rem;
-    overflow-y: hidden; /* impide que la animación de scroll desborde la pantalla */
+    overflow-y: hidden;
+    /* impide que la animación de scroll desborde la pantalla */
     color: var(--black-screen);
 
     /* Contenedor del mensaje "PULSA START / PULSA ENTER"
@@ -24,14 +25,16 @@
         align-items: center;
         width: 100%;
         height: 100%;
-        animation: blink 1s steps(1) infinite; /* parpadeo brusco estilo retro */
+        animation: blink 1s steps(1) infinite;
+        /* parpadeo brusco estilo retro */
 
         h2 {
             font-size: 1.2rem;
             text-align: center;
 
             span {
-                display: block;    /* "o" en línea propia entre los dos textos */
+                display: block;
+                /* "o" en línea propia entre los dos textos */
                 padding: 0.6rem 0;
                 font-weight: 400;
             }
@@ -41,19 +44,22 @@
     /* Contenedor de la animación de intro — arranca oculto (.hidden en HTML)
        intro.js lo revela y activa animationPlayState = 'running' al pulsar START */
     .animation-home {
-        position: absolute; /* se superpone a .home-start al aparecer */
+        position: absolute;
+        /* se superpone a .home-start al aparecer */
         top: 0;
         left: 0;
         width: 100%;
-        mix-blend-mode: multiply;  /* funde el texto con la textura de fondo */
+        mix-blend-mode: multiply;
+        /* funde el texto con la textura de fondo */
         image-rendering: pixelated;
 
         /* Animación de scroll: mueve el contenido hacia arriba durante 34 segundos.
            'steps(150)' divide el movimiento en 150 saltos discretos para el efecto retro.
            'forwards' mantiene la posición final al acabar.
            intro.js pausa/reanuda esta animación y la resetea al saltar la intro. */
-        animation: verticalScroll 34s steps(150) forwards;
-        animation-play-state: paused; /* empieza parada; intro.js la arranca */
+        animation: verticalScroll 34s steps(200) forwards;
+        animation-play-state: paused;
+        /* empieza parada; intro.js la arranca */
 
         h2,
         h3 {
@@ -89,7 +95,8 @@
                     width: 100%;
                     height: 0.16rem;
                     background: var(--black-screen);
-                    animation: blink 1s infinite; /* parpadea igual que el texto */
+                    animation: blink 1s infinite;
+                    /* parpadea igual que el texto */
                 }
 
                 &::before {
@@ -112,19 +119,92 @@
     }
 }
 
+.intro-skip {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2.5rem;
+    background-image: url(../../public/img/screen-back.png);
+    z-index: 1;    
+
+    .intro-skip-hint {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        padding: 1rem;
+        font-size: 0.72rem;
+        text-align: center;
+        animation: blink 1s steps(1) infinite;
+        z-index: 10;
+    }
+}
+
+
 /* Parpadeo brusco estilo retro: 50% visible, 50% invisible, sin transición */
 @keyframes blink {
-    0%,  50%   { opacity: 1; }
-    50.1%, 100% { opacity: 0; }
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    50.1%,
+    100% {
+        opacity: 0;
+    }
 }
 
 /* Animación de scroll vertical de la intro:*/
 @keyframes verticalScroll {
-    0%, 2.4%    { opacity: 0; transform: translateY(0%); }
-    2.5%, 7%    { opacity: 1; transform: translateY(0%); }  
-    7.1%, 9%    { opacity: 0; transform: translateY(0%); }
-    9.1%, 11% { opacity: 0; transform: translateY(-20%); }
-    11.1%, 15%  { opacity: 0.9; transform: translateY(-20%); }
-    25%         { opacity: 1; transform: translateY(-20%); }
-    100%        { transform: translateY(-100%); }
+
+    0%,
+    2.4% {
+        opacity: 0;
+        transform: translateY(0%);
+    }
+
+    2.5%,
+    7% {
+        opacity: 1;
+        transform: translateY(0%);
+    }
+
+    7.1%,
+    9% {
+        opacity: 0;
+        transform: translateY(0%);
+    }
+
+    9.1%,
+    11% {
+        opacity: 0;
+        transform: translateY(-20%);
+    }
+
+    11.1%,
+    15% {
+        opacity: 0.9;
+        transform: translateY(-20%);
+    }
+
+   
+
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes hint-blink {
+
+    0%,
+    100% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 0;
+    }
 }

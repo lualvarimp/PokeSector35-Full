@@ -56,16 +56,31 @@ export default function MenuScreen() {
         </ul>
       </div>
 
-      {/* Vista: Personalizar */}
       <div className="menu-customize hidden">
         <h2>PERSONALIZAR</h2>
         <ul className="menu-list">
-          <li data-customize="color" className="menu-item active">COLOR CONSOLA</li>
+          <li data-customize="difficulty" className="menu-item active">DIFICULTAD</li>
           <li data-customize="explorer" className="menu-item"> EXPLORADOR</li>
+          <li data-customize="color" className="menu-item"> COLOR CONSOLA</li>
           <li data-customize="sticker" className="menu-item"> STICKER</li>
-          <li data-customize="difficulty" className="menu-item"> DIFICULTAD</li>
+          <li data-customize="vibration" className="menu-item"> VIBRACIÓN</li>
           <li data-customize="back" className="menu-item"> VOLVER</li>
         </ul>
+      </div>
+
+      {/* Vista: Selector de vibración */}
+      <div className="menu-vibration hidden">
+        <h2>VIBRACIÓN</h2>
+        <p>&nbsp;</p>
+        <p className="menu-preview-vibration"></p>
+        <p className="menu-hint">
+          <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="10,0 0,5 10,10" /></svg>
+          &nbsp;Seleccionar&nbsp;
+          <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{ width: '0.7em', height: '0.7em', verticalAlign: 'middle', fill: 'currentColor' }}><polygon points="0,0 10,5 0,10" /></svg>
+        </p>
+        <p><strong>A/SPACE:</strong> Confirmar <br />
+          <strong>B/ESC:</strong> Volver
+        </p>
       </div>
 
       {/* Vista: Selector de color */}

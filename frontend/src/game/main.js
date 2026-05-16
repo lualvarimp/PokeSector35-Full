@@ -17,6 +17,8 @@
 import { gameState, sanitizeExplorerName, updateExplorerHUD } from './game-state.js';
 import { updateHUD } from './hud.js';
 import { initControls } from './controls.js';
+import { initGamepad } from './gamepad-input.js';
+import { dispatch } from './controls.js';
 import { updateGoalScreen } from './movement.js';
 import { melodySound } from './sounds.js';
 import { openGoalMenu } from './game-over.js';
@@ -151,6 +153,7 @@ async function loadGame() {
 
     // 3. Controles
     initControls();
+    initGamepad(dispatch);
 
     // 4. HUD
     updateHUD();

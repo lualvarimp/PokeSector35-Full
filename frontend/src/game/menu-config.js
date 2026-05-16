@@ -60,6 +60,11 @@ export const STICKERS = [
     { label: 'ZAPDOS',      src: '/img/stickers/zapdos.webp'     },
 ];
 
+export const VIBRATION_OPTIONS = [
+    { label: 'ON',  value: 'on' },
+    { label: 'OFF', value: 'off' },
+];
+
 const MAPS = {
     facil: [
         '',     '',     'rock', '',     '',     'wild', 'rock',

@@ -15,6 +15,7 @@
 
 import { gameState }                                      from './game-state.js';
 import { EXPLORERS, COLORS, DIFFICULTY_CONFIG, STICKERS } from './menu-config.js';
+import { VIBRATION_OPTIONS } from './menu-config.js';
 import {
     showView, moveCursorUp, moveCursorDown, playClick,
     getCursorIndex, registerHandler,
@@ -30,6 +31,7 @@ registerHandler('color',      handleColor);
 registerHandler('explorer',   handleExplorer);
 registerHandler('difficulty', handleDifficulty);
 registerHandler('sticker',    handleSticker);
+registerHandler('vibration', handleVibration);
 
 // =============================================================================
 //  VISTA: PERSONALIZAR (raíz)
@@ -46,11 +48,12 @@ function handleCustomize(action) {
         const selected = items[getCursorIndex()].dataset.customize;
 
         switch (selected) {
-            case 'color':      openColorSelector();    break;
-            case 'explorer':   openExplorerSelector(); break;
-            case 'difficulty': showView('difficulty'); break;
-            case 'sticker':    openStickerSelector();  break;
-            case 'back':       showView('main');       break;
+            case 'difficulty': openDifficultySelector(); break;
+            case 'explorer':   openExplorerSelector();  break;
+            case 'color':      openColorSelector();     break;
+            case 'sticker':    openStickerSelector();   break;
+            case 'vibration':  openVibrationSelector(); break;
+            case 'back':       showView('main');        break;
         }
     }
 }
@@ -238,6 +241,55 @@ function handleSticker(action) {
         const stickerImg = document.querySelector('.sticker img');
         if (stickerImg) stickerImg.src = chosen.src;
         localStorage.setItem('pokesector_sticker', chosen.src);
+        showView('customize');
+    }
+}
+
+// =============================================================================
+//  VISTA: VIBRACIÓN
+// =============================================================================
+let vibrationIndex = 0;
+
+function openVibrationSelector() {
+    const saved = localStorage.getItem('pokesector_vibration') || 'on';
+    vibrationIndex = VIBRATION_OPTIONS.findIndex(v => v.value === saved);
+    if (vibrationIndex < 0) vibrationIndex = 0;
+    renderVibrationPreview();
+    showView('vibration');
+}
+
+function renderVibrationPreview() {
+    const preview = document.querySelector('.menu-preview-vibration');
+    if (!preview) return;
+    const option = VIBRATION_OPTIONS[vibrationIndex];
+    preview.textContent = option.label;
+}
+
+function handleVibration(action) {
+    if (action === 'pressB') {
+        playClick();
+        showView('customize');
+        return;
+    }
+
+    if (action === 'pressLeft') {
+        playClick();
+        vibrationIndex = (vibrationIndex - 1 + VIBRATION_OPTIONS.length) % VIBRATION_OPTIONS.length;
+        renderVibrationPreview();
+        return;
+    }
+
+    if (action === 'pressRight') {
+        playClick();
+        vibrationIndex = (vibrationIndex + 1) % VIBRATION_OPTIONS.length;
+        renderVibrationPreview();
+        return;
+    }
+
+    if (action === 'pressA') {
+        playClick();
+        const chosen = VIBRATION_OPTIONS[vibrationIndex];
+        localStorage.setItem('pokesector_vibration', chosen.value);
         showView('customize');
     }
 }

@@ -16,6 +16,7 @@
 
 import { gameState, saveGame } from './game-state.js';
 import { capturedSound, escapedSound, runawaySound } from './sounds.js';
+import { triggerGamepadRumble } from './gamepad-input.js';
 import { updateHUD } from './hud.js';
 import { triggerGameOver } from './game-over.js';
 
@@ -32,7 +33,7 @@ export function updateBattle(action) {
 
     let messageBattle = "";                                   // texto que se mostrará al jugador
     const battleScreen = document.querySelector('.battle-screen');
-    const gameScreen   = document.querySelector('.game-screen');
+    const gameScreen = document.querySelector('.game-screen');
 
     // currentWildPokemon es { id, name } — guardado por api.js
     const pokemon = gameState.currentWildPokemon;
@@ -52,23 +53,29 @@ export function updateBattle(action) {
 
             // Leemos catchRate desde gameState.difficulty (sobrevive a recargas)
             const catchRate = gameState.difficulty ? gameState.difficulty.catchRate : 0.60;
-            const success   = Math.random() < catchRate;
+            const success = Math.random() < catchRate;
 
             if (success) {
                 messageBattle = `Has capturado a ${pokemon.name}`;
                 // Guardamos el objeto completo {id, name} para poder ordenar por ID en la Pokédex
                 gameState.pokemonCaptured.push({ id: pokemon.id, name: pokemon.name });
+                triggerGamepadRumble(100, 0.5);
+
                 // También lo añadimos a la Pokédex del slot para detectar duplicados
                 if (!gameState.slotPokedex.some(p => p.id === pokemon.id)) {
                     gameState.slotPokedex.push({ id: pokemon.id, name: pokemon.name });
+
                 }
                 capturedSound.play();
+
 
             } else {
                 gameState.hp -= 2; // fallo: perdemos 2 HP
                 messageBattle = `¡Fallaste! Pierdes 2 HP. ${pokemon.name} ha escapado...`;
                 gameState.pokemonEscaped.push({ id: pokemon.id, name: pokemon.name });
+                triggerGamepadRumble(150, 0.6);
                 escapedSound.play();
+
             }
         }
     }
@@ -92,12 +99,12 @@ export function updateBattle(action) {
 
         // Tras 2 segundos cerramos el mensaje y volvemos al mapa
         setTimeout(() => {
-            gameState.isBattle           = false; // desactivamos el flag de combate
+            gameState.isBattle = false; // desactivamos el flag de combate
             gameState.currentWildPokemon = null;  // limpiamos el Pokémon actual
 
             messageBox.classList.add('hidden');
             if (battleScreen) battleScreen.classList.add('hidden');
-            if (gameScreen)   gameScreen.classList.remove('hidden');
+            if (gameScreen) gameScreen.classList.remove('hidden');
 
             // Si el jugador se ha quedado sin HP, activamos la pantalla de derrota
             if (gameState.hp <= 0) {

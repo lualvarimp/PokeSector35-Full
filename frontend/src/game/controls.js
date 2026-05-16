@@ -85,7 +85,7 @@ function flashButton(action) {
 // Los botones y el teclado llaman ambos a dispatch(), eliminando
 // la duplicación que existía anteriormente.
 
-function dispatch(action) {
+export function dispatch(action) {
     if (inputLocked) return;
     lock(lockTimeFor(action));
 

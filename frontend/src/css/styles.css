@@ -170,7 +170,7 @@ body {
     border-radius: 0.5rem 0.5rem 3.5rem 0.5rem;
     box-shadow:
     /* línea de luz fina en el borde superior */
-    0 -0.05rem 0 rgba(255, 255, 255, 0.5),
+    0 -0.05rem 0 rgba(255, 255, 255, 0.2),
     /* sombra exterior compacta y muy oscura — más estrecha abajo y derecha */
     0 0.3rem 0.5rem rgba(0, 0, 0, 0.98),
     0.2rem 0.5rem 0.8rem rgba(0, 0, 0, 0.9),
@@ -196,7 +196,7 @@ body {
                 width: 50%;
                 mix-blend-mode: multiply;
                 /* funde el logo con el fondo verde */
-                opacity: 0.8;
+                opacity: 0.65;
             }
         }
     }

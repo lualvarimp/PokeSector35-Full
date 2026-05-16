@@ -11,6 +11,7 @@
 //    · 'explorer'   — selector de explorador (◀ ▶)
 //    · 'difficulty'  — selector de dificultad (cursor)
 //    · 'sticker'    — selector de sticker (◀ ▶)
+//    · 'vibration'  — selector de vibración (◀ ▶)
 // =============================================================================
 
 import { gameState }                                      from './game-state.js';
@@ -31,7 +32,7 @@ registerHandler('color',      handleColor);
 registerHandler('explorer',   handleExplorer);
 registerHandler('difficulty', handleDifficulty);
 registerHandler('sticker',    handleSticker);
-registerHandler('vibration', handleVibration);
+registerHandler('vibration',  handleVibration);
 
 // =============================================================================
 //  VISTA: PERSONALIZAR (raíz)
@@ -165,6 +166,10 @@ function handleExplorer(action) {
 // =============================================================================
 //  VISTA: DIFICULTAD
 // =============================================================================
+function openDifficultySelector() {
+    showView('difficulty');
+}
+
 function handleDifficulty(action) {
     if (action === 'pressUp')   { moveCursorUp();   return; }
     if (action === 'pressDown') { moveCursorDown(); return; }

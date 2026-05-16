@@ -161,6 +161,9 @@ export function syncMenuVisibility() {
     const accountDelete = document.querySelector('[data-account="delete"]');
     if (accountLogout) accountLogout.classList.toggle('hidden', !hasSession);
     if (accountDelete) accountDelete.classList.toggle('hidden', !hasSession);
+    
+    const continueItem = document.getElementById('continue-item');
+    if (continueItem) continueItem.classList.toggle('hidden', !hasSession);
 }
 
 // =============================================================================

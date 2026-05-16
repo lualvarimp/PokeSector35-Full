@@ -18,8 +18,8 @@ export default function MenuScreen() {
           <li data-option="start" className="menu-item active">INICIAR PARTIDA</li>
           <li data-option="customize" className="menu-item"> PERSONALIZAR</li>
           <li data-option="pokedex" className="menu-item"> POKÉDEX</li>
-          <li data-option="account" className="menu-item"> CUENTA</li>
-          <li data-option="ranking" className="menu-item"> RANKING</li>
+          <li data-option="account" className="menu-item"> MI CUENTA</li>
+          <li data-option="ranking" className="menu-item"> CLASIFICACIÓN</li>
         </ul>
         <p className="menu-hint"><br></br><strong>A/SPACE:</strong> Elegir</p>
       </div>
@@ -29,7 +29,7 @@ export default function MenuScreen() {
         <h2>MENÚ PRINCIPAL</h2>
         <p className="menu-player-name"></p>
         <ul className="menu-list">
-          <li data-start="continue" className="menu-item active"> CONTINUAR</li>
+          <li id="continue-item" data-start="continue" className="menu-item active"> CONTINUAR</li>
           <li data-start="new-game" className="menu-item"> NUEVA PARTIDA</li>
           <li data-start="back" className="menu-item"> VOLVER</li>
         </ul>

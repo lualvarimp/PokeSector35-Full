@@ -19,6 +19,12 @@ export default function StatsScreen() {
             <p data-option="2"><span className="end-cursor">►</span> Volver al menú</p>
             <p data-option="3"><span className="end-cursor">►</span> Cerrar sesión</p>
           </nav>
+          {/* Mensaje para usuarios no registrados */}
+          <div id="goal-unregistered-message" className="goal-message hidden">
+            <p><strong>¡Crea una cuenta para guardar tu progreso!</strong></p>
+            <p>Si no tienes cuenta, tus avances no se guardarán.</p>
+          </div>
+
         </div>
       </div>
 

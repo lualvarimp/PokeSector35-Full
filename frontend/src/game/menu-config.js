@@ -37,12 +37,10 @@ export const STICKERS = [
     { label: 'CUBONE',      src: '/img/stickers/cubone.webp'     },
     { label: 'DITTO',       src: '/img/stickers/ditto.webp'      },
     { label: 'DRAGONITE',   src: '/img/stickers/dragonite.webp'  },
-    { label: 'EEVEE',       src: '/img/stickers/eevee.webp'      },
     { label: 'GENGAR',      src: '/img/stickers/gengar.webp'     },
     { label: 'GRIMER',      src: '/img/stickers/grimer.webp'     },
     { label: 'GYARADOS',    src: '/img/stickers/gyarados.webp'   },
     { label: 'IVYSAUR',     src: '/img/stickers/ivysaur.webp'    },
-    { label: 'JIGGLYPUFF',  src: '/img/stickers/jigglypuff.webp' },
     { label: 'JYNX',        src: '/img/stickers/jynx.webp'       },
     { label: 'KADABRA',     src: '/img/stickers/kadabra.webp'    },
     { label: 'LAPRAS',      src: '/img/stickers/lapras.webp'     },
@@ -53,11 +51,9 @@ export const STICKERS = [
     { label: 'NIDOQUEEN',   src: '/img/stickers/nidoqueen.webp'  },
     { label: 'PIDGEOTTO',   src: '/img/stickers/pidgeotto.webp'  },
     { label: 'PIKACHU',     src: '/img/stickers/pikachu.webp'    },
-    { label: 'PONYTA',      src: '/img/stickers/ponyta.webp'     },
     { label: 'PSYDUCK',     src: '/img/stickers/psyduck.webp'    },
     { label: 'SNORLAX',     src: '/img/stickers/snorlax.webp'    },
     { label: 'SQUIRTLE',    src: '/img/stickers/squirtle.webp'   },
-    { label: 'ZAPDOS',      src: '/img/stickers/zapdos.webp'     },
 ];
 
 export const VIBRATION_OPTIONS = [
@@ -67,34 +63,183 @@ export const VIBRATION_OPTIONS = [
 
 const MAPS = {
     facil: [
-        '',     '',     'rock', '',     '',     'wild', 'rock',
-        'wild', '',     '',     'wild', '',     'wild', '',
-        '',     'rock', '',     '',     'rock', 'wild', '',
-        'wild', '',     '',     'rock', '',     '',     'wild',
-        'rock', '',     'wild', '',     'wild', 'rock', 'goal',
+        // Mapa 1 — camino amplio central, pocas rocas
+        [
+            '',     '',     '',     '',     '',     'wild', '',
+            '',     'wild', '',     'rock', '',     '',     '',
+            'wild', '',     '',     '',     '',     'wild', '',
+            '',     '',     'rock', '',     'wild', '',     '',
+            '',     'wild', '',     '',     '',     '',     'goal',
+        ],
+        // Mapa 2 — zigzag suave, muchos espacios libres
+        [
+            '',     'wild', '',     '',     'rock', '',     '',
+            '',     '',     '',     'wild', '',     '',     'wild',
+            'rock', '',     'wild', '',     '',     '',     '',
+            '',     '',     '',     '',     'wild', 'rock', '',
+            'wild', '',     '',     'rock', '',     '',     'goal',
+        ],
+        // Mapa 3 — corredor izquierda despejado
+        [
+            '',     '',     'wild', '',     '',     'wild', 'rock',
+            '',     'rock', '',     '',     'wild', '',     '',
+            '',     '',     '',     'rock', '',     '',     'wild',
+            'wild', '',     '',     '',     '',     'rock', '',
+            '',     '',     'wild', '',     '',     '',     'goal',
+        ],
+        // Mapa 4 — pocos encuentros salvajes, fácil de atravesar
+        [
+            '',     '',     'rock', '',     '',     '',     'wild',
+            'wild', '',     '',     '',     'rock', '',     '',
+            '',     '',     'wild', '',     '',     '',     'rock',
+            '',     'rock', '',     '',     '',     'wild', '',
+            '',     '',     '',     'wild', '',     '',     'goal',
+        ],
+        // Mapa 5 — abierto, caminos amplios
+        [
+            '',     '',     '',     'wild', '',     '',     '',
+            '',     'wild', 'rock', '',     '',     'wild', '',
+            '',     '',     '',     '',     'wild', '',     'rock',
+            'rock', '',     'wild', '',     '',     '',     '',
+            '',     '',     '',     '',     'rock', '',     'goal',
+        ],
     ],
+
     normal: [
-        '',     'wild', '',     '',     'rock', 'wild', '',
-        '',     'rock', '',     'wild', '',     '',     'wild',
-        'wild', '',     'wild', '',     'rock', 'wild', '',
-        '',     'wild', 'rock', '',     'wild', '',     'wild',
-        'wild', '',     '',     'wild', '',     'rock', 'goal',
+        // Mapa 1 — equilibrado, pasillos con encuentros moderados
+        [
+            '',     'wild', '',     '',     'rock', 'wild', '',
+            '',     'rock', '',     'wild', '',     '',     'wild',
+            'wild', '',     'wild', '',     'rock', 'wild', '',
+            '',     'wild', 'rock', '',     'wild', '',     'wild',
+            'wild', '',     '',     'wild', '',     'rock', 'goal',
+        ],
+        // Mapa 2 — diagonal de rocas, zona central abierta
+        [
+            '',     '',     'rock', '',     'wild', '',     'rock',
+            'wild', '',     '',     'rock', '',     'wild', '',
+            '',     'rock', '',     '',     '',     'rock', 'wild',
+            'wild', '',     'wild', '',     'rock', '',     '',
+            '',     'wild', '',     'rock', '',     'wild', 'goal',
+        ],
+        // Mapa 3 — franjas alternadas de wild y roca
+        [
+            '',     'wild', '',     'rock', '',     'wild', '',
+            'rock', '',     'wild', '',     'wild', '',     'rock',
+            '',     '',     'rock', 'wild', '',     '',     'wild',
+            'wild', 'rock', '',     '',     'rock', '',     '',
+            '',     '',     'wild', '',     '',     'rock', 'goal',
+        ],
+        // Mapa 4 — esquinas con rocas, centro más libre
+        [
+            '',     '',     '',     'wild', '',     '',     'rock',
+            '',     'wild', '',     '',     '',     'wild', '',
+            '',     '',     'rock', '',     'rock', '',     '',
+            '',     'wild', '',     '',     '',     'wild', '',
+            'rock', '',     'wild', '',     '',     '',     'goal',
+        ],
+        // Mapa 5 — mixto, buen ritmo de juego
+        [
+            '',     'rock', '',     'wild', '',     '',     'wild',
+            'wild', '',     '',     '',     'rock', 'wild', '',
+            '',     '',     'wild', 'rock', '',     '',     '',
+            'rock', 'wild', '',     '',     'wild', '',     'rock',
+            '',     '',     'rock', 'wild', '',     '',     'goal',
+        ],
     ],
+
     dificil: [
-        '',     'wild', 'rock', 'wild', '',     'wild', 'rock',
-        'wild', 'rock', 'wild', '',     'rock', '',     'wild',
-        '',     'wild', '',     'rock', 'wild', '',     '',
-        'rock', '',     'wild', 'wild', 'rock', 'wild', 'rock',
-        'wild', 'rock', '',     'wild', 'rock', 'wild', 'goal',
+        // Mapa 1 — original rebalanceado: quitamos 2 rocas y 1 wild del final
+        [
+            '',     'wild', 'rock', 'wild', '',     'wild', 'rock',
+            'wild', 'rock', 'wild', '',     'rock', '',     'wild',
+            '',     'wild', '',     'rock', 'wild', '',     '',
+            'rock', '',     'wild', 'wild', '',     'wild', 'rock',
+            'wild', '',     '',     'wild', 'rock', 'wild', 'goal',
+        ],
+        // Mapa 2 — laberinto con pasillos estrechos
+        [
+            '',     'wild', 'rock', '',     'wild', 'rock', '',
+            'rock', '',     '',     'wild', 'rock', '',     'wild',
+            '',     'rock', 'wild', '',     '',     'wild', 'rock',
+            'wild', '',     'rock', 'wild', '',     'rock', '',
+            '',     'wild', '',     'rock', 'wild', '',     'goal',
+        ],
+        // Mapa 3 — alta densidad de wild, pocas rocas bloqueantes
+        [
+            '',     'wild', 'wild', '',     'rock', 'wild', '',
+            'wild', '',     'rock', 'wild', '',     'wild', 'rock',
+            '',     'wild', '',     '',     'wild', 'rock', 'wild',
+            'rock', 'wild', '',     'rock', 'wild', '',     'wild',
+            'wild', '',     'wild', '',     'rock', 'wild', 'goal',
+        ],
+        // Mapa 4 — columnas de obstáculos, pasillos verticales
+        [
+            '',     'rock', '',     'wild', '',     'rock', '',
+            'wild', 'rock', '',     'wild', '',     'rock', 'wild',
+            '',     '',     'wild', 'rock', 'wild', '',     '',
+            'rock', 'wild', '',     '',     'wild', 'rock', 'wild',
+            '',     'wild', 'rock', '',     'wild', '',     'goal',
+        ],
+        // Mapa 5 — alta densidad pero con ruta viable
+        [
+            '',     'wild', 'rock', 'wild', 'rock', '',     'wild',
+            'rock', '',     'wild', '',     'wild', 'rock', '',
+            'wild', 'rock', '',     'wild', '',     'wild', 'rock',
+            '',     'wild', 'rock', '',     'rock', '',     'wild',
+            'wild', '',     'wild', 'rock', '',     'wild', 'goal',
+        ],
     ],
+
     infernal: [
-        '',     'wild', 'rock', 'wild', ''    , 'wild', 'wild',
-        'wild', '',     'wild', 'rock', 'wild', 'rock', '',
-        'rock', 'wild', 'wild', 'rock', '',     'rock', 'wild',
-        'wild', 'rock', '',     'rock', 'wild', 'rock', 'wild',
-        'rock', 'wild', 'wild', 'wild', 'wild', 'rock', 'goal',
+        // Mapa 1 — original aligerado: sin bloqueos totales, siempre hay ruta
+        [
+            '',     'wild', 'rock', 'wild', '',     'wild', 'wild',
+            'wild', '',     'wild', 'rock', 'wild', '',     '',
+            'rock', 'wild', '',     'rock', '',     'rock', 'wild',
+            'wild', 'rock', '',     '',     'wild', 'rock', 'wild',
+            '',     'wild', 'wild', 'wild', '',     'wild', 'goal',
+        ],
+        // Mapa 2 — espiral de wild hacia la meta
+        [
+            '',     'wild', 'wild', 'rock', 'wild', 'wild', '',
+            'wild', 'rock', '',     'wild', '',     'rock', 'wild',
+            'wild', '',     'wild', 'rock', 'wild', '',     'wild',
+            'rock', 'wild', 'rock', '',     'wild', 'wild', '',
+            '',     'wild', '',     'wild', 'rock', 'wild', 'goal',
+        ],
+        // Mapa 3 — casi todo ocupado, pasillos de un paso
+        [
+            '',     'wild', 'rock', '',     'wild', 'rock', 'wild',
+            'wild', 'rock', 'wild', 'wild', 'rock', '',     'wild',
+            '',     '',     'wild', 'rock', '',     'wild', 'rock',
+            'wild', 'rock', '',     'wild', 'rock', 'wild', '',
+            'rock', '',     'wild', 'rock', 'wild', '',     'goal',
+        ],
+        // Mapa 4 — fortaleza central de rocas, rodeo obligatorio
+        [
+            '',     'wild', '',     'rock', '',     'wild', '',
+            'wild', 'rock', 'wild', 'rock', 'wild', 'rock', 'wild',
+            '',     '',     '',     '',     '',     '',     'wild',
+            'wild', 'rock', 'wild', 'rock', 'wild', 'rock', '',
+            '',     'wild', '',     'wild', '',     'wild', 'goal',
+        ],
+        // Mapa 5 — máxima presión pero siempre existe un camino
+        [
+            '',     'wild', 'rock', 'wild', 'rock', 'wild', '',
+            'rock', 'wild', '',     'rock', '',     'wild', 'rock',
+            'wild', '',     'wild', 'wild', 'wild', '',     'wild',
+            '',     'rock', 'wild', '',     'rock', 'wild', 'rock',
+            'wild', '',     'rock', 'wild', '',     'wild', 'goal',
+        ],
     ],
 };
+
+export function getRandomMap(difficultyId) {
+    const maps = MAPS[difficultyId];
+    if (!maps) return MAPS.normal[0];
+    return maps[Math.floor(Math.random() * maps.length)];
+}
 
 export const DIFFICULTY_CONFIG = {
     facil: {
@@ -103,7 +248,7 @@ export const DIFFICULTY_CONFIG = {
         encounterRate: 0.40,
         wildRate:      0.75,
         catchRate:     0.85,
-        map:           MAPS.facil,
+        map:           MAPS.facil[0],
     },
     normal: {
         hp:            10,
@@ -111,7 +256,7 @@ export const DIFFICULTY_CONFIG = {
         encounterRate: 0.30,
         wildRate:      0.70,
         catchRate:     0.60,
-        map:           MAPS.normal,
+        map:           MAPS.normal[0],
     },
     dificil: {
         hp:            10,
@@ -119,7 +264,7 @@ export const DIFFICULTY_CONFIG = {
         encounterRate: 0.50,
         wildRate:      0.85,
         catchRate:     0.35,
-        map:           MAPS.dificil,
+        map:           MAPS.dificil[0],
     },
     infernal: {
         hp:            10,
@@ -127,6 +272,6 @@ export const DIFFICULTY_CONFIG = {
         encounterRate: 0.70,
         wildRate:      0.95,
         catchRate:     0.20,
-        map:           MAPS.infernal,
+        map:           MAPS.infernal[0],
     },
 };

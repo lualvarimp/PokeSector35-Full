@@ -43,6 +43,7 @@ CREATE TABLE game_slots (
     explorer_name VARCHAR(30),
     color VARCHAR(7) NOT NULL,
     difficulty_id VARCHAR(20) NOT NULL,
+    sticker VARCHAR(100) NOT NULL DEFAULT '/img/stickers/nosticker.webp',
     hp INTEGER NOT NULL DEFAULT 10,
     pokeball INTEGER NOT NULL DEFAULT 20,
     position_r INTEGER NOT NULL DEFAULT 0,

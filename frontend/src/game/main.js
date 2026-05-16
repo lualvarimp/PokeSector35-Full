@@ -16,11 +16,10 @@
 
 import { gameState, sanitizeExplorerName, updateExplorerHUD } from './game-state.js';
 import { updateHUD } from './hud.js';
-import { initControls } from './controls.js';
+import { initControls, dispatch } from './controls.js';
 import { initGamepad } from './gamepad-input.js';
-import { dispatch } from './controls.js';
 import { updateGoalScreen } from './movement.js';
-import { melodySound } from './sounds.js';
+import { getRandomMelodyTrack } from './sounds.js';
 import { openGoalMenu } from './game-over.js';
 
 async function loadGame() {
@@ -125,10 +124,12 @@ async function loadGame() {
             // Los navegadores bloquean autoplay sin interacción previa del usuario.
             // Intentamos reproducir; si falla (política de autoplay), esperamos al
             // primer keydown para arrancarlo.
-            melodySound.currentTime = 0;
-            melodySound.play().catch(() => {
+            const randomMelodyTrack = getRandomMelodyTrack();
+            randomMelodyTrack.currentTime = 0;
+            gameState.currentMelody = randomMelodyTrack;
+            randomMelodyTrack.play().catch(() => {
                 const unlock = () => {
-                    melodySound.play().catch(() => {});
+                    randomMelodyTrack.play().catch(() => {});
                     window.removeEventListener('keydown', unlock);
                 };
                 window.addEventListener('keydown', unlock);
@@ -153,6 +154,8 @@ async function loadGame() {
 
     // 3. Controles
     initControls();
+
+    // 3.5 Gamepad/Joystick
     initGamepad(dispatch);
 
     // 4. HUD

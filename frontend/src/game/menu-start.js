@@ -124,7 +124,7 @@ function onContinue() {
     } else {
         showInfoMessage(
             'No tienes ninguna partida guardada.\n¿Quieres crear una cuenta para guardar tu progreso?',
-            true
+            false
         );
     }
 }

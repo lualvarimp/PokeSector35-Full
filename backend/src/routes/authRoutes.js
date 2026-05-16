@@ -1,6 +1,7 @@
 import express from 'express';
 import { register, login, loginGame, refresh, logout } from '../controllers/authController.js';
 import { validateRegister, validateLogin } from '../validations/index.js';
+import { rateLimitLogin, rateLimitRegister } from '../middlewares/rateLimitMiddleware.js';
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ const router = express.Router();
  * /api/auth/register:
  *   post:
  *     summary: Registrar nuevo usuario
- *     description: Crea una nueva cuenta de usuario. Username debe ser único y entre 3-15 caracteres. Password mínimo 6 caracteres.
+ *     description: Crea una nueva cuenta de usuario. Username debe ser único y entre 3-15 caracteres. Password mínimo 6 caracteres. Protegido contra spam con rate limiting.
  *     tags:
  *       - Autenticación
  *     requestBody:
@@ -46,16 +47,24 @@ const router = express.Router();
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               error: "Usuario ya existe"
+ *       429:
+ *         description: Demasiados intentos. Bloqueado temporalmente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               error: "Demasiados intentos de registro. Intenta de nuevo en 3 horas."
  *     security: []
  */
-router.post('/register', validateRegister, register);
+router.post('/register', rateLimitRegister, validateRegister, register);
 
 /**
  * @swagger
  * /api/auth/login:
  *   post:
  *     summary: Iniciar sesión (SOLO para administradores)
- *     description: Autentica un usuario y devuelve tokens JWT. RESTRICCION - Solo usuarios con rol admin pueden loguear. Los usuarios con rol user recibiran error 403.
+ *     description: Autentica un usuario y devuelve tokens JWT. RESTRICCION - Solo usuarios con rol admin pueden loguear. Los usuarios con rol user recibiran error 403. Protegido contra fuerza bruta con rate limiting.
  *     tags:
  *       - Autenticación
  *     requestBody:
@@ -97,15 +106,24 @@ router.post('/register', validateRegister, register);
  *               $ref: '#/components/schemas/Error'
  *             example:
  *               error: "Solo administradores pueden acceder a este panel"
+ *       429:
+ *         description: Demasiados intentos fallidos. Bloqueado temporalmente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               error: "Demasiados intentos fallidos. Intenta de nuevo en 15 minutos."
  *     security: []
  */
-router.post('/login', validateLogin, login);
+router.post('/login', rateLimitLogin, validateLogin, login);
 
 /**
  * @swagger
  * /api/auth/login-game:
  *   post:
  *     summary: Iniciar sesión (jugadores del juego, cualquier rol)
+ *     description: Autentica un usuario jugador y devuelve tokens JWT. Protegido contra fuerza bruta.
  *     tags:
  *       - Autenticación
  *     requestBody:
@@ -124,10 +142,12 @@ router.post('/login', validateLogin, login);
  *       200:
  *         description: Login exitoso
  *       401:
- *         description: Credenciales incorrectas
+ *         description: Credenciales incorrectas. Incluye número de intentos restantes.
+ *       429:
+ *         description: Demasiados intentos fallidos. Bloqueado por 15 minutos.
  *     security: []
  */
-router.post('/login-game', validateLogin, loginGame);
+router.post('/login-game', rateLimitLogin, validateLogin, loginGame);
 
 /**
  * @swagger

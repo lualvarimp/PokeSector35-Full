@@ -10,6 +10,7 @@
     .menu-color,
     .menu-explorer,
     .menu-difficulty,
+    .menu-vibration,
     .menu-ranking,
     .menu-pokedex,
     .menu-account,
@@ -108,10 +109,28 @@
             padding: 2rem 1rem;
             text-align: left;
         }
-
-
-
     }
+
+    .menu-vibration {
+        text-align: center;
+
+        .menu-preview-vibration {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .menu-hint {
+            padding: 0;
+        }
+
+        p:last-of-type {
+            padding: 2rem 1rem;
+            text-align: left;
+        }
+    }
+
+
+
 
     .menu-color {
         .menu-preview-color {

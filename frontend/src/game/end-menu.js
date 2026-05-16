@@ -117,6 +117,12 @@ export function openGoalMenu() {
     const logoutOptionGoal = document.querySelector('#goal-menu [data-option="3"]');
     if (logoutOptionGoal) logoutOptionGoal.style.display = api.isLoggedIn() ? '' : 'none';
 
+    // AGREGAR ESTO:
+    const messageUnregistered = document.getElementById('goal-unregistered-message');
+    if (messageUnregistered) {
+        messageUnregistered.classList.toggle('hidden', api.isLoggedIn());
+    }
+
     endMenuActive  = true;
     endMenuContext = 'goal';
     setEndMenuCursor('goal-menu', 0);

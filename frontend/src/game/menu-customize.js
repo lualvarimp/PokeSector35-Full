@@ -246,6 +246,7 @@ function handleSticker(action) {
         const stickerImg = document.querySelector('.sticker img');
         if (stickerImg) stickerImg.src = chosen.src;
         localStorage.setItem('pokesector_sticker', chosen.src);
+        localStorage.setItem('pokesector_sticker_pending', 'true');
         showView('customize');
     }
 }

@@ -17,8 +17,8 @@
 // =============================================================================
 
 import { gameState, saveGame, sanitizeExplorerName, updateExplorerHUD } from './game-state.js';
-import { melodySound }                      from './sounds.js';
-import { EXPLORERS, DIFFICULTY_CONFIG }      from './menu-config.js';
+import { getRandomMelodyTrack }                      from './sounds.js';
+import { EXPLORERS, DIFFICULTY_CONFIG, STICKERS, getRandomMap } from './menu-config.js';
 import * as api                              from '../services/apiService.js';
 import {
     showView, moveCursorUp, moveCursorDown, playClick,
@@ -261,10 +261,13 @@ async function restoreFromSlot(slot) {
     const savedExplorer  = localStorage.getItem('pokesector_explorer');
     const colorPending   = localStorage.getItem('pokesector_color_pending');
     const savedColor     = colorPending ? localStorage.getItem('pokesector_color') : null;
+    const stickerPending = localStorage.getItem('pokesector_sticker_pending');
+    const savedSticker   = stickerPending ? localStorage.getItem('pokesector_sticker') : null;
 
     const diffId   = savedDiffRaw ? JSON.parse(savedDiffRaw).id : slot.difficulty_id;
     const explorer = savedExplorer || slot.explorer;
     const color    = savedColor    || slot.color;
+    const sticker  = savedSticker  || slot.sticker;
 
     gameState.difficultyId = diffId;
     gameState.explorer     = explorer;
@@ -276,18 +279,25 @@ async function restoreFromSlot(slot) {
     document.documentElement.style.setProperty('--gameboy', color);
     localStorage.setItem('pokesector_color', color);
 
+    // Cargar sticker
+    const stickerImg = document.querySelector('.sticker img');
+    if (stickerImg) stickerImg.src = sticker;
+    localStorage.setItem('pokesector_sticker', sticker);
+
     // Guardar personalización en BD y limpiar bandeja
-    const hasLocalChanges = savedDiffRaw || savedExplorer || colorPending;
+    const hasLocalChanges = savedDiffRaw || savedExplorer || colorPending || stickerPending;
     if (hasLocalChanges && api.isLoggedIn()) {
         api.updateSlot(slot.slot_number, {
             difficulty_id: diffId,
             explorer:      explorer,
             color:         color,
+            sticker:       sticker,
         }).catch(e => console.warn('No se pudo actualizar personalización en BD:', e.message));
 
         localStorage.removeItem('pokesector_difficulty');
         localStorage.removeItem('pokesector_explorer');
         localStorage.removeItem('pokesector_color_pending');
+        localStorage.removeItem('pokesector_sticker_pending');
     }
 
     // Apply difficulty config
@@ -299,7 +309,6 @@ async function restoreFromSlot(slot) {
             wildRate:      fullConfig.wildRate,
             catchRate:     fullConfig.catchRate,
         };
-        applyMap(fullConfig.map);
     }
 
     // Apply explorer
@@ -314,25 +323,33 @@ async function restoreFromSlot(slot) {
         document.documentElement.style.setProperty('--gameboy', color);
     }
 
-    // Move player to correct position
-    const player    = document.getElementById('player');
+    // Move player to correct position + apply map once gameScreen is visible
+    const player = document.getElementById('player');
     const posR = slot.is_goal ? 0 : slot.position_r;
     const posC = slot.is_goal ? 0 : slot.position_c;
-    const targetCell = document.querySelector(`div[data-r="${posR}"][data-c="${posC}"]`);
-    if (player && targetCell) {
-        targetCell.appendChild(player);
-    }
+
+    const gameScreen = document.querySelector('.game-screen');
+    if (gameScreen) gameScreen.classList.remove('hidden');
+
+    requestAnimationFrame(() => {
+        applyMap(getRandomMap(diffId));
+        const targetCell = document.querySelector(`div[data-r="${posR}"][data-c="${posC}"]`);
+        if (player && targetCell) {
+            targetCell.appendChild(player);
+            gameState.currentPosition = { r: posR, c: posC };
+        }
+    });
 
     updateExplorerHUD();
 
     // Transition to game screen
     const menuScreen = document.querySelector('.menu-screen');
-    const gameScreen = document.querySelector('.game-screen');
     if (menuScreen) menuScreen.classList.add('hidden');
-    if (gameScreen) gameScreen.classList.remove('hidden');
 
-    melodySound.currentTime = 0;
-    melodySound.play().catch(() => {});
+    const randomMelodyTrack = getRandomMelodyTrack();
+    randomMelodyTrack.currentTime = 0;
+    randomMelodyTrack.play().catch(() => {});
+    gameState.currentMelody = randomMelodyTrack;
 
     setMenuActive(false);
     gameState.isIntro = false;
@@ -379,29 +396,31 @@ async function startGame(slotNumber) {
     const diffRaw       = localStorage.getItem('pokesector_difficulty');
     const savedExplorer = localStorage.getItem('pokesector_explorer');
     const savedColor    = localStorage.getItem('pokesector_color');
+    const savedSticker  = localStorage.getItem('pokesector_sticker');
 
     // ── Dificultad ────────────────────────────────────────────────────────
     if (diffRaw) {
         const diff       = JSON.parse(diffRaw);
         const fullConfig = DIFFICULTY_CONFIG[diff.id];
 
-        gameState.hp           = fullConfig ? fullConfig.hp       : DIFFICULTY_CONFIG.normal.hp;
-        gameState.pokeball     = fullConfig ? fullConfig.pokeballs : DIFFICULTY_CONFIG.normal.pokeballs;
-        gameState.difficultyId = diff.id;
-        gameState.difficulty   = {
-            id:            diff.id,
-            encounterRate: fullConfig ? fullConfig.encounterRate : DIFFICULTY_CONFIG.normal.encounterRate,
-            wildRate:      fullConfig ? fullConfig.wildRate      : DIFFICULTY_CONFIG.normal.wildRate,
-            catchRate:     fullConfig ? fullConfig.catchRate     : DIFFICULTY_CONFIG.normal.catchRate,
-        };
-        if (fullConfig) applyMap(fullConfig.map);
+        if (fullConfig) {
+            gameState.hp           = fullConfig.hp;
+            gameState.pokeball     = fullConfig.pokeballs;
+            gameState.difficultyId = diff.id;
+            gameState.difficulty   = {
+                id:            diff.id,
+                encounterRate: fullConfig.encounterRate,
+                wildRate:      fullConfig.wildRate,
+                catchRate:     fullConfig.catchRate,
+            };
+        }
     } else {
-        const def            = DIFFICULTY_CONFIG.normal;
+        const currentDiffId = gameState.difficultyId || 'normal';
+        const def           = DIFFICULTY_CONFIG[currentDiffId] || DIFFICULTY_CONFIG.normal;
         gameState.hp         = def.hp;
         gameState.pokeball   = def.pokeballs;
-        gameState.difficultyId = 'normal';
-        gameState.difficulty = { id: 'normal', encounterRate: def.encounterRate, wildRate: def.wildRate, catchRate: def.catchRate };
-        applyMap(def.map);
+        gameState.difficultyId = currentDiffId;
+        gameState.difficulty = { id: currentDiffId, encounterRate: def.encounterRate, wildRate: def.wildRate, catchRate: def.catchRate };
     }
 
     // ── Explorador ────────────────────────────────────────────────────────
@@ -418,6 +437,12 @@ async function startGame(slotNumber) {
     if (savedColor) {
         document.documentElement.style.setProperty('--gameboy', savedColor);
         gameState.color = savedColor;
+    }
+
+    // ── Sticker ───────────────────────────────────────────────────────────
+    if (savedSticker) {
+        const stickerImg = document.querySelector('.sticker img');
+        if (stickerImg) stickerImg.src = savedSticker;
     }
 
     // ── Slot para usuarios registrados ────────────────────────────────────
@@ -437,6 +462,7 @@ async function startGame(slotNumber) {
                 explorer_name: gameState.playerName,
                 color:         gameState.color || '#019273',
                 difficulty_id: gameState.difficultyId || 'normal',
+                sticker:       savedSticker || '/img/stickers/nosticker.webp',
             });
             gameState.slotDbId = newSlot.id;
         } catch (e) {
@@ -456,11 +482,23 @@ async function startGame(slotNumber) {
     if (menuScreen) menuScreen.classList.add('hidden');
     if (gameScreen) gameScreen.classList.remove('hidden');
 
-    melodySound.currentTime = 0;
-    melodySound.play().catch(() => {});
+    requestAnimationFrame(() => {
+        const mapToApply = getRandomMap(gameState.difficultyId || 'normal');
+        applyMap(mapToApply);
+        const player = document.getElementById('player');
+        const startCell = document.querySelector('div[data-r="0"][data-c="0"]');
+        if (player && startCell) {
+            startCell.appendChild(player);
+            gameState.currentPosition = { r: 0, c: 0 };
+        }
+    });
+
+    const randomMelodyTrack = getRandomMelodyTrack();
+    randomMelodyTrack.currentTime = 0;
+    randomMelodyTrack.play().catch(() => {});
+    gameState.currentMelody = randomMelodyTrack;
 
     setMenuActive(false);
-    gameState.isIntro = false;
 
     // Reset game state for new game
     gameState.pokemonCaptured = [];
@@ -488,13 +526,6 @@ function applyMap(mapData) {
             cell.classList.remove('rock', 'wild', 'goal');
             if (clase) cell.classList.add(clase);
         }
-    }
-
-    const player    = document.getElementById('player');
-    const startCell = document.querySelector('div[data-r="0"][data-c="0"]');
-    if (player && startCell) {
-        startCell.appendChild(player);
-        gameState.currentPosition = { r: 0, c: 0 };
     }
 }
 

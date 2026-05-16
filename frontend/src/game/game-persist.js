@@ -105,7 +105,9 @@ export function resetGameData() {
     localStorage.removeItem('pokesector_replay');
     localStorage.removeItem('pokesector_difficulty');
     localStorage.removeItem('pokesector_explorer');
+    localStorage.removeItem('pokesector_sticker_pending');
     // NO borramos pokesector_color: el color elegido persiste entre partidas
+    // NO borramos pokesector_sticker: el sticker elegido persiste entre partidas
     gameState.pokemonCaptured = [];
     gameState.pokemonEscaped  = [];
     gameState.statsScroll     = 0;
@@ -127,6 +129,8 @@ export function eraseAllData() {
     localStorage.removeItem('pokesector_difficulty');
     localStorage.removeItem('pokesector_explorer');
     localStorage.removeItem('pokesector_color');
+    localStorage.removeItem('pokesector_sticker');
+    localStorage.removeItem('pokesector_sticker_pending');
     gameState.playerName      = 'Ash';
     gameState.pokemonCaptured = [];
     gameState.pokemonEscaped  = [];

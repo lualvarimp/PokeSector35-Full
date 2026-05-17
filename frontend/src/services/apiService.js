@@ -33,7 +33,7 @@ export { getRanking, getRankingByPercentage, createRanking } from './api/ranking
 export { createReplay, getReplay } from './api/replays.js';
 
 // ── Usuario ──────────────────────────────────────────────────────────────────
-export { deleteAccount } from './api/users.js';
+export { getUserStats, deleteAccount } from './api/users.js';
 
 // ── Volcado de fin de partida ────────────────────────────────────────────────
 export { saveGameToBackend } from './api/save.js';

@@ -24,6 +24,7 @@ import {
     showView, moveCursorUp, moveCursorDown, playClick,
     setMenuActive, setCursorIndex, getCursorIndex, updateCursor,
     syncMenuVisibility, registerHandler, showMenu, showInfoMessage,
+    showAlert, showConfirm,
 } from './menu-nav.js';
 
 // Almacena los slots cargados del backend para usarlos al seleccionar
@@ -73,24 +74,25 @@ function onNewGame() {
 }
 
 // ── CONFIRMACIÓN NUEVA PARTIDA ───────────────────────────────────────────────
-async function confirmNewGame(slotNumber, slotOccupied = false) {
+function confirmNewGame(slotNumber, slotOccupied = false) {
     if (slotOccupied) {
-        const aviso1 = confirm(
-            'NUEVA PARTIDA\n' +
-            'Esta acción borrará TODOS los datos de este slot:\n' +
-            '  · Progreso actual, estadísticas y pokédex\n' +
-            '¿Quieres continuar?'
+        showConfirm(
+            'NUEVA PARTIDA\n\nSe borrarán los datos de este slot:\n Progreso, Pokédex y estadísticas.\n¿Quieres continuar?',
+            () => confirmNewGame2(slotNumber)
         );
-        if (!aviso1) return;
-
-        const aviso2 = confirm(
-            '¿ESTÁS SEGURO/A?\n' +
-            'Los datos del slot se perderán\n' +
-            '¿Confirmas que quieres empezar de nuevo?'
-        );
-        if (!aviso2) return;
+    } else {
+        confirmNewGame2(slotNumber);
     }
+}
 
+function confirmNewGame2(slotNumber) {
+    showConfirm(
+        '¿ESTÁS SEGURO/A?\nLos datos guardados del slot se va a sobrescribir.\n¿Confirmas?',
+        () => confirmNewGame3(slotNumber)
+    );
+}
+
+function confirmNewGame3(slotNumber) {
     if (api.isLoggedIn()) {
         const explorerInput = prompt(
             'NOMBRE DE TU EXPLORADOR\n(Máx. 12 caracteres)',
@@ -208,7 +210,7 @@ function handleSlots(action) {
             if (existingSlot) {
                 restoreFromSlot(existingSlot);
             } else {
-                alert('No hay partida guardada en este slot.');
+                showAlert('No hay partida guardada en este slot.', 'slots');
             }
         }
     }

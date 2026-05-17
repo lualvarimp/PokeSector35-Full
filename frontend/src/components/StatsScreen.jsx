@@ -3,10 +3,31 @@
 // =============================================================================
 //  Incluye la goal-screen (meta), la results-screen (resultados de partida)
 //  y la stats-screen (estadísticas globales y Pokédex).
-//  La lógica la gestiona stats.js y stats-pokedex.js.
+//  La lógica de navegación la gestiona stats.js (Vanilla JS).
+//
+//  Hooks utilizados:
+//  · useState:  almacena los datos de stats del usuario y el estado de carga
+//  · useEffect: llama a la API al montar el componente si hay sesión activa
 // =============================================================================
 
+import { useState, useEffect } from 'react';
+import { isLoggedIn, getUserStats } from '../services/apiService.js';
+
 export default function StatsScreen() {
+  const [stats, setStats]     = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState(null);
+
+  useEffect(() => {
+    if (!isLoggedIn()) return;
+
+    setLoading(true);
+    getUserStats()
+      .then(data => setStats(data))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <>
       {/* Pantalla de meta — aparece al llegar al objetivo */}
@@ -19,12 +40,10 @@ export default function StatsScreen() {
             <p data-option="2"><span className="end-cursor">►</span> Volver al menú</p>
             <p data-option="3"><span className="end-cursor">►</span> Cerrar sesión</p>
           </nav>
-          {/* Mensaje para usuarios no registrados */}
           <div id="goal-unregistered-message" className="goal-message hidden">
             <p><strong>¡Crea una cuenta para guardar tu progreso!</strong></p>
             <p>Si no tienes cuenta, tus avances no se guardarán.</p>
           </div>
-
         </div>
       </div>
 
@@ -33,11 +52,36 @@ export default function StatsScreen() {
         <h2>Resultados</h2>
         <div className="results-viewport">
           <div className="results-list">
-            
             <div id="results-text"></div>
           </div>
         </div>
         <p className="results-back"><strong>B/ESC:</strong> Volver</p>
+      </div>
+
+      {/* Pantalla de estadísticas globales */}
+      <div className="stats-screen hidden">
+        <h2>ESTADÍSTICAS</h2>
+
+        {loading && <p className="stats-loading">Cargando...</p>}
+        {error   && <p className="stats-error">Sin datos de sesión</p>}
+
+        {stats && (
+          <div className="stats-global">
+            <p><strong>Jugador:</strong> {stats.username}</p>
+            <p><strong>Partidas jugadas:</strong> {stats.total_games}</p>
+            <p><strong>Pokémon capturados:</strong> {stats.total_captured}</p>
+            <p><strong>Pokémon perdidos:</strong> {stats.total_escaped}</p>
+            <p><strong>Pokémon únicos:</strong> {stats.unique_pokemon}</p>
+          </div>
+        )}
+
+        <div className="stats-list">
+          <div className="game-list"></div>
+        </div>
+
+        <p className="info-stats"><strong>A/SPACE:</strong> Pokédex</p>
+        <p className="info-stats"><strong>B/ESC:</strong> Borrar datos</p>
+        <p className="info-stats"><strong>SELECT:</strong> Volver a meta</p>
       </div>
     </>
   );

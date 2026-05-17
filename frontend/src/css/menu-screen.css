@@ -129,7 +129,33 @@
         }
     }
 
+    .menu-confirm {
+        .menu-confirm-text {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--black-screen);
 
+            strong {
+                display: block;
+                width: fit-content;
+                margin: 1rem auto 0rem;
+                padding: 0.5rem 1.5rem;
+                font-size: 1rem;
+                text-align: center;
+                color: var(--white);
+                mix-blend-mode: multiply;
+            }
+        }
+
+        p:not(.menu-confirm-text) {
+            margin-top: 2.5rem;
+        }
+
+        p:nth-of-type(3):not(.menu-confirm-text) {
+            display: inline-block;
+            margin-top: 0;
+        }
+    }
 
 
     .menu-color {

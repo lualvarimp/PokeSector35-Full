@@ -246,3 +246,104 @@ export function showInfoMessage(text, showContinueOption) {
 
     showView('info');
 }
+// =============================================================================
+//  SHOW ALERT — Sustituye a window.alert()
+// =============================================================================
+// Muestra un mensaje informativo dentro de la consola.
+// El jugador lo cierra con A/SPACE o B/ESC.
+// backView: vista a la que volver al cerrar (por defecto 'main')
+let _alertBackView = 'main';
+let _alertCallback = null;
+
+export function showAlert(text, backView = 'main', callback = null) {
+    _alertBackView = backView;
+    _alertCallback = callback;
+
+    const confirmText = document.querySelector('.menu-confirm-text');
+    const menuConfirm = document.querySelector('.menu-confirm');
+    if (!confirmText || !menuConfirm) return;
+
+    confirmText.innerHTML = text;
+
+    // Ocultar instrucciones de confirmación y mostrar solo "Continuar"
+    menuConfirm.querySelectorAll('p:not(.menu-confirm-text)').forEach(p => p.classList.add('hidden'));
+
+    let okHint = document.getElementById('alert-ok-hint');
+    if (!okHint) {
+        okHint    = document.createElement('p');
+        okHint.id = 'alert-ok-hint';
+        menuConfirm.appendChild(okHint);
+    }
+    okHint.innerHTML = '<strong>A/SPACE</strong> o <strong>B/ESC:</strong> Continuar';
+    okHint.classList.remove('hidden');
+
+    menuConfirm.dataset.mode = 'alert';
+    showView('confirm');
+}
+
+// =============================================================================
+//  SHOW CONFIRM — Sustituye a window.confirm()
+// =============================================================================
+// Muestra una pregunta de confirmación dentro de la consola.
+// onConfirm: callback que se ejecuta si el jugador pulsa A/SPACE
+// onCancel:  callback que se ejecuta si el jugador pulsa B/ESC (opcional)
+let _confirmCallback = null;
+let _cancelCallback  = null;
+
+export function showConfirm(text, onConfirm, onCancel = null) {
+    _confirmCallback = onConfirm;
+    _cancelCallback  = onCancel;
+
+    const confirmText = document.querySelector('.menu-confirm-text');
+    const menuConfirm = document.querySelector('.menu-confirm');
+    if (!confirmText || !menuConfirm) return;
+
+    confirmText.innerHTML = text;
+
+    // Restaurar instrucciones de confirmación
+    menuConfirm.querySelectorAll('p:not(.menu-confirm-text)').forEach(p => p.classList.remove('hidden'));
+
+    const okHint = document.getElementById('alert-ok-hint');
+    if (okHint) okHint.classList.add('hidden');
+
+    menuConfirm.dataset.mode = 'confirm';
+    showView('confirm');
+}
+
+// Handler para la vista 'confirm' — gestiona A/B según el modo
+registerHandler('confirm', function handleConfirm(action) {
+    const menuConfirm = document.querySelector('.menu-confirm');
+    const mode = menuConfirm?.dataset.mode || 'alert';
+
+    if (action === 'pressA') {
+        playClick();
+        if (mode === 'alert') {
+            const cb = _alertCallback;
+            _alertCallback = null;
+            showView(_alertBackView);
+            if (cb) cb();
+        } else {
+            const cb = _confirmCallback;
+            _confirmCallback = null;
+            _cancelCallback  = null;
+            showView('main');
+            if (cb) cb();
+        }
+    }
+
+    if (action === 'pressB') {
+        playClick();
+        if (mode === 'alert') {
+            const cb = _alertCallback;
+            _alertCallback = null;
+            showView(_alertBackView);
+            if (cb) cb();
+        } else {
+            const cb = _cancelCallback;
+            _confirmCallback = null;
+            _cancelCallback  = null;
+            showView('main');
+            if (cb) cb();
+        }
+    }
+});

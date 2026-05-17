@@ -2,8 +2,7 @@
 //  menu-account.js — Cuenta: registro, login, logout, borrar cuenta
 // =============================================================================
 //  RESPONSABILIDAD: Gestionar toda la lógica de cuenta del usuario:
-//  registro, login, logout y borrado de cuenta. Incluye los prompts
-//  y alerts de interacción con el usuario.
+//  registro, login, logout y borrado de cuenta.
 //
 //  REGISTRA HANDLERS PARA:
 //    · 'account' — vista de gestión de cuenta
@@ -14,6 +13,7 @@ import * as api from '../services/apiService.js';
 import {
     showView, moveCursorUp, moveCursorDown, playClick,
     getCursorIndex, syncMenuVisibility, registerHandler,
+    showAlert, showConfirm,
 } from './menu-nav.js';
 
 // ── Registrar handler ────────────────────────────────────────────────────────
@@ -49,39 +49,40 @@ function handleAccount(action) {
 //  REGISTRO
 // =============================================================================
 async function doRegister() {
-    let explorer = prompt('TU NOMBRE DE EXPLORADOR\n(Máx. 12 caracteres. Aparecerá en el juego)', 'Ash');
+    let explorer = prompt('NOMBRE DE EXPLORADOR\n(Máx. 12 caracteres. Aparecerá en el juego)', 'Ash');
     if (explorer === null) return;
     if (explorer.trim() === '') explorer = 'Ash';
     explorer = explorer.trim().substring(0, 12);
 
-    let username = prompt('TU NOMBRE/ID DE USUARIO\n(Único, 3-15 caracteres)', '');
+    let username = prompt('ID (NOMBRE) DE USUARIO\n(Único, 3-15 caracteres)', '');
     if (!username || username.trim() === '') return;
     username = username.trim().substring(0, 15);
 
-    let password = prompt('TU CONTRASEÑA DE USUARIO\n(Mínimo 6 caracteres)', '');
+    let password = prompt('CONTRASEÑA\n(Mínimo 6 caracteres)', '');
     if (!password || password.trim() === '') return;
 
     let password2 = prompt('REPITE LA CONTRASEÑA', '');
     if (password2 === null) return;
     if (password !== password2) {
-        alert('Las contraseñas no coinciden.\nVuelve a intentarlo.');
+        showAlert('Las contraseñas no coinciden.\nVuelve a intentarlo.', 'account');
         return;
     }
 
     try {
         await api.register(username, password);
-        alert(`¡Bienvenido/a, ${explorer}!\n\n¡Gracias por registrarte en PokéSector 35!\nKanto te necesita...\n\n¡Buena suerte, explorador/a!`);
 
         gameState.playerName = sanitizeExplorerName(explorer);
         localStorage.setItem('pokesector_explorer_name', gameState.playerName);
-
         updateExplorerHUD();
-
         saveGame();
         syncMenuVisibility();
-        showView('main');
+
+        showAlert(
+            '¡Bienvenido/a, ' + explorer + '!\n¡Gracias por registrarte!\nKanto te necesita...\n¡Buena suerte!',
+            'main'
+        );
     } catch (error) {
-        alert('Error al registrar: ' + error.message);
+        showAlert('<strong>ERROR</strong><br>al registrar: ' + error.message, 'account');
     }
 }
 
@@ -89,17 +90,15 @@ async function doRegister() {
 //  LOGIN
 // =============================================================================
 async function doLogin() {
-    let username = prompt('Nombre de usuario:', '');
+    let username = prompt('ID (NOMBRE) DE USUARIO', '');
     if (!username || username.trim() === '') return;
 
-    let password = prompt('Contraseña:', '');
+    let password = prompt('CONTRASEÑA:', '');
     if (!password || password.trim() === '') return;
 
     try {
         await api.login(username, password);
-        alert(`¡Bienvenido de vuelta, ${username}!`);
 
-        // Cargar el explorer_name desde la BD (slot más reciente)
         let explorerName = '';
         try {
             const slots = await api.getSlots();
@@ -107,23 +106,20 @@ async function doLogin() {
                 const sorted = slots.sort((a, b) => b.slot_number - a.slot_number);
                 explorerName = sorted.find(s => s.explorer_name)?.explorer_name || '';
             }
-        } catch (e) {
-            // Si falla la llamada, usar el localStorage como fallback
-        }
+        } catch (e) {}
 
-        // Fallback: localStorage (por si no hay slots todavía)
         if (!explorerName) {
             explorerName = localStorage.getItem('pokesector_explorer_name') || '';
         }
 
         gameState.playerName = sanitizeExplorerName(explorerName);
         localStorage.setItem('pokesector_explorer_name', gameState.playerName);
-
         updateExplorerHUD();
         syncMenuVisibility();
-        showView('main');
+
+        showAlert('¡Bienvenido/a de vuelta, ' + username + '!', 'main');
     } catch (error) {
-        alert('Error: ' + error.message);
+        showAlert('<strong>ERROR</strong><br>' + error.message, 'account');
     }
 }
 
@@ -146,28 +142,21 @@ export function onLogout() {
 // =============================================================================
 //  BORRAR CUENTA
 // =============================================================================
-async function askDeleteConfirm() {
-    const aviso1 = confirm(
-        '⚠️ BORRAR CUENTA\n\n' +
-        'Estás a punto de borrar tu cuenta permanentemente.\n\n' +
-        'Se eliminarán:\n' +
-        '  · Tu cuenta de usuario\n' +
-        '  · Todos tus slots de partida\n' +
-        '  · Tu Pokédex completa\n' +
-        '  · Tu historial de ranking\n\n' +
-        'Esta acción NO se puede deshacer.\n\n' +
-        '¿Quieres continuar?'
+function askDeleteConfirm() {
+    showConfirm(
+        'BORRAR CUENTA\n\nSe eliminarán tu cuenta, slots, Pokédex y ranking.\n¿Quieres continuar?',
+        () => askDeleteConfirm2()
     );
-    if (!aviso1) return;
+}
 
-    const aviso2 = confirm(
-        '🚨 ÚLTIMA ADVERTENCIA\n\n' +
-        'Si confirmas, todos tus datos desaparecerán para siempre.\n' +
-        'No habrá forma de recuperarlos.\n\n' +
-        '¿Estás completamente seguro/a de que quieres borrar tu cuenta?'
+function askDeleteConfirm2() {
+    showConfirm(
+        'ÚLTIMA ADVERTENCIA\n\nTodos tus datos desaparecerán.\n¿Estás seguro/a?',
+        () => doDeleteAccount()
     );
-    if (!aviso2) return;
+}
 
+async function doDeleteAccount() {
     try {
         await api.deleteAccount();
     } catch (e) {
@@ -180,11 +169,10 @@ async function askDeleteConfirm() {
     localStorage.removeItem('pokesector_explorer_name');
     api.logout();
 
-    gameState.playerName  = '';
-    gameState.slotNumber  = null;
-    gameState.slotDbId    = null;
+    gameState.playerName = '';
+    gameState.slotNumber = null;
+    gameState.slotDbId   = null;
 
-    alert('Tu cuenta y todos tus datos han sido eliminados.');
     syncMenuVisibility();
-    showView('main');
+    showAlert('Tu cuenta y todos tus datos han sido eliminados.', 'main');
 }

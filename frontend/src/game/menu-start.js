@@ -543,5 +543,17 @@ export async function restartFromEndScreen() {
     gameState.isResultsOpen = false;
     gameState.statsScroll   = 0;
 
+    // Restaurar slotPokedex desde la BD para preservar la pokédex del slot
+    // Esto es necesario porque startGame(isRestart=true) no recarga desde BD
+    if (api.isLoggedIn() && gameState.slotDbId) {
+        try {
+            const savedPokemon = await api.getPokedex(gameState.slotDbId);
+            gameState.slotPokedex = savedPokemon.map(p => ({ id: p.pokemon_id, name: p.pokemon_name }));
+        } catch (e) {
+            console.warn('Error restaurando pokédex en restart:', e.message);
+            gameState.slotPokedex = [];
+        }
+    }
+
     await startGame(slotNumber, true);
 }

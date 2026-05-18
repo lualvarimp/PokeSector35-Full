@@ -1,6 +1,5 @@
-// =============================================================================
 //  menu-start.js — Flujo de inicio de partida
-// =============================================================================
+
 //  RESPONSABILIDAD: Gestionar todo el flujo de iniciar y continuar partidas:
 //  selección de slot, confirmación de nueva partida, restauración desde la BD,
 //  aplicación de personalización, transición al mapa, y reinicio desde
@@ -14,7 +13,6 @@
 //    · 'start' — vista continuar/nueva partida
 //    · 'slots' — vista selección de slot
 //    · 'info'  — vista de mensaje informativo
-// =============================================================================
 
 import { gameState, saveGame, sanitizeExplorerName, updateExplorerHUD } from './game-state.js';
 import { getRandomMelodyTrack }                      from './sounds.js';
@@ -35,9 +33,8 @@ registerHandler('start', handleStart);
 registerHandler('slots', handleSlots);
 registerHandler('info',  handleInfo);
 
-// =============================================================================
 //  INICIAR PARTIDA → pantalla intermedia nueva partida / continuar
-// =============================================================================
+
 export function onStart() {
     showView('start');
 }
@@ -131,9 +128,8 @@ function onContinue() {
     }
 }
 
-// =============================================================================
 //  VISTA: SLOTS — carga real desde backend
-// =============================================================================
+
 async function renderSlots(mode) {
     const list = document.querySelector('.menu-slots .menu-list');
     if (!list) return;
@@ -216,9 +212,8 @@ function handleSlots(action) {
     }
 }
 
-// =============================================================================
 //  RESTORE FROM SLOT — Restaurar partida desde la BD
-// =============================================================================
+
 async function restoreFromSlot(slot) {
     const originalName = slot.explorer_name;
     slot.explorer_name = sanitizeExplorerName(slot.explorer_name);
@@ -361,9 +356,7 @@ async function restoreFromSlot(slot) {
     saveGame();
 }
 
-// =============================================================================
 //  VISTA: INFO — handler para las opciones de la pantalla informativa
-// =============================================================================
 
 function handleInfo(action) {
     if (action === 'pressUp')   { moveCursorUp();   return; }
@@ -386,10 +379,9 @@ function handleInfo(action) {
     }
 }
 
-// =============================================================================
 //  START GAME — Inicia una partida nueva
-// =============================================================================
-async function startGame(slotNumber) {
+
+async function startGame(slotNumber, isRestart = false) {
     if (!api.isLoggedIn()) {
         gameState.playerName = 'Ash';
         updateExplorerHUD();
@@ -454,19 +446,21 @@ async function startGame(slotNumber) {
 
         try {
             const existingSlot = loadedSlots.find(s => s.slot_number === slotNumber);
-            if (existingSlot) {
+            if (existingSlot && !isRestart) {
                 await api.deleteSlot(slotNumber);
             }
 
-            const newSlot = await api.createSlot({
-                slot_number:   slotNumber,
-                explorer:      gameState.explorer || 'boy',
-                explorer_name: gameState.playerName,
-                color:         gameState.color || '#019273',
-                difficulty_id: gameState.difficultyId || 'normal',
-                sticker:       savedSticker || '/img/stickers/nosticker.webp',
-            });
-            gameState.slotDbId = newSlot.id;
+            if (!isRestart) {
+                const newSlot = await api.createSlot({
+                    slot_number:   slotNumber,
+                    explorer:      gameState.explorer || 'boy',
+                    explorer_name: gameState.playerName,
+                    color:         gameState.color || '#019273',
+                    difficulty_id: gameState.difficultyId || 'normal',
+                    sticker:       savedSticker || '/img/stickers/nosticker.webp',
+                });
+                gameState.slotDbId = newSlot.id;
+            }
         } catch (e) {
             console.warn('Error creating slot:', e.message);
         }
@@ -502,10 +496,13 @@ async function startGame(slotNumber) {
 
     setMenuActive(false);
 
-    // Reset game state for new game
-    gameState.pokemonCaptured = [];
-    gameState.pokemonEscaped  = [];
-    gameState.slotPokedex     = [];
+    // SOLO resetear Pokédex si es una partida nueva, NO en restart
+    if (!isRestart) {
+        gameState.pokemonCaptured = [];
+        gameState.pokemonEscaped  = [];
+        gameState.slotPokedex     = [];
+    }
+    
     gameState.currentPosition = { r: 0, c: 0 };
     gameState.isGoal          = false;
     gameState.isGameOver      = false;
@@ -515,9 +512,8 @@ async function startGame(slotNumber) {
     saveGame();
 }
 
-// =============================================================================
 //  APPLY MAP — Aplica la configuración del mapa al grid
-// =============================================================================
+
 function applyMap(mapData) {
     for (let r = 0; r < 5; r++) {
         for (let c = 0; c < 7; c++) {
@@ -531,9 +527,8 @@ function applyMap(mapData) {
     }
 }
 
-// =============================================================================
 //  RESTART FROM END SCREEN
-// =============================================================================
+
 export async function restartFromEndScreen() {
     const slotNumber = gameState.slotNumber;
 
@@ -548,5 +543,5 @@ export async function restartFromEndScreen() {
     gameState.isResultsOpen = false;
     gameState.statsScroll   = 0;
 
-    await startGame(slotNumber);
+    await startGame(slotNumber, true);
 }

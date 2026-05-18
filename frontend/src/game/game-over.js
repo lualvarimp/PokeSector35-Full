@@ -22,7 +22,7 @@
 // =============================================================================
 
 import { gameState, saveGame, saveGlobalData } from './game-state.js';
-import { gameOverSound, melodySound }          from './sounds.js';
+import { gameOverSound }          from './sounds.js';
 import {
     isEndMenuOpen, openGameOverMenu, openGoalMenu,
     handleEndMenuNav, resetEndMenu,
@@ -36,6 +36,12 @@ export { isResultsScreenOpen, closeResultsScreen, handleResultsScroll } from './
 //  TRIGGER GAME OVER — Activa la pantalla de derrota
 // =============================================================================
 export function triggerGameOver() {
+    // PAUSAR MÚSICA PRIMERO (antes de cambiar pantallas)
+    if (gameState.currentMelody) {
+        gameState.currentMelody.pause();
+        gameState.currentMelody.currentTime = 0;
+    }
+
     const gameScreen     = document.querySelector('.game-screen');
     const battleScreen   = document.querySelector('.battle-screen');
     const gameOverScreen = document.querySelector('.game-over-screen');
@@ -48,8 +54,6 @@ export function triggerGameOver() {
     gameState.isGameOver = true;
     saveGame();
 
-    melodySound.pause();
-    melodySound.currentTime = 0;
     gameOverSound.play();
 }
 

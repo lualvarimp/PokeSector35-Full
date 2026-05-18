@@ -113,11 +113,17 @@ export function openGameOverMenu() {
 }
 
 export function openGoalMenu() {
+    // PAUSAR MÚSICA al llegar a meta
+    if (gameState.currentMelody) {
+        gameState.currentMelody.pause();
+        gameState.currentMelody.currentTime = 0;
+    }
+
     // Ocultar "Cerrar sesión" si el usuario no está logueado
     const logoutOptionGoal = document.querySelector('#goal-menu [data-option="3"]');
     if (logoutOptionGoal) logoutOptionGoal.style.display = api.isLoggedIn() ? '' : 'none';
 
-    // AGREGAR ESTO:
+    // Mostrar mensaje para no registrados
     const messageUnregistered = document.getElementById('goal-unregistered-message');
     if (messageUnregistered) {
         messageUnregistered.classList.toggle('hidden', api.isLoggedIn());

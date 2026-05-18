@@ -109,6 +109,11 @@ function renderSlots(slots) {
           <div class="slot-color-circle" style="background-color: ${slot.color};"></div>
         </div>
 
+        <div class="slot-info-item">
+          <span class="slot-info-label">Sticker:</span>
+          <span class="slot-info-value">${slot.sticker ? slot.sticker.split('/').pop().replace('.webp', '').toUpperCase() : 'Ninguno'}</span>
+        </div>
+
         <div class="slot-stats">
           <span>🎮 Pokémon capturados: ${slot.captured_count || 0}</span>
         </div>
@@ -166,6 +171,7 @@ function openSlotModal(slotId = null) {
 
   form.reset();
   document.getElementById('slotColor').value = '#019273'; // Verde por defecto
+  document.getElementById('slotSticker').value = '/img/stickers/nosticker.webp'; // Sin sticker por defecto
 
   if (slotId) {
     title.textContent = 'Editar Slot';
@@ -175,6 +181,7 @@ function openSlotModal(slotId = null) {
       document.getElementById('explorerName').value = slot.explorer_name || '';
       document.getElementById('difficulty').value = slot.difficulty_id;
       document.getElementById('slotColor').value = slot.color;
+      document.getElementById('slotSticker').value = slot.sticker;
     }
   } else {
     title.textContent = 'Crear Nuevo Slot';
@@ -211,8 +218,9 @@ async function saveSlot() {
   const explorerName = document.getElementById('explorerName').value.trim();
   const difficulty = document.getElementById('difficulty').value;
   const color = document.getElementById('slotColor').value;
+  const sticker = document.getElementById('slotSticker').value;
 
-  if (!slotNumber || !difficulty || !color) {
+  if (!slotNumber || !difficulty || !color || !sticker) {
     alert('Por favor, rellena todos los campos obligatorios');
     return;
   }
@@ -235,7 +243,8 @@ async function saveSlot() {
       explorer: 'boy',
       explorer_name: explorerName || null,
       difficulty_id: difficulty,
-      color: color
+      color: color,
+      sticker: sticker
     };
 
     const response = await fetch(url, {

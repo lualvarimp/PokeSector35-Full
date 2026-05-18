@@ -3,7 +3,14 @@
 // =============================================================================
 //  Renderiza el grid del mapa (5 filas × 7 columnas), el jugador y el HUD
 //  con HP y Pokéballs. La lógica de movimiento la gestiona movement.js.
+//
+//  El grid se genera dinámicamente con Array.map() para evitar repetición.
+//  Las clases de cada celda (rock, wild, goal) las aplica applyMap() en
+//  menu-start.js una vez el gameScreen es visible en el DOM.
 // =============================================================================
+
+const ROWS = 5;
+const COLS = 7;
 
 export default function GameScreen() {
   return (
@@ -16,62 +23,25 @@ export default function GameScreen() {
           </div>
         </div>
 
-        {/* Fila 0 */}
-        <div data-r="0" data-c="0">
-          <div id="player"><img src="/img/character-boy-front.png" alt="Pokémon explorer" /></div>
-        </div>
-        <div data-r="0" data-c="1" className="wild"></div>
-        <div data-r="0" data-c="2"></div>
-        <div data-r="0" data-c="3"></div>
-        <div data-r="0" data-c="4" className="rock"></div>
-        <div data-r="0" data-c="5" className="wild"></div>
-        <div data-r="0" data-c="6"></div>
+        {Array.from({ length: ROWS }, (_, r) =>
+          Array.from({ length: COLS }, (_, c) => (
+            <div key={`${r}-${c}`} data-r={r} data-c={c}>
+              {r === 0 && c === 0 && (
+                <div id="player">
+                  <img src="/img/character-boy-front.png" alt="Pokémon explorer" />
+                </div>
+              )}
+            </div>
+          ))
+        )}
 
-        {/* Fila 1 */}
-        <div data-r="1" data-c="0"></div>
-        <div data-r="1" data-c="1" className="rock"></div>
-        <div data-r="1" data-c="2"></div>
-        <div data-r="1" data-c="3" className="wild"></div>
-        <div data-r="1" data-c="4"></div>
-        <div data-r="1" data-c="5"></div>
-        <div data-r="1" data-c="6" className="wild"></div>
-
-        {/* Fila 2 */}
-        <div data-r="2" data-c="0" className="wild"></div>
-        <div data-r="2" data-c="1"></div>
-        <div data-r="2" data-c="2" className="wild"></div>
-        <div data-r="2" data-c="3"></div>
-        <div data-r="2" data-c="4" className="rock"></div>
-        <div data-r="2" data-c="5" className="wild"></div>
-        <div data-r="2" data-c="6"></div>
-
-        {/* Fila 3 */}
-        <div data-r="3" data-c="0"></div>
-        <div data-r="3" data-c="1" className="wild"></div>
-        <div data-r="3" data-c="2" className="rock"></div>
-        <div data-r="3" data-c="3"></div>
-        <div data-r="3" data-c="4" className="wild"></div>
-        <div data-r="3" data-c="5"></div>
-        <div data-r="3" data-c="6" className="wild"></div>
-
-        {/* Fila 4 — meta */}
-        <div data-r="4" data-c="0" className="wild"></div>
-        <div data-r="4" data-c="1"></div>
-        <div data-r="4" data-c="2"></div>
-        <div data-r="4" data-c="3" className="wild"></div>
-        <div data-r="4" data-c="4"></div>
-        <div data-r="4" data-c="5" className="rock"></div>
-        <div data-r="4" data-c="6" className="goal"></div>
-
-        {/* HUD inferior */}
         <div data-row="bottom" className="full-bottom">
           <div>
             <img src="/img/heart.png" alt="heart" />
             <p>HP:</p>
             <div>
               <div className="hp-bar">
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
+                {Array.from({ length: 10 }, (_, i) => <span key={i}></span>)}
               </div>
               <p className="player-hp"><span>10</span>/10</p>
             </div>

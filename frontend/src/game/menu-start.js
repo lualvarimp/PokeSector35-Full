@@ -1,6 +1,5 @@
-// =============================================================================
 //  menu-start.js — Flujo de inicio de partida
-// =============================================================================
+
 //  RESPONSABILIDAD: Gestionar todo el flujo de iniciar y continuar partidas:
 //  selección de slot, confirmación de nueva partida, restauración desde la BD,
 //  aplicación de personalización, transición al mapa, y reinicio desde
@@ -14,16 +13,16 @@
 //    · 'start' — vista continuar/nueva partida
 //    · 'slots' — vista selección de slot
 //    · 'info'  — vista de mensaje informativo
-// =============================================================================
 
 import { gameState, saveGame, sanitizeExplorerName, updateExplorerHUD } from './game-state.js';
-import { melodySound }                      from './sounds.js';
-import { EXPLORERS, DIFFICULTY_CONFIG }      from './menu-config.js';
+import { getRandomMelodyTrack }                      from './sounds.js';
+import { EXPLORERS, DIFFICULTY_CONFIG, STICKERS, getRandomMap } from './menu-config.js';
 import * as api                              from '../services/apiService.js';
 import {
     showView, moveCursorUp, moveCursorDown, playClick,
     setMenuActive, setCursorIndex, getCursorIndex, updateCursor,
     syncMenuVisibility, registerHandler, showMenu, showInfoMessage,
+    showAlert, showConfirm,
 } from './menu-nav.js';
 
 // Almacena los slots cargados del backend para usarlos al seleccionar
@@ -34,9 +33,8 @@ registerHandler('start', handleStart);
 registerHandler('slots', handleSlots);
 registerHandler('info',  handleInfo);
 
-// =============================================================================
 //  INICIAR PARTIDA → pantalla intermedia nueva partida / continuar
-// =============================================================================
+
 export function onStart() {
     showView('start');
 }
@@ -73,24 +71,25 @@ function onNewGame() {
 }
 
 // ── CONFIRMACIÓN NUEVA PARTIDA ───────────────────────────────────────────────
-async function confirmNewGame(slotNumber, slotOccupied = false) {
+function confirmNewGame(slotNumber, slotOccupied = false) {
     if (slotOccupied) {
-        const aviso1 = confirm(
-            'NUEVA PARTIDA\n' +
-            'Esta acción borrará TODOS los datos de este slot:\n' +
-            '  · Progreso actual, estadísticas y pokédex\n' +
-            '¿Quieres continuar?'
+        showConfirm(
+            'NUEVA PARTIDA\n\nSe borrarán los datos de este slot:\n Progreso, Pokédex y estadísticas.\n¿Quieres continuar?',
+            () => confirmNewGame2(slotNumber)
         );
-        if (!aviso1) return;
-
-        const aviso2 = confirm(
-            '¿ESTÁS SEGURO/A?\n' +
-            'Los datos del slot se perderán\n' +
-            '¿Confirmas que quieres empezar de nuevo?'
-        );
-        if (!aviso2) return;
+    } else {
+        confirmNewGame2(slotNumber);
     }
+}
 
+function confirmNewGame2(slotNumber) {
+    showConfirm(
+        '¿ESTÁS SEGURO/A?\nLos datos guardados del slot se va a sobrescribir.\n¿Confirmas?',
+        () => confirmNewGame3(slotNumber)
+    );
+}
+
+function confirmNewGame3(slotNumber) {
     if (api.isLoggedIn()) {
         const explorerInput = prompt(
             'NOMBRE DE TU EXPLORADOR\n(Máx. 12 caracteres)',
@@ -129,9 +128,8 @@ function onContinue() {
     }
 }
 
-// =============================================================================
 //  VISTA: SLOTS — carga real desde backend
-// =============================================================================
+
 async function renderSlots(mode) {
     const list = document.querySelector('.menu-slots .menu-list');
     if (!list) return;
@@ -208,15 +206,14 @@ function handleSlots(action) {
             if (existingSlot) {
                 restoreFromSlot(existingSlot);
             } else {
-                alert('No hay partida guardada en este slot.');
+                showAlert('No hay partida guardada en este slot.', 'slots');
             }
         }
     }
 }
 
-// =============================================================================
 //  RESTORE FROM SLOT — Restaurar partida desde la BD
-// =============================================================================
+
 async function restoreFromSlot(slot) {
     const originalName = slot.explorer_name;
     slot.explorer_name = sanitizeExplorerName(slot.explorer_name);
@@ -261,10 +258,13 @@ async function restoreFromSlot(slot) {
     const savedExplorer  = localStorage.getItem('pokesector_explorer');
     const colorPending   = localStorage.getItem('pokesector_color_pending');
     const savedColor     = colorPending ? localStorage.getItem('pokesector_color') : null;
+    const stickerPending = localStorage.getItem('pokesector_sticker_pending');
+    const savedSticker   = stickerPending ? localStorage.getItem('pokesector_sticker') : null;
 
     const diffId   = savedDiffRaw ? JSON.parse(savedDiffRaw).id : slot.difficulty_id;
     const explorer = savedExplorer || slot.explorer;
     const color    = savedColor    || slot.color;
+    const sticker  = savedSticker  || slot.sticker;
 
     gameState.difficultyId = diffId;
     gameState.explorer     = explorer;
@@ -276,18 +276,25 @@ async function restoreFromSlot(slot) {
     document.documentElement.style.setProperty('--gameboy', color);
     localStorage.setItem('pokesector_color', color);
 
+    // Cargar sticker
+    const stickerImg = document.querySelector('.sticker img');
+    if (stickerImg) stickerImg.src = sticker;
+    localStorage.setItem('pokesector_sticker', sticker);
+
     // Guardar personalización en BD y limpiar bandeja
-    const hasLocalChanges = savedDiffRaw || savedExplorer || colorPending;
+    const hasLocalChanges = savedDiffRaw || savedExplorer || colorPending || stickerPending;
     if (hasLocalChanges && api.isLoggedIn()) {
         api.updateSlot(slot.slot_number, {
             difficulty_id: diffId,
             explorer:      explorer,
             color:         color,
+            sticker:       sticker,
         }).catch(e => console.warn('No se pudo actualizar personalización en BD:', e.message));
 
         localStorage.removeItem('pokesector_difficulty');
         localStorage.removeItem('pokesector_explorer');
         localStorage.removeItem('pokesector_color_pending');
+        localStorage.removeItem('pokesector_sticker_pending');
     }
 
     // Apply difficulty config
@@ -299,7 +306,6 @@ async function restoreFromSlot(slot) {
             wildRate:      fullConfig.wildRate,
             catchRate:     fullConfig.catchRate,
         };
-        applyMap(fullConfig.map);
     }
 
     // Apply explorer
@@ -314,25 +320,33 @@ async function restoreFromSlot(slot) {
         document.documentElement.style.setProperty('--gameboy', color);
     }
 
-    // Move player to correct position
-    const player    = document.getElementById('player');
+    // Move player to correct position + apply map once gameScreen is visible
+    const player = document.getElementById('player');
     const posR = slot.is_goal ? 0 : slot.position_r;
     const posC = slot.is_goal ? 0 : slot.position_c;
-    const targetCell = document.querySelector(`div[data-r="${posR}"][data-c="${posC}"]`);
-    if (player && targetCell) {
-        targetCell.appendChild(player);
-    }
+
+    const gameScreen = document.querySelector('.game-screen');
+    if (gameScreen) gameScreen.classList.remove('hidden');
+
+    requestAnimationFrame(() => {
+        applyMap(getRandomMap(diffId));
+        const targetCell = document.querySelector(`div[data-r="${posR}"][data-c="${posC}"]`);
+        if (player && targetCell) {
+            targetCell.appendChild(player);
+            gameState.currentPosition = { r: posR, c: posC };
+        }
+    });
 
     updateExplorerHUD();
 
     // Transition to game screen
     const menuScreen = document.querySelector('.menu-screen');
-    const gameScreen = document.querySelector('.game-screen');
     if (menuScreen) menuScreen.classList.add('hidden');
-    if (gameScreen) gameScreen.classList.remove('hidden');
 
-    melodySound.currentTime = 0;
-    melodySound.play().catch(() => {});
+    const randomMelodyTrack = getRandomMelodyTrack();
+    randomMelodyTrack.currentTime = 0;
+    randomMelodyTrack.play().catch(() => {});
+    gameState.currentMelody = randomMelodyTrack;
 
     setMenuActive(false);
     gameState.isIntro = false;
@@ -342,9 +356,7 @@ async function restoreFromSlot(slot) {
     saveGame();
 }
 
-// =============================================================================
 //  VISTA: INFO — handler para las opciones de la pantalla informativa
-// =============================================================================
 
 function handleInfo(action) {
     if (action === 'pressUp')   { moveCursorUp();   return; }
@@ -367,10 +379,9 @@ function handleInfo(action) {
     }
 }
 
-// =============================================================================
 //  START GAME — Inicia una partida nueva
-// =============================================================================
-async function startGame(slotNumber) {
+
+async function startGame(slotNumber, isRestart = false) {
     if (!api.isLoggedIn()) {
         gameState.playerName = 'Ash';
         updateExplorerHUD();
@@ -379,29 +390,31 @@ async function startGame(slotNumber) {
     const diffRaw       = localStorage.getItem('pokesector_difficulty');
     const savedExplorer = localStorage.getItem('pokesector_explorer');
     const savedColor    = localStorage.getItem('pokesector_color');
+    const savedSticker  = localStorage.getItem('pokesector_sticker');
 
     // ── Dificultad ────────────────────────────────────────────────────────
     if (diffRaw) {
         const diff       = JSON.parse(diffRaw);
         const fullConfig = DIFFICULTY_CONFIG[diff.id];
 
-        gameState.hp           = fullConfig ? fullConfig.hp       : DIFFICULTY_CONFIG.normal.hp;
-        gameState.pokeball     = fullConfig ? fullConfig.pokeballs : DIFFICULTY_CONFIG.normal.pokeballs;
-        gameState.difficultyId = diff.id;
-        gameState.difficulty   = {
-            id:            diff.id,
-            encounterRate: fullConfig ? fullConfig.encounterRate : DIFFICULTY_CONFIG.normal.encounterRate,
-            wildRate:      fullConfig ? fullConfig.wildRate      : DIFFICULTY_CONFIG.normal.wildRate,
-            catchRate:     fullConfig ? fullConfig.catchRate     : DIFFICULTY_CONFIG.normal.catchRate,
-        };
-        if (fullConfig) applyMap(fullConfig.map);
+        if (fullConfig) {
+            gameState.hp           = fullConfig.hp;
+            gameState.pokeball     = fullConfig.pokeballs;
+            gameState.difficultyId = diff.id;
+            gameState.difficulty   = {
+                id:            diff.id,
+                encounterRate: fullConfig.encounterRate,
+                wildRate:      fullConfig.wildRate,
+                catchRate:     fullConfig.catchRate,
+            };
+        }
     } else {
-        const def            = DIFFICULTY_CONFIG.normal;
+        const currentDiffId = gameState.difficultyId || 'normal';
+        const def           = DIFFICULTY_CONFIG[currentDiffId] || DIFFICULTY_CONFIG.normal;
         gameState.hp         = def.hp;
         gameState.pokeball   = def.pokeballs;
-        gameState.difficultyId = 'normal';
-        gameState.difficulty = { id: 'normal', encounterRate: def.encounterRate, wildRate: def.wildRate, catchRate: def.catchRate };
-        applyMap(def.map);
+        gameState.difficultyId = currentDiffId;
+        gameState.difficulty = { id: currentDiffId, encounterRate: def.encounterRate, wildRate: def.wildRate, catchRate: def.catchRate };
     }
 
     // ── Explorador ────────────────────────────────────────────────────────
@@ -420,6 +433,12 @@ async function startGame(slotNumber) {
         gameState.color = savedColor;
     }
 
+    // ── Sticker ───────────────────────────────────────────────────────────
+    if (savedSticker) {
+        const stickerImg = document.querySelector('.sticker img');
+        if (stickerImg) stickerImg.src = savedSticker;
+    }
+
     // ── Slot para usuarios registrados ────────────────────────────────────
     if (api.isLoggedIn() && slotNumber) {
         gameState.slotNumber = slotNumber;
@@ -427,18 +446,21 @@ async function startGame(slotNumber) {
 
         try {
             const existingSlot = loadedSlots.find(s => s.slot_number === slotNumber);
-            if (existingSlot) {
+            if (existingSlot && !isRestart) {
                 await api.deleteSlot(slotNumber);
             }
 
-            const newSlot = await api.createSlot({
-                slot_number:   slotNumber,
-                explorer:      gameState.explorer || 'boy',
-                explorer_name: gameState.playerName,
-                color:         gameState.color || '#019273',
-                difficulty_id: gameState.difficultyId || 'normal',
-            });
-            gameState.slotDbId = newSlot.id;
+            if (!isRestart) {
+                const newSlot = await api.createSlot({
+                    slot_number:   slotNumber,
+                    explorer:      gameState.explorer || 'boy',
+                    explorer_name: gameState.playerName,
+                    color:         gameState.color || '#019273',
+                    difficulty_id: gameState.difficultyId || 'normal',
+                    sticker:       savedSticker || '/img/stickers/nosticker.webp',
+                });
+                gameState.slotDbId = newSlot.id;
+            }
         } catch (e) {
             console.warn('Error creating slot:', e.message);
         }
@@ -456,16 +478,31 @@ async function startGame(slotNumber) {
     if (menuScreen) menuScreen.classList.add('hidden');
     if (gameScreen) gameScreen.classList.remove('hidden');
 
-    melodySound.currentTime = 0;
-    melodySound.play().catch(() => {});
+    requestAnimationFrame(() => {
+        const mapToApply = getRandomMap(gameState.difficultyId || 'normal');
+        applyMap(mapToApply);
+        const player = document.getElementById('player');
+        const startCell = document.querySelector('div[data-r="0"][data-c="0"]');
+        if (player && startCell) {
+            startCell.appendChild(player);
+            gameState.currentPosition = { r: 0, c: 0 };
+        }
+    });
+
+    const randomMelodyTrack = getRandomMelodyTrack();
+    randomMelodyTrack.currentTime = 0;
+    randomMelodyTrack.play().catch(() => {});
+    gameState.currentMelody = randomMelodyTrack;
 
     setMenuActive(false);
-    gameState.isIntro = false;
 
-    // Reset game state for new game
-    gameState.pokemonCaptured = [];
-    gameState.pokemonEscaped  = [];
-    gameState.slotPokedex     = [];
+    // SOLO resetear Pokédex si es una partida nueva, NO en restart
+    if (!isRestart) {
+        gameState.pokemonCaptured = [];
+        gameState.pokemonEscaped  = [];
+        gameState.slotPokedex     = [];
+    }
+    
     gameState.currentPosition = { r: 0, c: 0 };
     gameState.isGoal          = false;
     gameState.isGameOver      = false;
@@ -475,9 +512,8 @@ async function startGame(slotNumber) {
     saveGame();
 }
 
-// =============================================================================
 //  APPLY MAP — Aplica la configuración del mapa al grid
-// =============================================================================
+
 function applyMap(mapData) {
     for (let r = 0; r < 5; r++) {
         for (let c = 0; c < 7; c++) {
@@ -489,18 +525,10 @@ function applyMap(mapData) {
             if (clase) cell.classList.add(clase);
         }
     }
-
-    const player    = document.getElementById('player');
-    const startCell = document.querySelector('div[data-r="0"][data-c="0"]');
-    if (player && startCell) {
-        startCell.appendChild(player);
-        gameState.currentPosition = { r: 0, c: 0 };
-    }
 }
 
-// =============================================================================
 //  RESTART FROM END SCREEN
-// =============================================================================
+
 export async function restartFromEndScreen() {
     const slotNumber = gameState.slotNumber;
 
@@ -515,5 +543,5 @@ export async function restartFromEndScreen() {
     gameState.isResultsOpen = false;
     gameState.statsScroll   = 0;
 
-    await startGame(slotNumber);
+    await startGame(slotNumber, true);
 }

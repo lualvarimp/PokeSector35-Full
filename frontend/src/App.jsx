@@ -15,8 +15,9 @@ import GameControls from './components/GameControls.jsx';
 //
 //  Hooks utilizados:
 //  · useGameInit (custom): inicializa main.js tras el primer render (useEffect + useRef + useState interno)
-//  · useState: gestiona el nombre del explorador que aparece en el menú
-//  · useEffect: sincroniza playerName con localStorage al cargar la app
+//  · useState: gestiona el nombre del explorador y el sticker activo
+//  · useEffect: sincroniza playerName y sticker con localStorage al cargar la app
+//  · useRef: referencia directa a la imagen del sticker para actualizaciones externas
 //
 //  IMPORTANTE: React actúa solo como contenedor que renderiza el DOM correcto.
 //  Toda la lógica del juego (movimiento, menú, batalla, etc.) sigue siendo
@@ -24,20 +25,23 @@ import GameControls from './components/GameControls.jsx';
 //  las clases CSS y los selectores del juego funcionen exactamente igual.
 // =============================================================================
 
+const DEFAULT_STICKER = '/img/stickers/nosticker.webp';
+
 export default function App() {
   const { ready, error } = useGameInit();
   const [playerName, setPlayerName] = useState('');
+  const [stickerSrc, setStickerSrc]  = useState(DEFAULT_STICKER);
 
   useEffect(() => {
-    const saved = localStorage.getItem('pokesector_explorer_name');
-    if (saved && saved.trim() !== '') {
-      setPlayerName(saved.trim());
-    }
+    const savedName    = localStorage.getItem('pokesector_explorer_name');
+    const savedSticker = localStorage.getItem('pokesector_sticker');
 
-    // Cargar sticker guardado, o nosticker por defecto
-    const savedSticker = localStorage.getItem('pokesector_sticker') || '/img/stickers/nosticker.webp';
-    const stickerImg = document.querySelector('.sticker img');
-    if (stickerImg) stickerImg.src = savedSticker;
+    if (savedName && savedName.trim() !== '') {
+      setPlayerName(savedName.trim());
+    }
+    if (savedSticker) {
+      setStickerSrc(savedSticker);
+    }
   }, []);
 
   return (
@@ -106,7 +110,7 @@ export default function App() {
         />
       </div>
       <div className='sticker'>
-        <img src='/img/stickers/nosticker.webp' alt='' />
+        <img src={stickerSrc} alt='' />
       </div>
 
       <GameControls />

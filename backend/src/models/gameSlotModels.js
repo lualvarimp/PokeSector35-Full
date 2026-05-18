@@ -31,6 +31,10 @@ const GameSlot = sequelize.define('GameSlot', {
     type: DataTypes.STRING(20),
     allowNull: false
   },
+  sticker: {
+    type: DataTypes.STRING(255),
+    defaultValue: '/img/stickers/nosticker.webp'
+  },
   hp: {
     type: DataTypes.INTEGER,
     defaultValue: 10

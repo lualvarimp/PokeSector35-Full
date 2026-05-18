@@ -7,7 +7,7 @@
 
 import { gameState, saveGame, saveGlobalData, saveToBackend } from './game-state.js';
 import { triggerPokemonEncounter }             from './api.js';
-import { stepSound, crashSound, goalSound, melodySound } from './sounds.js';
+import { stepSound, crashSound, goalSound } from './sounds.js';
 import { triggerGamepadRumble } from './gamepad-input.js';
 import { updateHUD }                           from './hud.js';
 import { openGoalMenu }                        from './game-over.js';
@@ -48,7 +48,7 @@ export function updatePosition(direction) {
 
     } else {
         crashSound.currentTime = 0;
-        triggerGamepadRumble(200, 0.8);
+        triggerGamepadRumble(150, 0.6);
         crashSound.play();
     }
 }
@@ -60,8 +60,6 @@ export async function checkSquare(square) {
         gameState.isGoal = true;
 
         goalSound.currentTime = 0;
-        melodySound.pause();
-        melodySound.currentTime = 0;
         goalSound.play();
 
         saveGlobalData();

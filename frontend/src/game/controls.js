@@ -69,13 +69,88 @@ const ACTION_TO_BTN = {
     pressB:      'b-btn',
 };
 
-function flashButton(action) {
+// Mapea las acciones de dirección a la clase de inclinación del D-Pad
+const ACTION_TO_TILT = {
+    pressUp:    'tilt-up',
+    pressDown:  'tilt-down',
+    pressLeft:  'tilt-left',
+    pressRight: 'tilt-right',
+};
+
+// Guarda los timeouts de cada botón para poder cancelarlos en keyup
+const buttonTimeouts = new Map();
+
+function flashButton(action, holdMode = false) {
     const id = ACTION_TO_BTN[action];
     if (!id) return;
     const btn = document.getElementById(id);
     if (!btn) return;
+
+    // Si el botón ya está pulsado en hold mode, ignorar
+    if (holdMode && btn.classList.contains('pressed')) return;
+
+    // Cancelar timeout anterior si existe
+    if (buttonTimeouts.has(id)) {
+        clearTimeout(buttonTimeouts.get(id));
+        buttonTimeouts.delete(id);
+    }
+
     btn.classList.add('pressed');
-    setTimeout(() => btn.classList.remove('pressed'), 120);
+
+    // Si no es hold mode, quitar la clase después de 120ms
+    if (!holdMode) {
+        const timeout = setTimeout(() => {
+            btn.classList.remove('pressed');
+            buttonTimeouts.delete(id);
+        }, 120);
+        buttonTimeouts.set(id, timeout);
+    }
+
+    // Inclinar toda la cruceta del D-Pad como pieza física única
+    const tiltClass = ACTION_TO_TILT[action];
+    if (tiltClass) {
+        const dpad = document.querySelector('.dpad');
+        if (dpad) {
+            dpad.classList.add(tiltClass);
+            
+            // Si no es hold mode, quitar tilt después de 120ms
+            if (!holdMode) {
+                const tiltTimeout = setTimeout(() => {
+                    dpad.classList.remove(tiltClass);
+                }, 120);
+                buttonTimeouts.set(`tilt-${id}`, tiltTimeout);
+            }
+        }
+    }
+}
+
+function releaseButton(action) {
+    const id = ACTION_TO_BTN[action];
+    if (!id) return;
+    const btn = document.getElementById(id);
+    if (!btn) return;
+
+    // Cancelar timeout si existe
+    if (buttonTimeouts.has(id)) {
+        clearTimeout(buttonTimeouts.get(id));
+        buttonTimeouts.delete(id);
+    }
+
+    btn.classList.remove('pressed');
+
+    // Quitar tilt del D-Pad
+    const tiltClass = ACTION_TO_TILT[action];
+    if (tiltClass) {
+        const dpad = document.querySelector('.dpad');
+        if (dpad) {
+            dpad.classList.remove(tiltClass);
+        }
+        // Cancelar timeout del tilt si existe
+        if (buttonTimeouts.has(`tilt-${id}`)) {
+            clearTimeout(buttonTimeouts.get(`tilt-${id}`));
+            buttonTimeouts.delete(`tilt-${id}`);
+        }
+    }
 }
 
 // =============================================================================
@@ -89,8 +164,8 @@ export function dispatch(action) {
     if (inputLocked) return;
     lock(lockTimeFor(action));
 
-    // Feedback visual en el botón correspondiente
-    flashButton(action);
+    // Feedback visual ya se maneja en los listeners (keydown, mousedown, touchstart)
+    // así que no se llama aquí
 
     // ── D-Pad: arriba, abajo ─────────────────────────────────────────────
     if (action === 'pressUp' || action === 'pressDown') {
@@ -194,16 +269,43 @@ export function initControls() {
     Object.entries(buttons).forEach(([id, action]) => {
         const btn = document.getElementById(id);
         if (btn) {
-            btn.addEventListener('mousedown', (e) => { e.preventDefault(); dispatch(action); });
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); dispatch(action); }, { passive: false });
+            btn.addEventListener('mousedown', (e) => { 
+                e.preventDefault();
+                flashButton(action, true);
+                dispatch(action);
+            });
+            btn.addEventListener('mouseup', (e) => {
+                releaseButton(action);
+            });
+            btn.addEventListener('touchstart', (e) => { 
+                e.preventDefault();
+                flashButton(action, true);
+                dispatch(action);
+            }, { passive: false });
+            btn.addEventListener('touchend', (e) => {
+                releaseButton(action);
+            });
         }
     });
 
     // ── Teclado ──────────────────────────────────────────────────────────
     window.addEventListener('keydown', (event) => {
+        if (event.repeat) return; // ignorar repetición por tecla mantenida
         const action = KEY_MAP[event.key];
         if (!action) return;
         if (PREVENT_DEFAULT_KEYS.has(event.key)) event.preventDefault();
+        
+        // Feedback visual en hold mode (mientras se mantenga pulsada)
+        flashButton(action, true);
+        
+        // Dispatch de la acción (con debounce/lock)
         dispatch(action);
+    });
+
+    // Soltar botones cuando se suelta la tecla
+    window.addEventListener('keyup', (event) => {
+        const action = KEY_MAP[event.key];
+        if (!action) return;
+        releaseButton(action);
     });
 }

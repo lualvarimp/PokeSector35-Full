@@ -290,7 +290,7 @@ body {
     max-width: 340px;
     margin: 0 auto;
 
-    /* Estilos base compartidos por todos los botones de dirección y acción */
+    /* Estilos base compartidos por los botones de dirección */
     button {
         aspect-ratio: 1 / 1;
         border: none;
@@ -356,7 +356,21 @@ body {
         .center {
             background: var(--black);
             /* celda central del D-Pad (sin botón) */
-            box-shadow: 0.2rem 0.2rem 0.3rem 0 var(--shadow-button);
+            /*box-shadow: 0.2rem 0.2rem 0.3rem 0 var(--shadow-button);*/
+            position: relative;
+
+            /* Borde sólido expandido desde el centro: tapa los gaps sub-píxel
+               que la perspectiva 3D genera entre las celdas adyacentes al centro.
+               Se extiende justo lo necesario para cubrir las juntas sin
+               sobresalir por las esquinas de la cruceta. */
+            &::before {
+                content: '';
+                position: absolute;
+                inset: -0.2rem;
+                background: var(--black);
+                border-radius: 0.3rem;
+                z-index: -1;
+            }
         }
 
         #right-btn {
@@ -364,7 +378,6 @@ body {
             border-radius: 0 0.6rem 0.6rem 0;
             box-shadow:
                 0.1rem 0.1rem 0 var(--light-button),
-                inset 0rem 0.1rem 0 var(--light-button),
                 0.2rem 0.2rem 0.3rem 0 var(--shadow-button);
 
             &::after {
@@ -382,7 +395,6 @@ body {
             border-radius: 0 0 0.6rem 0.6rem;
             box-shadow:
                 0.1rem 0.1rem 0px var(--light-button),
-                inset 0.1rem 0 0 var(--light-button),
                 0.2rem 0.2rem 0.3rem 0 var(--shadow-button);
 
             &::after {
@@ -395,45 +407,54 @@ body {
             }
         }
     }
+}
 
-    /* Botones A y B: circulares, inclinados -25° para imitar el diseño original */
-    .actions {
-        z-index: 100;
-        width: fit-content;
-        height: fit-content;
-        transform: rotate(-25deg) translate(-1rem, 2.5rem);
-        transform-origin: 0 100%;
-        padding-left: 1rem;
+/* Botones A y B: fuera de .controls para no heredar el efecto 3D del D-Pad.
+   Posicionados de forma absoluta respecto a la consola para mantener
+   la misma posición visual que tenían dentro de .controls. */
+.actions {
+    z-index: 100;
+    position: absolute;
+    right: 1.2rem;
+    /* alineado a la derecha de la consola */
+    margin-top: -5.5rem;
+    /* sube para alinearse con el dpad */
+    width: fit-content;
+    height: fit-content;
+    transform: rotate(-25deg);
+    transform-origin: 0 100%;
+    padding-left: 1rem;
+    /* Capa GPU propia: aísla de los repaints causados por el transform 3D del dpad */
+    will-change: transform;
 
-        button {
-            width: clamp(3rem, 2rem + 5.333vw, 3.5rem);
-            transform: rotate(25deg);
-            /* contrarrota cada botón para que el texto quede recto */
-            background: var(--black);
-            cursor: pointer;
-            outline: none;
-            padding: 0;
-            border: 0.2rem solid var(--black);
-            border-radius: 100%;
-            /* perfectamente circulares */
-            /* Restauramos font-size y color que el selector .controls button ocultó */
-            font-size: 1.7rem;
-            color: var(--gameboy);
-            display: revert;
-            /* cancelamos el flex heredado del selector padre */
-            box-shadow:
-                inset 0.1rem 0.1rem 0px #94949426,
-                inset -0.1rem -0.1rem 0px rgba(0, 0, 0, 0.3),
-                0px 0.3rem 0.3rem 0px var(--shadow-button);
+    button {
+        width: clamp(3rem, 2rem + 5.333vw, 3.5rem);
+        aspect-ratio: 1 / 1;
+        transform: rotate(25deg);
+        /* contrarrota cada botón para que el texto quede recto */
+        background: var(--black);
+        cursor: pointer;
+        outline: none;
+        padding: 0;
+        border: 0.2rem solid var(--black);
+        border-radius: 100%;
+        /* perfectamente circulares */
+        font-weight: 700;
+        font-size: 1.7rem;
+        color: var(--gameboy);
+        -webkit-tap-highlight-color: transparent;
+        box-shadow:
+            inset 0.1rem 0.1rem 0px #94949426,
+            inset -0.1rem -0.1rem 0px rgba(0, 0, 0, 0.3),
+            0px 0.3rem 0.3rem 0px var(--shadow-button);
 
-            &:first-child {
-                margin-right: 0.3rem;
-                /* separación entre B y A */
-            }
+        &:first-child {
+            margin-right: 0.3rem;
+            /* separación entre B y A */
+        }
 
-            &:last-child {
-                margin-left: 0.8rem;
-            }
+        &:last-child {
+            margin-left: 0.8rem;
         }
     }
 }
@@ -468,28 +489,52 @@ body {
 
 
 /* ==================== EFECTO DE PULSACIÓN — FEEDBACK VISUAL ==================== */
-/* D-Pad: el botón se hunde con desplazamiento + sombra interior direccional */
+
+/* D-Pad: cruceta como pieza física única.
+   Al pulsar una dirección, toda la cruceta se inclina simulando
+   el balanceo real de una cruceta sobre su pivote central.
+   Ángulo exagerado (6deg) y perspectiva cercana (14rem) para que
+   el desplazamiento de los botones opuestos sea bien visible.
+   Los gaps sub-píxel del render 3D se tapan con el pseudo-elemento del .center. */
 .dpad {
+    transform-origin: center center;
+    transition: transform 0.08s ease-out;
+    will-change: transform;
+
+    /* ── Inclinación de la cruceta completa ── */
+    &.tilt-up {
+        transform: perspective(14rem) rotateX(6deg);
+    }
+
+    &.tilt-down {
+        transform: perspective(14rem) rotateX(-6deg);
+    }
+
+    &.tilt-left {
+        transform: perspective(14rem) rotateY(-6deg);
+    }
+
+    &.tilt-right {
+        transform: perspective(14rem) rotateY(6deg);
+    }
+
+    /* ── Sombra interior del botón pulsado (feedback direccional) ── */
     #up-btn.pressed {
-        transform: translateY(0.1rem);
         box-shadow:
             inset 0 0.15rem 0.2rem rgba(0, 0, 0, 0.5);
     }
 
     #down-btn.pressed {
-        transform: translateY(-0.1rem);
         box-shadow:
             inset 0 -0.15rem 0.2rem rgba(0, 0, 0, 0.5);
     }
 
     #left-btn.pressed {
-        transform: translateX(0.1rem);
         box-shadow:
             inset 0.15rem 0 0.2rem rgba(0, 0, 0, 0.5);
     }
 
     #right-btn.pressed {
-        transform: translateX(-0.1rem);
         box-shadow:
             inset -0.15rem 0 0.2rem rgba(0, 0, 0, 0.5);
     }

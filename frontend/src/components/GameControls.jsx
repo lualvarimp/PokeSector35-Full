@@ -22,18 +22,18 @@ export default function GameControls() {
           <button id="down-btn" className="btn" aria-label="Abajo"></button>
           <div></div>
         </div>
+      </section>
 
-        <div className="actions">
-          <button id="b-btn">B</button>
-          <button id="a-btn">A</button>
-        </div>
+      <section className="actions">
+        <button id="b-btn">B</button>
+        <button id="a-btn">A</button>
       </section>
 
       <div className="separator"></div>
 
       <section className="menu">
-        <button id="start-btn">START</button>
         <button id="select-btn">SELECT</button>
+        <button id="start-btn">START</button>
       </section>
 
     </>

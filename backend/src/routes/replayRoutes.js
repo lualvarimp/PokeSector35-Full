@@ -1,6 +1,6 @@
 import express from 'express';
 import { createReplay, getReplay, getUserReplays, removeReplay } from '../controllers/replayController.js';
-import { verifyToken, requireAdmin } from '../middlewares/index.js';
+import { verifyToken, requireAdmin, requireOwnerOrAdmin } from '../middlewares/index.js';
 
 const router = express.Router();
 
@@ -102,7 +102,7 @@ const router = express.Router();
  *     security:
  *       - BearerAuth: []
  */
-router.post('/:userId/slots/:slotId/replay', verifyToken, createReplay);
+router.post('/:userId/slots/:slotId/replay', verifyToken, requireOwnerOrAdmin, createReplay);
 
 /**
  * @swagger
@@ -160,7 +160,7 @@ router.post('/:userId/slots/:slotId/replay', verifyToken, createReplay);
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId/slots/:slotId/replay', verifyToken, getReplay);
+router.get('/:userId/slots/:slotId/replay', verifyToken, requireOwnerOrAdmin, getReplay);
 
 /**
  * @swagger
@@ -213,7 +213,7 @@ router.get('/:userId/slots/:slotId/replay', verifyToken, getReplay);
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId/replays', verifyToken, getUserReplays);
+router.get('/:userId/replays', verifyToken, requireOwnerOrAdmin, getUserReplays);
 
 /**
  * @swagger

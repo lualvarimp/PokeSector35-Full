@@ -5,7 +5,7 @@
 //  o spam. Se aplica en el registro.
 //
 //  CRITERIOS DE RECHAZO:
-//    · Nombres muy cortos (menos de 3 caracteres)
+//    · Nombres muy cortos (menos de 5 caracteres)
 //    · Nombres muy largos (más de 20 caracteres)
 //    · Nombres con patrones repetitivos (aaaa, 1111, etc.)
 //    · Nombres genéricos de bots (user, admin, test, bot, spam, etc.)
@@ -95,8 +95,8 @@ export function validatePassword(password) {
     return { valid: false, reason: 'La contraseña es requerida' };
   }
 
-  if (password.length < 4) {
-    return { valid: false, reason: 'La contraseña debe tener al menos 4 caracteres' };
+  if (password.length < 6) {
+    return { valid: false, reason: 'La contraseña debe tener al menos 6 caracteres' };
   }
 
   if (password.length > 128) {

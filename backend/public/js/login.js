@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitButton.textContent = 'Entrando...';
 
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('/pokesector35/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -41,17 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Guardar tokens en localStorage
+        // Guardar tokens en localStorage para peticiones AJAX del panel
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('refresh_token', data.refresh_token);
         localStorage.setItem('user_id', data.user_id);
         localStorage.setItem('user_role', data.role);
 
+        // La cookie admin_token la establece el servidor con HttpOnly
+        // JavaScript no la toca — el navegador la gestiona solo
+
         showMessage('¡LOGIN CORRECTO! REDIRIGIENDO...', 'success');
 
         // Redirigir al dashboard admin
         setTimeout(() => {
-          window.location.href = '/admin/dashboard';
+          window.location.href = '/pokesector35/admin/dashboard';
         }, 1000);
 
       } else {

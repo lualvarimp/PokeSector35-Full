@@ -1,6 +1,7 @@
 import { registerUser, loginUser, generateAccessToken, generateRefreshToken, refreshAccessToken } from '../services/index.js';
 import { incrementLoginAttempts, getLoginAttemptsRemaining, incrementRegisterAttempts, getRegisterAttemptsRemaining } from '../middlewares/rateLimitMiddleware.js';
 import { validateUsername, validatePassword } from '../validations/usernameValidation.js';
+import { RefreshToken } from '../models/index.js';
 
 /**
  * Endpoint: POST /api/auth/register
@@ -30,7 +31,6 @@ export async function register(req, res) {
     }
 
     // ─── REGISTRO: Si validaciones pasaron ──────────────────────────────────
-    console.log(`📝 Registro: username="${username}"`);
     const user = await registerUser(username, password);
     const accessToken = generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
@@ -60,6 +60,7 @@ export async function register(req, res) {
  * Autentica un usuario y devuelve tokens JWT
  * ⚠️ SOLO permite login a usuarios con rol 'admin'
  * Con rate limiting contra fuerza bruta
+ * Establece cookie HttpOnly con el token para el panel admin
  * @param {Object} req - Express request
  * @param {string} req.body.username - Nombre de usuario
  * @param {string} req.body.password - Contraseña
@@ -79,6 +80,16 @@ export async function login(req, res) {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = await generateRefreshToken(user);
+
+    // Cookie HttpOnly para proteger el panel admin
+    // El navegador la envía automáticamente pero JavaScript no puede leerla
+    res.cookie('admin_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 24 * 60 * 60 * 1000
+    });
 
     res.json({ 
       message: 'Login exitoso', 
@@ -162,12 +173,37 @@ export async function refresh(req, res) {
 
 /**
  * Endpoint: POST /api/auth/logout
- * Cierra la sesión del usuario (actualmente es un stub)
+ * Cierra la sesión del usuario eliminando su refresh token de la BD
+ * También borra la cookie HttpOnly del panel admin
  * @param {Object} req - Express request
+ * @param {string} req.body.refresh_token - Refresh token a invalidar
  * @param {Object} res - Express response
  */
 export async function logout(req, res) {
   try {
+    const { refresh_token } = req.body;
+
+    if (!refresh_token) {
+      return res.status(400).json({ error: 'Refresh token requerido' });
+    }
+
+    // Borrar cookie HttpOnly del panel admin
+    // Para el juego es inofensivo (simplemente ignora el header)
+    res.clearCookie('admin_token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/'
+    });
+
+    const deleted = await RefreshToken.destroy({
+      where: { token: refresh_token }
+    });
+
+    if (deleted === 0) {
+      return res.status(200).json({ message: 'Token ya estaba invalidado' });
+    }
+
     res.json({ message: 'Logout exitoso' });
   } catch (error) {
     res.status(500).json({ error: error.message });

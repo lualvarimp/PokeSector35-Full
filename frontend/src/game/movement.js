@@ -3,6 +3,8 @@
 // =============================================================================
 //  MODIFICADO PARA FULLSTACK:
 //  - Al llegar a la meta, si hay sesión activa, vuelca datos al backend
+//  - FIX: isGoal se activa ANTES del await para evitar encuentros Pokémon
+//    durante el tiempo de espera de la llamada al backend
 // =============================================================================
 
 import { gameState, saveGame, saveGlobalData, saveToBackend } from './game-state.js';
@@ -57,7 +59,12 @@ export async function checkSquare(square) {
 
     // ── CASO 1: meta ──────────────────────────────────────────────────────
     if (square.classList.contains('goal')) {
+
+        // FIX: activamos isGoal INMEDIATAMENTE antes del await
+        // Esto bloquea cualquier encuentro Pokémon que pudiera dispararse
+        // durante el tiempo de espera de saveToBackend()
         gameState.isGoal = true;
+        gameState.isBattle = false;
 
         goalSound.currentTime = 0;
         goalSound.play();
@@ -65,18 +72,22 @@ export async function checkSquare(square) {
         saveGlobalData();
         saveGame();
 
-        // ── FULLSTACK: volcado al backend si usuario registrado ───────────
-        await saveToBackend();
+        // Transición inmediata: ocultamos el mapa y mostramos la meta
+        // a la vez, antes del await, para evitar el parpadeo de pantalla negra.
+        const gameScreen = document.querySelector('.game-screen');
+        if (gameScreen) gameScreen.classList.add('hidden');
 
-        document.querySelector('.game-screen').classList.add('hidden');
         const goalScreen = document.querySelector('.goal-screen');
-        goalScreen.classList.remove('hidden');
+        if (goalScreen) goalScreen.classList.remove('hidden');
 
         requestAnimationFrame(() => {
             updateGoalScreen();
             openGoalMenu();
             updateHUD();
         });
+
+        // ── FULLSTACK: volcado al backend si usuario registrado ───────────
+        await saveToBackend();
 
         return;
     }

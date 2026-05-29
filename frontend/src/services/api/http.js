@@ -10,7 +10,7 @@
 //  módulos de recurso (auth.js, slots.js, etc.) o por apiService.js.
 // =============================================================================
 
-export const API_BASE = '/api';
+export const API_BASE = '/pokesector35/api';
 
 // ─── Token management ────────────────────────────────────────────────────────
 

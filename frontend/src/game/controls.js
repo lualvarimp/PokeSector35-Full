@@ -21,7 +21,7 @@
 // =============================================================================
 
 import { updatePosition }     from './movement.js';
-import { startIntro, isIntroInProgress } from './intro.js';
+import { startIntro, isIntroInProgress, playThemeNow } from './intro.js';
 import { updateStatsScreen }  from './stats.js';
 import { updateBattle }       from './battle.js';
 import {
@@ -29,6 +29,17 @@ import {
     isEndMenuOpen, isResultsScreenOpen,
 } from './game-over.js';
 import { updateMenu, isMenuOpen } from './menu.js';
+import { themeSound } from './sounds.js';
+
+// ─── Precarga de audio en el primer gesto ────────────────────────────────────
+// Los móviles ignoran preload='auto'. Con el primer toque del usuario,
+// forzamos la carga de themeSound para que esté listo cuando pulse START.
+let audioPreloaded = false;
+function preloadAudio() {
+    if (audioPreloaded) return;
+    audioPreloaded = true;
+    themeSound.load();
+}
 
 // ─── Debounce ────────────────────────────────────────────────────────────────
 const LOCK_MOVE   = 300;
@@ -80,7 +91,7 @@ const ACTION_TO_TILT = {
 // Guarda los timeouts de cada botón para poder cancelarlos en keyup
 const buttonTimeouts = new Map();
 
-function flashButton(action, holdMode = false) {
+export function flashButton(action, holdMode = false) {
     const id = ACTION_TO_BTN[action];
     if (!id) return;
     const btn = document.getElementById(id);
@@ -124,7 +135,7 @@ function flashButton(action, holdMode = false) {
     }
 }
 
-function releaseButton(action) {
+export function releaseButton(action) {
     const id = ACTION_TO_BTN[action];
     if (!id) return;
     const btn = document.getElementById(id);
@@ -271,14 +282,26 @@ export function initControls() {
         if (btn) {
             btn.addEventListener('mousedown', (e) => { 
                 e.preventDefault();
+                if (action === 'pressStart') playThemeNow();
                 flashButton(action, true);
                 dispatch(action);
             });
             btn.addEventListener('mouseup', (e) => {
                 releaseButton(action);
             });
-            btn.addEventListener('touchstart', (e) => { 
+            btn.addEventListener('touchstart', async (e) => { 
                 e.preventDefault();
+                if (action === 'pressStart') {
+                    // Desbloqueo del audio directamente en el gesto táctil.
+                    // audioCtx.resume() es lo primero que se ejecuta, sin awaits previos,
+                    // para que Chrome/Firefox Android reconozcan el gesto del usuario.
+                    try {
+                        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                        if (ctx.state === 'suspended') await ctx.resume();
+                        ctx.close();
+                    } catch (_) {}
+                    playThemeNow();
+                }
                 flashButton(action, true);
                 dispatch(action);
             }, { passive: false });
@@ -295,6 +318,9 @@ export function initControls() {
         if (!action) return;
         if (PREVENT_DEFAULT_KEYS.has(event.key)) event.preventDefault();
         
+        // Reproducir música de intro al pulsar START (Enter) en PC
+        if (action === 'pressStart') playThemeNow();
+
         // Feedback visual en hold mode (mientras se mantenga pulsada)
         flashButton(action, true);
         

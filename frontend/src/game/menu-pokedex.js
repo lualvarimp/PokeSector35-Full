@@ -172,7 +172,7 @@ function renderList() {
     list.style.transform = 'translateY(0)';
 
     if (label) {
-        label.textContent = `◀  ${menuPokedex.getFilterLabel()}  ▶`;
+        label.innerHTML = `<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style="width:0.7em;height:0.7em;vertical-align:middle;fill:currentColor"><polygon points="10,0 0,5 10,10"/></svg>  ${menuPokedex.getFilterLabel()}  <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style="width:0.7em;height:0.7em;vertical-align:middle;fill:currentColor"><polygon points="0,0 10,5 0,10"/></svg>`;
     }
 
     list.textContent = '';

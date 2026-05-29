@@ -10,6 +10,7 @@
 //  FUNCIONES EXPORTADAS:
 //    · startIntro()        — inicia la intro o la salta si ya está en curso
 //    · isIntroInProgress() — true si la intro está activa
+//    · playThemeNow()      — reproduce el tema (versión simplificada para START)
 // =============================================================================
 
 import { gameState }  from './game-state.js';
@@ -22,6 +23,23 @@ let hintTimeout;
 let hintHideTimeout;
 
 export function isIntroInProgress() { return introInProgress; }
+
+/**
+ * Reproduce themeSound ahora. Se llama desde controls.js en el touchstart de START.
+ * themeSound ya está COMPLETAMENTE cargado en memoria (precargado en main.js).
+ * Solo necesitamos reproducirlo.
+ */
+export function playThemeNow() {
+    // Solo reproducir si estamos en la pantalla inicial esperando START
+    // y la intro no está ya en curso.
+    if (introInProgress) return;
+    const homeStart = document.querySelector('.home-start');
+    if (!homeStart || homeStart.classList.contains('hidden')) return;
+
+    themeSound.currentTime = 0;
+    themeSound.loop = false;
+    themeSound.play().catch(() => {});
+}
 
 export function startIntro() {
     const homeStart     = document.querySelector('.home-start');
@@ -43,9 +61,11 @@ export function startIntro() {
         animationHome.classList.remove('hidden');
         animationHome.style.animationPlayState = 'running';
 
-        themeSound.currentTime = 0;
-        themeSound.loop = false;
-        themeSound.play();
+        // El audio ya fue lanzado por playThemeNow() en el touchstart.
+        // Si por algún motivo no sonó (teclado en PC), lo intentamos aquí.
+        if (themeSound.paused) {
+            playThemeNow();
+        }
 
         // Mostrar el hint a los 5 segundos
         hintTimeout = setTimeout(() => {

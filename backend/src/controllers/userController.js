@@ -60,7 +60,17 @@ export async function updateUser(req, res) {
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-    await user.update(req.body);
+
+    // Solo permitir actualizar el username — nunca role, password_hash ni deleted_at
+    const allowedFields = ['username'];
+    const filteredData = {};
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        filteredData[key] = req.body[key];
+      }
+    }
+
+    await user.update(filteredData);
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -133,7 +143,7 @@ export async function getStats(req, res) {
 export async function restoreUser(req, res) {
   try {
     const userId = req.params.id;
-    const user = await User.findByPk(userId, { paranoid: false });
+    const user = await User.findByPk(userId);
     
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });

@@ -25,3 +25,80 @@ export function requireAdmin(req, res, next) {
   }
   next();
 }
+
+/**
+ * Middleware que verifica que el usuario autenticado es el propietario del recurso o es admin.
+ * Compara req.user.id (del token) con req.params.id o req.params.userId (de la URL).
+ */
+export function requireOwnerOrAdmin(req, res, next) {
+  const paramId = req.params.id || req.params.userId;
+  if (String(req.user.id) !== String(paramId) && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'No tienes permiso para acceder a este recurso' });
+  }
+  next();
+}
+
+/**
+ * Middleware para proteger las vistas del panel admin.
+ * Lee el token desde la cookie 'admin_token' (las rutas de vistas no envían header Authorization).
+ * Si no hay cookie o el token es inválido o no es admin, redirige al login.
+ */
+export function verifyAdminView(req, res, next) {
+  try {
+    const cookies = req.headers.cookie;
+    if (!cookies) {
+      return res.redirect('/login');
+    }
+
+    const tokenCookie = cookies.split(';').map(c => c.trim()).find(c => c.startsWith('admin_token='));
+    if (!tokenCookie) {
+      return res.redirect('/login');
+    }
+
+    const token = tokenCookie.split('=')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decoded.role !== 'admin') {
+      return res.redirect('/login');
+    }
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.redirect('/login');
+  }
+}
+
+/**
+ * Middleware para proteger las vistas (páginas HTML) del panel admin.
+ * Lee el token desde la cookie 'access_token' y verifica que sea válido.
+ * Si no hay token o es inválido, redirige a /login.
+ */
+export function verifyViewToken(req, res, next) {
+  try {
+    const cookies = req.headers.cookie || '';
+    const match = cookies.split(';').map(c => c.trim()).find(c => c.startsWith('access_token='));
+    const token = match ? match.split('=')[1] : null;
+
+    if (!token) {
+      return res.redirect('/login');
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.redirect('/login');
+  }
+}
+
+/**
+ * Middleware para vistas que requieren rol admin.
+ * Debe usarse después de verifyViewToken.
+ */
+export function requireAdminView(req, res, next) {
+  if (req.user.role !== 'admin') {
+    return res.redirect('/login');
+  }
+  next();
+}

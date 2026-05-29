@@ -24,6 +24,7 @@
 // =============================================================================
 
 import { gameState } from './game-state.js';
+import { flashButton, releaseButton } from './controls.js';
 
 // ─── Configuración ──────────────────────────────────────────────────────────
 const DEADZONE = 0.4;        // Umbral para activar stick analógico (0-1)
@@ -184,7 +185,16 @@ function processGamepadButtons(gamepad, state, index) {
         if (pressed && !wasPressedBefore) {
             const action = BUTTON_MAP[i] || DPAD_BUTTON_MAP[i];
             if (action && dispatchFunction) {
+                flashButton(action, true);
                 dispatchFunction(action);
+            }
+        }
+
+        // Transición: presionado → suelto
+        if (!pressed && wasPressedBefore) {
+            const action = BUTTON_MAP[i] || DPAD_BUTTON_MAP[i];
+            if (action) {
+                releaseButton(action);
             }
         }
 
@@ -217,15 +227,23 @@ function processGamepadAxes(gamepad, state, index) {
         if (currentState.pos && !wasActive.pos) {
             const action = mapping.pos;
             if (action && dispatchFunction) {
+                flashButton(action, true);
                 dispatchFunction(action);
             }
+        }
+        if (!currentState.pos && wasActive.pos) {
+            releaseButton(mapping.pos);
         }
 
         if (currentState.neg && !wasActive.neg) {
             const action = mapping.neg;
             if (action && dispatchFunction) {
+                flashButton(action, true);
                 dispatchFunction(action);
             }
+        }
+        if (!currentState.neg && wasActive.neg) {
+            releaseButton(mapping.neg);
         }
 
         state.axes[axisIndex] = currentState;

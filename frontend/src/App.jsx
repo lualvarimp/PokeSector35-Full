@@ -25,7 +25,7 @@ import GameControls from './components/GameControls.jsx';
 //  las clases CSS y los selectores del juego funcionen exactamente igual.
 // =============================================================================
 
-const DEFAULT_STICKER = '/img/stickers/nosticker.webp';
+const DEFAULT_STICKER = '/pokesector35/img/stickers/nosticker.webp';
 
 export default function App() {
   const { ready, error } = useGameInit();
@@ -69,13 +69,13 @@ export default function App() {
           <div className="animation-home hidden">
             <h2>
               <img
-                src="/img/game-freak-nintendo-screen.png"
+                src="/pokesector35/img/game-freak-nintendo-screen.png"
                 alt="Gracias, Game Freak y Nintendo, por un juego tan divertido"
               />
             </h2>
             <h3>
               <img
-                src="/img/pokesector-35-screen.png"
+                src="/pokesector35/img/pokesector-35-screen.png"
                 alt="PokéSector 35 - El misterio de los Pokémon salvajes"
               />
             </h3>
@@ -105,7 +105,7 @@ export default function App() {
 
       <div className='logo'>
         <img
-          src="/img/pokesector-35-console.png"
+          src="/pokesector35/img/pokesector-35-console.png"
           alt="PokéSector 35 - El misterio de los Pokémon salvajes"
         />
       </div>

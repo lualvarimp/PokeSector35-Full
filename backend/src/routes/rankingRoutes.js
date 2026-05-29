@@ -1,6 +1,6 @@
 import express from 'express';
 import { getAllRanking, getUserRanking, createRanking, deleteRanking, getRankingPercentage } from '../controllers/rankingController.js';
-import { verifyToken, requireAdmin } from '../middlewares/index.js';
+import { verifyToken, requireAdmin, requireOwnerOrAdmin } from '../middlewares/index.js';
 import { validateCreateRanking } from '../validations/index.js';
 
 const router = express.Router();
@@ -130,7 +130,7 @@ router.get('/by-percentage', verifyToken, getRankingPercentage);
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId', verifyToken, getUserRanking);
+router.get('/:userId', verifyToken, requireOwnerOrAdmin, getUserRanking);
 
 /**
  * @swagger
@@ -192,7 +192,7 @@ router.get('/:userId', verifyToken, getUserRanking);
  *     security:
  *       - BearerAuth: []
  */
-router.post('/:userId', verifyToken, validateCreateRanking, createRanking);
+router.post('/:userId', verifyToken, requireOwnerOrAdmin, validateCreateRanking, createRanking);
 
 /**
  * @swagger

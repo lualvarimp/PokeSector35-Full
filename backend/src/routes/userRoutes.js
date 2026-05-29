@@ -1,6 +1,6 @@
 import express from 'express';
 import { getAllUsers, getUserById, updateUser, deleteUser, getStats, restoreUser, permanentDeleteUser, changePassword } from '../controllers/userController.js';
-import { verifyToken, requireAdmin } from '../middlewares/index.js';
+import { verifyToken, requireAdmin, requireOwnerOrAdmin } from '../middlewares/index.js';
 
 const router = express.Router();
 
@@ -76,7 +76,7 @@ router.get('/', verifyToken, requireAdmin, getAllUsers);
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:id', verifyToken, getUserById);
+router.get('/:id', verifyToken, requireOwnerOrAdmin, getUserById);
 
 /**
  * @swagger
@@ -131,7 +131,7 @@ router.get('/:id', verifyToken, getUserById);
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:id/stats', verifyToken, getStats);
+router.get('/:id/stats', verifyToken, requireOwnerOrAdmin, getStats);
 
 /**
  * @swagger
@@ -181,7 +181,7 @@ router.get('/:id/stats', verifyToken, getStats);
  *     security:
  *       - BearerAuth: []
  */
-router.put('/:id', verifyToken, updateUser);
+router.put('/:id', verifyToken, requireOwnerOrAdmin, updateUser);
 
 /**
  * @swagger

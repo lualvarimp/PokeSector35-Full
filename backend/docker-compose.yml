@@ -8,7 +8,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - ./pokesector_database.sql:/docker-entrypoint-initdb.d/01-pokesector_database.sql
       # seed_data.sql es una inserción de datos de prueba

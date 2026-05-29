@@ -35,14 +35,14 @@ export default function StatsScreen() {
         <div className="goal-list">
           <h2>¡Enhorabuena!</h2>
           <nav id="goal-menu">
-            <p data-option="0"><span className="end-cursor">►</span> Jugar de nuevo</p>
-            <p data-option="1"><span className="end-cursor">►</span> Ver resultados</p>
-            <p data-option="2"><span className="end-cursor">►</span> Volver al menú</p>
-            <p data-option="3"><span className="end-cursor">►</span> Cerrar sesión</p>
+            <p data-option="0"><span className="end-cursor"><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.8em',height:'0.8em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="0,0 10,5 0,10"/></svg></span> Jugar de nuevo</p>
+            <p data-option="1"><span className="end-cursor"><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.8em',height:'0.8em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="0,0 10,5 0,10"/></svg></span> Ver resultados</p>
+            <p data-option="2"><span className="end-cursor"><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.8em',height:'0.8em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="0,0 10,5 0,10"/></svg></span> Volver al menú</p>
+            <p data-option="3"><span className="end-cursor"><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style={{width:'0.8em',height:'0.8em',verticalAlign:'middle',fill:'currentColor'}}><polygon points="0,0 10,5 0,10"/></svg></span> Cerrar sesión</p>
           </nav>
           <div id="goal-unregistered-message" className="goal-message hidden">
-            <p><strong>¡Crea una cuenta para guardar tu progreso!</strong></p>
-            <p>Si no tienes cuenta, tus avances no se guardarán.</p>
+            <p><strong>¡Crea una cuenta y guarda tu progreso!</strong></p>
+            <p>Sin una cuenta, tus avances no se guardarán.</p>
           </div>
         </div>
       </div>

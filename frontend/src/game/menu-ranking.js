@@ -30,7 +30,7 @@ registerHandler('ranking', handleRanking);
 export function onRanking() {
     if (!api.isLoggedIn()) {
         showInfoMessage(
-            'Entra en tu cuenta para acceder al ranking.',
+            'Entra en tu cuenta para acceder a la clasificación.',
             false
         );
         return;
@@ -70,7 +70,7 @@ function renderRankingByDifficulty() {
     const entries = rankingData.filter(e => e.difficulty_id === diff);
 
     if (label) {
-        label.textContent = `◀  ${diff.toUpperCase()}  ▶`;
+        label.innerHTML = `<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style="width:0.7em;height:0.7em;vertical-align:middle;fill:currentColor"><polygon points="10,0 0,5 10,10"/></svg>  ${diff.toUpperCase()}  <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style="width:0.7em;height:0.7em;vertical-align:middle;fill:currentColor"><polygon points="0,0 10,5 0,10"/></svg>`;
     }
 
     rankingScroll = 0;

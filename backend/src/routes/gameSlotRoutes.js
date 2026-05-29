@@ -1,6 +1,6 @@
 import express from 'express';
 import { getSlotsByUser, getSlotById, createSlot, updateSlot, deleteSlot } from '../controllers/gameSlotController.js';
-import { verifyToken } from '../middlewares/index.js';
+import { verifyToken, requireOwnerOrAdmin } from '../middlewares/index.js';
 import { validateCreateSlot, validateUpdateSlot } from '../validations/index.js';
 
 const router = express.Router();
@@ -38,7 +38,7 @@ const router = express.Router();
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId/slots', verifyToken, getSlotsByUser);
+router.get('/:userId/slots', verifyToken, requireOwnerOrAdmin, getSlotsByUser);
 
 /**
  * @swagger
@@ -84,7 +84,7 @@ router.get('/:userId/slots', verifyToken, getSlotsByUser);
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId/slots/:slotNumber', verifyToken, getSlotById);
+router.get('/:userId/slots/:slotNumber', verifyToken, requireOwnerOrAdmin, getSlotById);
 
 /**
  * @swagger
@@ -126,12 +126,17 @@ router.get('/:userId/slots/:slotNumber', verifyToken, getSlotById);
  *                 type: string
  *                 enum: ["facil", "normal", "dificil", "infernal"]
  *                 example: "normal"
+ *               sticker:
+ *                 type: string
+ *                 description: Ruta del sticker decorativo de la consola
+ *                 example: "/img/stickers/sin-sticker.webp"
  *             required:
  *               - slot_number
  *               - explorer
  *               - explorer_name
  *               - color
  *               - difficulty_id
+ *               - sticker
  *     responses:
  *       201:
  *         description: Slot creado exitosamente
@@ -154,7 +159,7 @@ router.get('/:userId/slots/:slotNumber', verifyToken, getSlotById);
  *     security:
  *       - BearerAuth: []
  */
-router.post('/:userId/slots', verifyToken, validateCreateSlot, createSlot);
+router.post('/:userId/slots', verifyToken, requireOwnerOrAdmin, validateCreateSlot, createSlot);
 
 /**
  * @swagger
@@ -234,7 +239,7 @@ router.post('/:userId/slots', verifyToken, validateCreateSlot, createSlot);
  *     security:
  *       - BearerAuth: []
  */
-router.put('/:userId/slots/:slotNumber', verifyToken, validateUpdateSlot, updateSlot);
+router.put('/:userId/slots/:slotNumber', verifyToken, requireOwnerOrAdmin, validateUpdateSlot, updateSlot);
 
 /**
  * @swagger
@@ -284,6 +289,6 @@ router.put('/:userId/slots/:slotNumber', verifyToken, validateUpdateSlot, update
  *     security:
  *       - BearerAuth: []
  */
-router.delete('/:userId/slots/:slotNumber', verifyToken, deleteSlot);
+router.delete('/:userId/slots/:slotNumber', verifyToken, requireOwnerOrAdmin, deleteSlot);
 
 export default router;

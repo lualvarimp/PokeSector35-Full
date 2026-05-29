@@ -15,43 +15,43 @@
 export const MELODY_TRACKS = [
   {
     name: 'Cartridge Route',
-    path: '/sounds/soundtrack/cartridge-route.mp3'
+    path: '/pokesector35/sounds/soundtrack/cartridge-route.mp3'
   },
   {
     name: 'Cobblestone Mornings',
-    path: '/sounds/soundtrack/cobblestone-mornings.mp3'
+    path: '/pokesector35/sounds/soundtrack/cobblestone-mornings.mp3'
   },
   {
     name: 'High Score Morning',
-    path: '/sounds/soundtrack/high-score-morning.mp3'
+    path: '/pokesector35/sounds/soundtrack/high-score-morning.mp3'
   },
   {
     name: 'Level One Arrival',
-    path: '/sounds/soundtrack/level-one-arrival.mp3'
+    path: '/pokesector35/sounds/soundtrack/level-one-arrival.mp3'
   },
   {
     name: 'Morning Sun at the Gate',
-    path: '/sounds/soundtrack/morning-sun-at-the-gate.mp3'
+    path: '/pokesector35/sounds/soundtrack/morning-sun-at-the-gate.mp3'
   },
   {
     name: 'Over the Hilltop',
-    path: '/sounds/soundtrack/over-the-hilltop.mp3'
+    path: '/pokesector35/sounds/soundtrack/over-the-hilltop.mp3'
   },
   {
     name: 'Pocket Kingdom Map',
-    path: '/sounds/soundtrack/pocket-kingdom-map.mp3'
+    path: '/pokesector35/sounds/soundtrack/pocket-kingdom-map.mp3'
   },
   {
     name: 'Pocket Mountain Ascent',
-    path: '/sounds/soundtrack/pocket-mountain-ascent.mp3'
+    path: '/pokesector35/sounds/soundtrack/pocket-mountain-ascent.mp3'
   },
   {
     name: "The Mayor's Porch",
-    path: '/sounds/soundtrack/the-mayors-porch.mp3'
+    path: '/pokesector35/sounds/soundtrack/the-mayors-porch.mp3'
   },
   {
     name: 'The Sunny Coast',
-    path: '/sounds/soundtrack/the-sunny-coast.mp3'
+    path: '/pokesector35/sounds/soundtrack/the-sunny-coast.mp3'
   },
 ];
 
@@ -87,13 +87,13 @@ export function getRandomMelodyTrackName() {
 
 // ── SONIDOS DEL JUEGO (SE MANTIENEN IGUAL) ──────────────────────────────────
 
-export const themeSound    = new Audio('/sounds/theme.mp3');
-export const stepSound     = new Audio('/sounds/step.mp3');
-export const crashSound    = new Audio('/sounds/crash.mp3');
-export const goalSound     = new Audio('/sounds/goal.mp3');
-export const clickSound    = new Audio('/sounds/click.mp3');
-export const eraseSound    = new Audio('/sounds/erase.mp3');
-export const capturedSound = new Audio('/sounds/captured.mp3');
-export const escapedSound  = new Audio('/sounds/escaped.mp3');
-export const runawaySound  = new Audio('/sounds/runaway.mp3');
-export const gameOverSound = new Audio('/sounds/game-over.mp3');
+export const themeSound    = new Audio('/pokesector35/sounds/theme.mp3');
+export const stepSound     = new Audio('/pokesector35/sounds/step.mp3');
+export const crashSound    = new Audio('/pokesector35/sounds/crash.mp3');
+export const goalSound     = new Audio('/pokesector35/sounds/goal.mp3');
+export const clickSound    = new Audio('/pokesector35/sounds/click.mp3');
+export const eraseSound    = new Audio('/pokesector35/sounds/erase.mp3');
+export const capturedSound = new Audio('/pokesector35/sounds/captured.mp3');
+export const escapedSound  = new Audio('/pokesector35/sounds/escaped.mp3');
+export const runawaySound  = new Audio('/pokesector35/sounds/runaway.mp3');
+export const gameOverSound = new Audio('/pokesector35/sounds/game-over.mp3');

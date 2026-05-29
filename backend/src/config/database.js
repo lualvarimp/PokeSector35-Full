@@ -2,7 +2,6 @@ import { Sequelize } from 'sequelize';
 
 import dotenv from 'dotenv';
 dotenv.config();
-console.log('PUERTO DB:', process.env.DB_PORT)
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -12,7 +11,7 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: 'postgres',
-    logging: false, // Cambiar a console.log si quieres ver las queries
+    logging: false,
   }
 );
 

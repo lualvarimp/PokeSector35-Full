@@ -19,10 +19,16 @@ import { updateHUD } from './hud.js';
 import { initControls, dispatch } from './controls.js';
 import { initGamepad } from './gamepad-input.js';
 import { updateGoalScreen } from './movement.js';
-import { getRandomMelodyTrack } from './sounds.js';
+import { getRandomMelodyTrack, themeSound } from './sounds.js';
 import { openGoalMenu } from './game-over.js';
 
 async function loadGame() {
+    // 0. PRECARGA DE AUDIO — antes que nada, asegurar que theme.mp3 está en memoria
+    // Esto es crítico en móvil donde los navegadores no precargan por defecto.
+    // El usuario verá la pantalla de "PULSA START" mientras el audio se carga en segundo plano.
+    themeSound.preload = 'auto';
+    themeSound.load();
+
     // 1. Datos globales persistentes (nombre + colección total)
     const globalRaw = localStorage.getItem('pokesector_global');
     if (globalRaw) {

@@ -1,6 +1,6 @@
 import express from 'express';
 import { getPokedexByUser, addCapturedPokemon, deleteCapturedPokemon, getCapturesBySlot } from '../controllers/capturedPokemonController.js';
-import { verifyToken } from '../middlewares/index.js';
+import { verifyToken, requireOwnerOrAdmin } from '../middlewares/index.js';
 
 const router = express.Router();
 
@@ -43,7 +43,7 @@ const router = express.Router();
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:id/pokedex', verifyToken, getPokedexByUser);
+router.get('/:id/pokedex', verifyToken, requireOwnerOrAdmin, getPokedexByUser);
 
 /**
  * @swagger
@@ -115,7 +115,7 @@ router.get('/:id/pokedex', verifyToken, getPokedexByUser);
  *     security:
  *       - BearerAuth: []
  */
-router.post('/:id/pokedex', verifyToken, addCapturedPokemon);
+router.post('/:id/pokedex', verifyToken, requireOwnerOrAdmin, addCapturedPokemon);
 
 /**
  * @swagger
@@ -171,7 +171,7 @@ router.post('/:id/pokedex', verifyToken, addCapturedPokemon);
  *     security:
  *       - BearerAuth: []
  */
-router.delete('/:id/pokedex/:pokemonId', verifyToken, deleteCapturedPokemon);
+router.delete('/:id/pokedex/:pokemonId', verifyToken, requireOwnerOrAdmin, deleteCapturedPokemon);
 
 /**
  * @swagger
@@ -218,6 +218,6 @@ router.delete('/:id/pokedex/:pokemonId', verifyToken, deleteCapturedPokemon);
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId/captures/:slotId', verifyToken, getCapturesBySlot);
+router.get('/:userId/captures/:slotId', verifyToken, requireOwnerOrAdmin, getCapturesBySlot);
 
 export default router;

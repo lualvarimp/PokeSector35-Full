@@ -8,34 +8,47 @@ import './models/index.js';
 
 import cors from 'cors';
 import express from 'express';
-import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './config/swaggerConfig.js';
+import helmet from 'helmet';
 import routes from './routes/index.js';
-import { errorHandler } from './middlewares/index.js';
+import { errorHandler, verifyAdminView } from './middlewares/index.js';
 
 // ========== __dirname para ES6 MODULES ==========
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// ========== CREAR LA APP PRIMERO ==========
+// ========== CREAR LA APP ==========
 const app = express();
 
-// ========== MIDDLEWARES ==========
-app.use(cors());
-app.use(express.json());
+// ========== SEGURIDAD — Headers HTTP ==========
+app.use(helmet());
+
+// ========== CORS — solo permite capitanpixel.com en producción ==========
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [
+      'https://capitanpixel.com',
+      'https://www.capitanpixel.com',
+    ]
+  : [
+      'http://localhost:5173',
+      'http://localhost:3000',
+    ];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('CORS: origen no permitido'));
+  },
+  credentials: true,
+}));
+
+app.use(express.json({ limit: '50kb' }));
 
 // ========== CONFIGURACIÓN DE VISTAS (PUG) ==========
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/pokesector35', express.static(path.join(__dirname, '../public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
-// ========== SWAGGER UI - DOCUMENTACIÓN ==========
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-app.get('/api-docs/swagger.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(swaggerSpec);
-});
 
 // ========== RUTAS DE VISTAS (PANEL ADMIN) ==========
 app.get('/', (req, res) => {
@@ -46,39 +59,39 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'PokéSector Admin - Login' });
 });
 
-app.get('/admin/dashboard', (req, res) => {
+app.get('/admin/dashboard', verifyAdminView, (req, res) => {
   res.render('dashboard', { title: 'PokéSector Admin - Dashboard' });
 });
 
-app.get('/user/dashboard', (req, res) => {
+app.get('/user/dashboard', verifyAdminView, (req, res) => {
   res.render('dashboard', { title: 'PokéSector - Mi Dashboard' });
 });
 
-app.get('/admin/users', (req, res) => {
+app.get('/admin/users', verifyAdminView, (req, res) => {
   res.render('users', { title: 'PokéSector Admin - Usuarios' });
 });
 
-app.get('/user/users', (req, res) => {
+app.get('/user/users', verifyAdminView, (req, res) => {
   res.render('users', { title: 'PokéSector - Usuarios' });
 });
 
-app.get('/admin/ranking', (req, res) => {
+app.get('/admin/ranking', verifyAdminView, (req, res) => {
   res.render('ranking', { title: 'PokéSector Admin - Ranking' });
 });
 
-app.get('/user/ranking', (req, res) => {
+app.get('/user/ranking', verifyAdminView, (req, res) => {
   res.render('ranking', { title: 'PokéSector - Ranking' });
 });
 
-app.get('/admin/users/:id', (req, res) => {
+app.get('/admin/users/:id', verifyAdminView, (req, res) => {
   res.render('users-detail', { title: 'PokéSector Admin - Detalles Usuario' });
 });
 
-app.get('/admin/pokedex', (req, res) => {
+app.get('/admin/pokedex', verifyAdminView, (req, res) => {
   res.render('pokedex', { title: 'PokéSector Admin - Pokédex' });
 });
 
-app.get('/admin/slots', (req, res) => {
+app.get('/admin/slots', verifyAdminView, (req, res) => {
   res.render('slots', { title: 'PokéSector Admin - Slots' });
 });
 
@@ -91,22 +104,21 @@ app.use(errorHandler);
 // ========== ARRANCAR SERVIDOR ==========
 const startServer = async () => {
   try {
-    await sequelize.authenticate()
-    console.log('✅ Base de datos conectada en puerto 5432')
+    await sequelize.authenticate();
+    console.log('✅ Base de datos conectada');
 
-    await sequelize.sync({ force: false })
-    console.log('✅ Modelos sincronizados')
+    await sequelize.sync({ force: false });
+    console.log('✅ Modelos sincronizados');
 
-    const PORT = process.env.PORT || 3000
+    const PORT = process.env.PORT || 3000;
     app.listen(PORT, '0.0.0.0', () => {
-      console.log(`🚀 Servidor PokeSector corriendo en http://localhost:${PORT}`)
-      console.log(`📚 Swagger UI disponible en http://localhost:${PORT}/api-docs`)
-      console.log(`🎮 Panel Admin disponible en http://localhost:${PORT}/login`)
+      console.log(`🚀 Servidor PokeSector corriendo en puerto ${PORT}`);
+      console.log(`🎮 Panel Admin disponible en /login`);
     });
 
   } catch (error) {
-    console.error('❌ Error al iniciar:', error)
+    console.error('❌ Error al iniciar:', error.message);
   }
-}
+};
 
-startServer()
+startServer();

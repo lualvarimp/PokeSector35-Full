@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 import { User, RefreshToken } from '../models/index.js';
 import dotenv from 'dotenv';
 
@@ -115,6 +116,13 @@ export async function refreshAccessToken(refreshToken) {
   if (!user) {
     throw new Error('Usuario no encontrado');
   }
+
+  // Limpiar tokens expirados de toda la tabla aprovechando la petición
+  await RefreshToken.destroy({
+    where: {
+      expires_at: { [Op.lt]: new Date() }
+    }
+  });
 
   return generateAccessToken(user);
 }

@@ -48,9 +48,17 @@ export async function getSlotByNumber(userId, slotNumber) {
  * @returns {Promise<Object>} Objeto del slot creado
  */
 export async function createNewSlot(userId, slotData) {
+  // Solo permitir campos legítimos del juego — nunca user_id ni id
+  const { slot_number, explorer, explorer_name, color, difficulty_id, sticker } = slotData;
+
   const slot = await GameSlot.create({
     user_id: userId,
-    ...slotData
+    slot_number,
+    explorer,
+    explorer_name,
+    color,
+    difficulty_id,
+    sticker
   });
 
   return slot;
@@ -65,7 +73,20 @@ export async function createNewSlot(userId, slotData) {
  */
 export async function updateSlotData(userId, slotNumber, slotData) {
   const slot = await getSlotByNumber(userId, slotNumber);
-  await slot.update(slotData);
+
+  // Solo permitir campos actualizables del juego — nunca user_id, id ni slot_number
+  const allowedFields = [
+    'explorer', 'explorer_name', 'color', 'difficulty_id', 'sticker',
+    'hp', 'pokeball', 'position_r', 'position_c', 'is_game_over', 'is_goal'
+  ];
+  const filteredData = {};
+  for (const key of allowedFields) {
+    if (slotData[key] !== undefined) {
+      filteredData[key] = slotData[key];
+    }
+  }
+
+  await slot.update(filteredData);
   return slot;
 }
 

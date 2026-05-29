@@ -13,8 +13,8 @@ export function validateCreateSlot(req, res, next) {
     return res.status(400).json({ error: 'difficulty_id inválida' });
   }
 
-  // Validar que sticker sea una ruta válida
-  if (!sticker.includes('/img/stickers/') || !sticker.endsWith('.webp')) {
+  // Validar que sticker sea una ruta segura: solo letras, números, guiones y guiones bajos
+  if (!/^\/img\/stickers\/[\w-]+\.webp$/.test(sticker)) {
     return res.status(400).json({ error: 'sticker debe ser una ruta válida (/img/stickers/nombre.webp)' });
   }
 
@@ -37,7 +37,7 @@ export function validateUpdateSlot(req, res, next) {
     return res.status(400).json({ error: 'Pokeballs no puede ser negativo' });
   }
 
-  if (sticker !== undefined && (!sticker.includes('/img/stickers/') || !sticker.endsWith('.webp'))) {
+  if (sticker !== undefined && !/^\/img\/stickers\/[\w-]+\.webp$/.test(sticker)) {
     return res.status(400).json({ error: 'sticker debe ser una ruta válida (/img/stickers/nombre.webp)' });
   }
 

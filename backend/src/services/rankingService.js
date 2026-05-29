@@ -24,13 +24,16 @@ export async function getRankingGlobal(difficulty = null) {
       AND (r.captured_count + r.escaped_count) >= 10
   `;
 
+  const replacements = [];
+
   if (difficulty) {
-    query += ` AND r.difficulty_id = '${difficulty}'`;
+    query += ` AND r.difficulty_id = ?`;
+    replacements.push(difficulty);
   }
 
   query += ` ORDER BY r.captured_count DESC, efficiency DESC, r.completed_at ASC LIMIT 51`;
 
-  const ranking = await sequelize.query(query);
+  const ranking = await sequelize.query(query, { replacements });
   return ranking[0];
 }
 
@@ -55,9 +58,15 @@ export async function getRankingByUser(userId) {
  * @returns {Promise<Object>} Objeto de ranking creado
  */
 export async function createNewRanking(userId, rankingData) {
+  // Solo permitir campos legítimos — nunca user_id, id ni completed_at
+  const { captured_count, escaped_count, difficulty_id, explorer_name } = rankingData;
+
   const ranking = await Ranking.create({
     user_id: userId,
-    ...rankingData
+    captured_count,
+    escaped_count,
+    difficulty_id,
+    explorer_name
   });
 
   return ranking;
@@ -104,12 +113,15 @@ export async function getRankingByPercentage(difficulty = null) {
       AND (r.captured_count + r.escaped_count) >= 10
   `;
 
+  const replacements = [];
+
   if (difficulty) {
-    query += ` AND r.difficulty_id = '${difficulty}'`;
+    query += ` AND r.difficulty_id = ?`;
+    replacements.push(difficulty);
   }
 
   query += ` ORDER BY capture_rate DESC, r.completed_at ASC`;
 
-  const ranking = await sequelize.query(query);
+  const ranking = await sequelize.query(query, { replacements });
   return ranking[0];
 }

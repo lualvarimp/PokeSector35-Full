@@ -22,10 +22,16 @@
         width: fit-content;
         margin: 1rem auto;
         padding: 0.5rem 1.2rem;
-        font-size: 1rem;
+        font-size: 0.9rem;
         color: var(--white);
         background: var(--black-screen);
         mix-blend-mode: multiply;
+    }
+
+    .menu-main {
+        .menu-item {
+            font-size: 0.8rem;
+        }
     }
 
     .menu-player-name {
@@ -48,6 +54,7 @@
         padding: 0;
 
         li {
+            font-size: 0.9rem;
             list-style-type: none;
             padding: 0.3rem 0;
             font-size: 0.85rem;

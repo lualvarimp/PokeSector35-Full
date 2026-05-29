@@ -1,8 +1,4 @@
 // ============================================================================
-// LAYOUT.JS - Funciones compartidas del layout
-// ============================================================================
-
-// ============================================================================
 // LOGOUT
 // ============================================================================
 
@@ -10,14 +6,14 @@ async function performLogout(event) {
   event.preventDefault();
 
   try {
-    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
 
-    const response = await fetch('/api/auth/logout', {
+    await fetch('/api/auth/logout', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json'
-      }
+      },
+      body: JSON.stringify({ refresh_token: refreshToken })
     });
 
     // Limpiar localStorage
@@ -25,6 +21,9 @@ async function performLogout(event) {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user_role');
     localStorage.removeItem('username');
+
+    // La cookie admin_token la borra el servidor con HttpOnly
+    // JavaScript no puede tocarla — el servidor la invalida en /api/auth/logout
 
     // Redirigir a login y reemplazar el historial
     // Usar location.replace() para que NO se pueda volver atrás

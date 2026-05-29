@@ -195,12 +195,24 @@ router.post('/refresh', refresh);
  * /api/auth/logout:
  *   post:
  *     summary: Cerrar sesión
- *     description: Cierra la sesión del usuario (actualmente es un endpoint stub)
+ *     description: Cierra la sesión del usuario invalidando su refresh token en la base de datos. El cliente debe enviar el refresh_token en el body.
  *     tags:
  *       - Autenticación
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               refresh_token:
+ *                 type: string
+ *                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *             required:
+ *               - refresh_token
  *     responses:
  *       200:
- *         description: Logout exitoso
+ *         description: Logout exitoso o token ya invalidado
  *         content:
  *           application/json:
  *             schema:
@@ -209,8 +221,13 @@ router.post('/refresh', refresh);
  *                 message:
  *                   type: string
  *                   example: "Logout exitoso"
- *     security:
- *       - BearerAuth: []
+ *       400:
+ *         description: Refresh token no proporcionado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *     security: []
  */
 router.post('/logout', logout);
 

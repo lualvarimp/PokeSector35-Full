@@ -74,7 +74,7 @@
     }
 
     #goal-unregistered-message {
-        margin: 0.7rem 0.6rem;
+        margin: 0.5rem 0.6rem;
         padding: 0.7rem 0.3rem;
         border: 0.15rem solid var(--black-screen);
         animation: border-blink 2s infinite;

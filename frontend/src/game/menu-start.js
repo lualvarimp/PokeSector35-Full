@@ -382,6 +382,13 @@ function handleInfo(action) {
 //  START GAME — Inicia una partida nueva
 
 async function startGame(slotNumber, isRestart = false) {
+    // FIX: resetear TODOS los flags al inicio de cada partida nueva
+    // Sin esto, isIntro bloqueaba el movimiento al iniciar desde el menú de slots
+    gameState.isIntro    = false;
+    gameState.isGoal     = false;
+    gameState.isGameOver = false;
+    gameState.isBattle   = false;
+
     if (!api.isLoggedIn()) {
         gameState.playerName = 'Ash';
         updateExplorerHUD();
@@ -504,8 +511,6 @@ async function startGame(slotNumber, isRestart = false) {
     }
     
     gameState.currentPosition = { r: 0, c: 0 };
-    gameState.isGoal          = false;
-    gameState.isGameOver      = false;
 
     import('./hud.js').then(({ updateHUD }) => updateHUD());
 
@@ -537,6 +542,11 @@ export async function restartFromEndScreen() {
         const el = document.querySelector(sel);
         if (el) el.classList.add('hidden');
     });
+
+    // Mostramos la game-screen inmediatamente para evitar el parpadeo de
+    // pantalla en negro mientras se resuelven los awaits del backend.
+    const gameScreen = document.querySelector('.game-screen');
+    if (gameScreen) gameScreen.classList.remove('hidden');
 
     gameState.isGoal        = false;
     gameState.isGameOver    = false;

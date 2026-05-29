@@ -28,7 +28,7 @@ export default function GameScreen() {
             <div key={`${r}-${c}`} data-r={r} data-c={c}>
               {r === 0 && c === 0 && (
                 <div id="player">
-                  <img src="/img/character-boy-front.png" alt="Pokémon explorer" />
+                  <img src="/pokesector35/img/character-boy-front.png" alt="Pokémon explorer" />
                 </div>
               )}
             </div>
@@ -37,7 +37,7 @@ export default function GameScreen() {
 
         <div data-row="bottom" className="full-bottom">
           <div>
-            <img src="/img/heart.png" alt="heart" />
+            <img src="/pokesector35/img/heart.png" alt="heart" />
             <p>HP:</p>
             <div>
               <div className="hp-bar">
@@ -46,7 +46,7 @@ export default function GameScreen() {
               <p className="player-hp"><span>10</span>/10</p>
             </div>
             <div>
-              <span><img src="/img/pokeball.png" alt="pokeball" /></span>
+              <span><img src="/pokesector35/img/pokeball.png" alt="pokeball" /></span>
               <p>X</p>
               <p className="player-balls"></p>
             </div>

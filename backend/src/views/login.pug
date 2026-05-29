@@ -8,15 +8,15 @@ html(lang='es')
     link(rel='preconnect' href='https://fonts.googleapis.com')
     link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin)
     link(href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap' rel='stylesheet')
-    link(rel='stylesheet' href='/css/layout.css')
-    link(rel='stylesheet' href='/css/login.css')
+    link(rel='stylesheet' href='/pokesector35/css/layout.css')
+    link(rel='stylesheet' href='/pokesector35/css/login.css')
   
   body.login-page
     //- Navbar reutilizado de layout (sin ul de menú)
     nav.navbar
       div
         .logo-placeholder
-          a(href='/') POKÉSECTOR ADMIN
+          a(href='/pokesector35/login') POKÉSECTOR ADMIN
         .theme-toggle
           input#themeSwitch(type='checkbox')
           label(for='themeSwitch')
@@ -28,7 +28,7 @@ html(lang='es')
           h1.login-title Iniciar Sesión
           p.login-subtitle Accede al panel de administración
           
-          form#loginForm.login-form
+          form#loginForm.login-form(method='post' action='javascript:void(0)')
             .form-group
               label(for='username') NOMBRE
               input#username(
@@ -62,5 +62,5 @@ html(lang='es')
       p &copy; 2026 PokéSector 35 | Desarrollado por Luis Alonso
 
     //- Scripts
-    script(src='/js/layout.js')
-    script(src='/js/login.js')
+    script(src='/pokesector35/js/layout.js')
+    script(src='/pokesector35/js/login.js')

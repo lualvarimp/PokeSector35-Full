@@ -1,7 +1,7 @@
 {
   "name": "pokesector-backend",
   "version": "1.0.0",
-  "description": "Proyecto Backend para el juego PokeSector35",
+  "description": "Backend para el juego PokeSector35",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -18,6 +18,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "helmet": "^8.2.0",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.20.0",
     "pg-hstore": "2.3.4",

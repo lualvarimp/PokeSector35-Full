@@ -1,7 +1,3 @@
-// ============================================================================
-// POKÉSECTOR ADMIN PANEL - DASHBOARD.JS
-// Carga estadísticas en tiempo real desde la API (solo datos reales)
-// ============================================================================
 
 let globalStats = {
   totalUsers: 0,

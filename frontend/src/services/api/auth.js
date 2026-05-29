@@ -52,7 +52,19 @@ export async function login(username, password) {
 
 // ─── Logout ──────────────────────────────────────────────────────────────────
 
-export function logout() {
+export async function logout() {
+  const refreshToken = localStorage.getItem('pokesector_refresh_token');
+  if (refreshToken) {
+    try {
+      await fetch(`${API_BASE}/auth/logout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+      });
+    } catch (e) {
+      // Si falla la petición, igualmente limpiamos la sesión local
+    }
+  }
   clearSession();
 }
 

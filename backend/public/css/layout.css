@@ -369,7 +369,7 @@ main.main-content {
   color: var(--black);
 }
 
-/* =============== BUTTONS - CENTRALIZADOS =============== */
+/* =============== BUTTONS =============== */
 .btn-back {
   display: inline-flex;
   align-items: center;
@@ -488,7 +488,7 @@ main.main-content {
   }
 }
 
-/* =============== MODAL - CENTRALIZADOS =============== */
+/* =============== MODAL =============== */
 .modal {
   position: fixed;
   top: 0;
@@ -567,7 +567,7 @@ main.main-content {
   justify-content: flex-end;
 }
 
-/* =============== FORM GROUPS - CENTRALIZADOS =============== */
+/* =============== FORM GROUPS =============== */
 .form-group {
   margin-bottom: 1.5rem;
 
@@ -599,7 +599,7 @@ main.main-content {
   }
 }
 
-/* =============== FILTER SELECT - CENTRALIZADO =============== */
+/* =============== FILTER SELECT =============== */
 .filter-select {
   font-family: var(--font-family);
   font-size: 1rem;

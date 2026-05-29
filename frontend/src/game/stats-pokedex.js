@@ -96,7 +96,7 @@ export function renderPokedexView() {
 
     // Instrucción de filtrado por letra
     const hint = document.createElement('p');
-    hint.innerHTML = '<span style="font-size:0.73rem">◀ ▶ Filtrar por letra</span>';
+    hint.innerHTML = '<span style="font-size:0.73rem"><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style="width:0.7em;height:0.7em;vertical-align:middle;fill:currentColor"><polygon points="10,0 0,5 10,10"/></svg> <svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" style="width:0.7em;height:0.7em;vertical-align:middle;fill:currentColor"><polygon points="0,0 10,5 0,10"/></svg> Filtrar por letra</span>';
     gameList.appendChild(hint);
 
     // Lista de Pokémon filtrados

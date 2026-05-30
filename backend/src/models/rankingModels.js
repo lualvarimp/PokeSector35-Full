@@ -24,7 +24,7 @@ const Ranking = sequelize.define('Ranking', {
     allowNull: false
   },
   explorer_name: {
-    type: DataTypes.STRING(30),
+    type: DataTypes.STRING(12),
     allowNull: true
   }
 }, {

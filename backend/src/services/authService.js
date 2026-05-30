@@ -7,6 +7,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
+ * Máximo de refresh tokens activos por usuario.
+ * Permite tener sesión en varios dispositivos sin acumular tokens sin límite.
+ */
+const MAX_REFRESH_TOKENS_PER_USER = 5;
+
+/**
  * Registra un nuevo usuario en el sistema
  * @param {string} username - Nombre de usuario único (3-15 caracteres)
  * @param {string} password - Contraseña sin encriptar (mínimo 6 caracteres)
@@ -71,12 +77,41 @@ export function generateAccessToken(user) {
 
 /**
  * Genera y almacena un refresh token JWT en la BD
- * Los refresh tokens duran 7 días y se usan solo para renovar access tokens
+ * Limita a MAX_REFRESH_TOKENS_PER_USER tokens activos por usuario,
+ * eliminando los más antiguos si se supera el límite.
  * @param {Object} user - Objeto del usuario
  * @param {number} user.id - ID del usuario
  * @returns {Promise<string>} Refresh token firmado
  */
 export async function generateRefreshToken(user) {
+  // 1. Limpiar tokens expirados de este usuario
+  await RefreshToken.destroy({
+    where: {
+      user_id: user.id,
+      expires_at: { [Op.lt]: new Date() }
+    }
+  });
+
+  // 2. Contar tokens activos restantes
+  const activeCount = await RefreshToken.count({
+    where: { user_id: user.id }
+  });
+
+  // 3. Si hay demasiados, eliminar los más antiguos para dejar hueco
+  if (activeCount >= MAX_REFRESH_TOKENS_PER_USER) {
+    const tokensToDelete = await RefreshToken.findAll({
+      where: { user_id: user.id },
+      order: [['created_at', 'ASC']],
+      limit: activeCount - MAX_REFRESH_TOKENS_PER_USER + 1
+    });
+
+    const idsToDelete = tokensToDelete.map(t => t.id);
+    await RefreshToken.destroy({
+      where: { id: { [Op.in]: idsToDelete } }
+    });
+  }
+
+  // 4. Crear el nuevo token
   const refreshToken = jwt.sign(
     { id: user.id },
     process.env.JWT_REFRESH_SECRET,

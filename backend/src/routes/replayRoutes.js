@@ -166,8 +166,8 @@ router.get('/:userId/slots/:slotId/replay', verifyToken, requireOwnerOrAdmin, ge
  * @swagger
  * /api/users/{userId}/replays:
  *   get:
- *     summary: Obtener todos los replays del usuario
- *     description: Obtiene todas las grabaciones de un usuario. Útil para análisis de patrones de juego y estadísticas.
+ *     summary: Obtener todos los replays del usuario (solo admin)
+ *     description: Obtiene todas las grabaciones de un usuario. Solo accesible por administradores. Útil para análisis de patrones de juego y estadísticas.
  *     tags:
  *       - Replays
  *     parameters:
@@ -204,6 +204,12 @@ router.get('/:userId/slots/:slotId/replay', verifyToken, requireOwnerOrAdmin, ge
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: No tiene permisos de admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       500:
  *         description: Error del servidor
  *         content:
@@ -213,13 +219,13 @@ router.get('/:userId/slots/:slotId/replay', verifyToken, requireOwnerOrAdmin, ge
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId/replays', verifyToken, requireOwnerOrAdmin, getUserReplays);
+router.get('/:userId/replays', verifyToken, requireAdmin, getUserReplays);
 
 /**
  * @swagger
  * /api/users/{userId}/replays/{replayId}:
  *   delete:
- *     summary: Eliminar un replay
+ *     summary: Eliminar un replay (solo admin)
  *     description: Elimina una grabación de partida del servidor. Solo admin puede hacer esto.
  *     tags:
  *       - Replays

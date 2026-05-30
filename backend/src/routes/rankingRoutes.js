@@ -101,8 +101,8 @@ router.get('/by-percentage', verifyToken, getRankingPercentage);
  * @swagger
  * /api/ranking/{userId}:
  *   get:
- *     summary: Obtener ranking de un usuario
- *     description: Obtiene el historial de rankings (todas las partidas completadas) de un usuario específico
+ *     summary: Obtener ranking de un usuario (solo admin)
+ *     description: Obtiene el historial de rankings (todas las partidas completadas) de un usuario específico. Solo accesible por administradores.
  *     tags:
  *       - Ranking
  *     parameters:
@@ -127,10 +127,16 @@ router.get('/by-percentage', verifyToken, getRankingPercentage);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: No tiene permisos de admin
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *     security:
  *       - BearerAuth: []
  */
-router.get('/:userId', verifyToken, requireOwnerOrAdmin, getUserRanking);
+router.get('/:userId', verifyToken, requireAdmin, getUserRanking);
 
 /**
  * @swagger

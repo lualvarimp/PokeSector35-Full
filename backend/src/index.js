@@ -63,24 +63,12 @@ app.get('/admin/dashboard', verifyAdminView, (req, res) => {
   res.render('dashboard', { title: 'PokéSector Admin - Dashboard' });
 });
 
-app.get('/user/dashboard', verifyAdminView, (req, res) => {
-  res.render('dashboard', { title: 'PokéSector - Mi Dashboard' });
-});
-
 app.get('/admin/users', verifyAdminView, (req, res) => {
   res.render('users', { title: 'PokéSector Admin - Usuarios' });
 });
 
-app.get('/user/users', verifyAdminView, (req, res) => {
-  res.render('users', { title: 'PokéSector - Usuarios' });
-});
-
 app.get('/admin/ranking', verifyAdminView, (req, res) => {
   res.render('ranking', { title: 'PokéSector Admin - Ranking' });
-});
-
-app.get('/user/ranking', verifyAdminView, (req, res) => {
-  res.render('ranking', { title: 'PokéSector - Ranking' });
 });
 
 app.get('/admin/users/:id', verifyAdminView, (req, res) => {
@@ -104,6 +92,12 @@ app.use(errorHandler);
 // ========== ARRANCAR SERVIDOR ==========
 const startServer = async () => {
   try {
+    // Verificar que las variables JWT existen antes de arrancar
+    if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
+      console.error('❌ JWT_SECRET y JWT_REFRESH_SECRET son obligatorios en el .env');
+      process.exit(1);
+    }
+
     await sequelize.authenticate();
     console.log('✅ Base de datos conectada');
 

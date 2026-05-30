@@ -68,37 +68,3 @@ export function verifyAdminView(req, res, next) {
     return res.redirect('/login');
   }
 }
-
-/**
- * Middleware para proteger las vistas (páginas HTML) del panel admin.
- * Lee el token desde la cookie 'access_token' y verifica que sea válido.
- * Si no hay token o es inválido, redirige a /login.
- */
-export function verifyViewToken(req, res, next) {
-  try {
-    const cookies = req.headers.cookie || '';
-    const match = cookies.split(';').map(c => c.trim()).find(c => c.startsWith('access_token='));
-    const token = match ? match.split('=')[1] : null;
-
-    if (!token) {
-      return res.redirect('/login');
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.redirect('/login');
-  }
-}
-
-/**
- * Middleware para vistas que requieren rol admin.
- * Debe usarse después de verifyViewToken.
- */
-export function requireAdminView(req, res, next) {
-  if (req.user.role !== 'admin') {
-    return res.redirect('/login');
-  }
-  next();
-}

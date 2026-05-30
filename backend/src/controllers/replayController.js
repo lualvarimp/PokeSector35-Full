@@ -1,6 +1,29 @@
 import { saveReplay, getReplayBySlot, getReplaysByUser, deleteReplay } from '../services/index.js';
 
 /**
+ * Límite máximo de movimientos por partida.
+ * Un mapa grande con muchas idas y venidas no debería superar los 2000 turnos.
+ */
+const MAX_MOVEMENTS = 2000;
+
+/**
+ * Valida que un movimiento individual tenga la estructura correcta.
+ * Cada movimiento debe tener: hp (número), r (número), c (número), pok (número).
+ * @param {Object} mov - Movimiento a validar
+ * @returns {boolean} true si es válido
+ */
+function isValidMovement(mov) {
+  return (
+    mov !== null &&
+    typeof mov === 'object' &&
+    typeof mov.hp === 'number' &&
+    typeof mov.r === 'number' &&
+    typeof mov.c === 'number' &&
+    typeof mov.pok === 'number'
+  );
+}
+
+/**
  * Endpoint: POST /api/users/:userId/slots/:slotId/replay
  * Guarda la grabación de una partida completa
  * El movements array contiene la posición, HP y pokéballs en cada turno
@@ -10,9 +33,6 @@ import { saveReplay, getReplayBySlot, getReplaysByUser, deleteReplay } from '../
  * @param {Array} req.body.movements - Array de movimientos [{hp, r, c, pok}, ...]
  * @param {Object} res - Express response
  * @returns {Object} Objeto del replay guardado
- * @example
- * // POST body:
- * // { movements: [ {hp: 10, r: 0, c: 0, pok: 0}, {hp: 10, r: 1, c: 0, pok: 0}, ... ] }
  */
 export async function createReplay(req, res) {
   try {
@@ -22,6 +42,20 @@ export async function createReplay(req, res) {
 
     if (!movements || !Array.isArray(movements)) {
       return res.status(400).json({ error: 'Movements debe ser un array' });
+    }
+
+    if (movements.length === 0) {
+      return res.status(400).json({ error: 'Movements no puede estar vacío' });
+    }
+
+    if (movements.length > MAX_MOVEMENTS) {
+      return res.status(400).json({ error: `Movements no puede superar ${MAX_MOVEMENTS} elementos` });
+    }
+
+    // Validar que cada movimiento tenga la estructura esperada
+    const allValid = movements.every(isValidMovement);
+    if (!allValid) {
+      return res.status(400).json({ error: 'Cada movimiento debe tener hp, r, c y pok como números' });
     }
 
     const replay = await saveReplay(userId, slotId, movements);

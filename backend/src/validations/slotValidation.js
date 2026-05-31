@@ -19,7 +19,7 @@ export function validateCreateSlot(req, res, next) {
   }
 
   // Validar que sticker sea una ruta segura: solo letras, números, guiones y guiones bajos
-  if (!/^\/img\/stickers\/[\w-]+\.webp$/.test(sticker)) {
+  if (!/^(\/pokesector35)?\/img\/stickers\/[\w-]+\.webp$/.test(sticker)) {
     return res.status(400).json({ error: 'sticker debe ser una ruta válida (/img/stickers/nombre.webp)' });
   }
 
@@ -46,7 +46,7 @@ export function validateUpdateSlot(req, res, next) {
     return res.status(400).json({ error: 'color debe ser un hex válido (#RRGGBB)' });
   }
 
-  if (sticker !== undefined && !/^\/img\/stickers\/[\w-]+\.webp$/.test(sticker)) {
+  if (sticker !== undefined && !/^(\/pokesector35)?\/img\/stickers\/[\w-]+\.webp$/.test(sticker)) {
     return res.status(400).json({ error: 'sticker debe ser una ruta válida (/img/stickers/nombre.webp)' });
   }
 

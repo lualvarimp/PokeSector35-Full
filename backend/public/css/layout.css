@@ -3,21 +3,21 @@
 /* =============== IMPORTED FONTS =============== */
 @font-face {
   font-family: 'IBM EGA 8x8';
-  src: url('/fonts/ibm-ega-8x8.woff') format('woff');
+  src: url('/pokesector35/fonts/ibm-ega-8x8.woff') format('woff');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'ATI 8x16';
-  src: url('/fonts/ati-8x16.woff') format('woff');
+  src: url('/pokesector35/fonts/ati-8x16.woff') format('woff');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'Toshiba 8x14';
-  src: url('/fonts/toshiba-8x14.woff') format('woff');
+  src: url('/pokesector35/fonts/toshiba-8x14.woff') format('woff');
   font-weight: 400;
   font-style: normal;
 }

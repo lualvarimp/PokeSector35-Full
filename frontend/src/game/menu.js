@@ -29,3 +29,4 @@ import './menu-customize.js';
 import './menu-account.js';
 import './menu-ranking.js';
 import './menu-pokedex.js';
+import './menu-contact.js';

@@ -20,6 +20,7 @@ export default function MenuScreen() {
           <li data-option="pokedex" className="menu-item"> POKÉDEX</li>
           <li data-option="account" className="menu-item"> MI CUENTA</li>
           <li data-option="ranking" className="menu-item"> CLASIFICACIÓN</li>
+          <li data-option="contact" className="menu-item"> CONTACTO</li>
         </ul>
         <p className="menu-hint"><br></br><strong>A/SPACE:</strong> Elegir</p>
       </div>
@@ -170,6 +171,20 @@ export default function MenuScreen() {
           <li data-account="register" className="menu-item"> CREAR CUENTA</li>
           <li data-account="delete" className="menu-item"> BORRAR CUENTA</li>
           <li data-account="back" className="menu-item"> VOLVER</li>
+        </ul>
+      </div>
+
+      {/* Vista: Contacto */}
+      <div className="menu-contact hidden">
+        <h2>CONTACTO</h2>
+        <p className="menu-contact-text">
+          Fallos, sugerencias o simplemente para saludar.
+        <br /><br />
+          ¡El PROFESOR te responderá lo más rápido posible!
+        </p>
+        <ul className="menu-list">
+          <li data-contact="send" className="menu-item active">ENVIAR EMAIL</li>
+          <li data-contact="back" className="menu-item"> VOLVER</li>
         </ul>
       </div>
 

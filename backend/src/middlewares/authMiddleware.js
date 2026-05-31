@@ -47,24 +47,24 @@ export function verifyAdminView(req, res, next) {
   try {
     const cookies = req.headers.cookie;
     if (!cookies) {
-      return res.redirect('/login');
+      return res.redirect('/pokesector35/login');
     }
 
     const tokenCookie = cookies.split(';').map(c => c.trim()).find(c => c.startsWith('admin_token='));
     if (!tokenCookie) {
-      return res.redirect('/login');
+      return res.redirect('/pokesector35/login');
     }
 
     const token = tokenCookie.split('=')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded.role !== 'admin') {
-      return res.redirect('/login');
+      return res.redirect('/pokesector35/login');
     }
 
     req.user = decoded;
     next();
   } catch (error) {
-    return res.redirect('/login');
+    return res.redirect('/pokesector35/login');
   }
 }

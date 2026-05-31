@@ -52,7 +52,7 @@ app.set('view engine', 'pug');
 
 // ========== RUTAS DE VISTAS (PANEL ADMIN) ==========
 app.get('/', (req, res) => {
-  res.redirect('/login');
+  res.redirect('/pokesector35/login');
 });
 
 app.get('/login', (req, res) => {

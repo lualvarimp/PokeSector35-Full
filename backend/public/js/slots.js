@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const accessToken = localStorage.getItem('access_token');
 
   if (!accessToken) {
-    window.location.href = '/login';
+    window.location.href = '/pokesector35/login';
     return;
   }
 
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
   userId = urlParams.get('userId');
 
   if (!userId) {
-    window.location.href = '/admin/users';
+    window.location.href = '/pokesector35/admin/users';
     return;
   }
 
@@ -37,7 +37,7 @@ async function loadSlots() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/users/${userId}/slots`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/slots`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -231,7 +231,7 @@ async function saveSlot() {
 
     let existingSlot = allSlots.find(s => s.slot_number === slotNum);
     let method = 'POST';
-    let url = `/api/users/${userId}/slots`;
+    let url = `/pokesector35/api/users/${userId}/slots`;
 
     if (existingSlot) {
       url += `/${slotNum}`;
@@ -292,7 +292,7 @@ async function deleteSlot(slotId) {
       return;
     }
 
-    const response = await fetch(`/api/users/${userId}/slots/${slot.slot_number}`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/slots/${slot.slot_number}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });

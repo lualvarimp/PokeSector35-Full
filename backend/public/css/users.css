@@ -196,8 +196,10 @@
   }
 }
 
-tbody tr:has(.role-badge.admin) {
+tbody tr:has(.role-badge.admin),
+tbody tr.admin-row {
   color: var(--red);
+  background: rgba(130, 30, 30, 0.08);
 }
 
 .users-pagination {

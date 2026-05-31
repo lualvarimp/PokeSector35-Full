@@ -8,20 +8,20 @@ html(lang='es')
     link(rel='preconnect' href='https://fonts.googleapis.com')
     link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin)
     link(href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap' rel='stylesheet')
-    link(rel='stylesheet' href='/css/layout.css')
-    link(rel='stylesheet' href='/css/dashboard.css')
-    link(rel='stylesheet' href='/css/login.css')
-    link(rel='stylesheet' href='/css/users-detail.css')
-    link(rel='stylesheet' href='/css/ranking.css')
-    link(rel='stylesheet' href='/css/pokedex.css')
-    link(rel='stylesheet' href='/css/slots.css')
-    link(rel='stylesheet' href='/css/users.css')
+    link(rel='stylesheet' href='/pokesector35/css/layout.css')
+    link(rel='stylesheet' href='/pokesector35/css/dashboard.css')
+    link(rel='stylesheet' href='/pokesector35/css/login.css')
+    link(rel='stylesheet' href='/pokesector35/css/users-detail.css')
+    link(rel='stylesheet' href='/pokesector35/css/ranking.css')
+    link(rel='stylesheet' href='/pokesector35/css/pokedex.css')
+    link(rel='stylesheet' href='/pokesector35/css/slots.css')
+    link(rel='stylesheet' href='/pokesector35/css/users.css')
   
   body
     nav.navbar
       div
         .logo-placeholder
-          a(href='/') POKÉSECTOR ADMIN
+          a(href='/pokesector35/') POKÉSECTOR ADMIN
         
         button#menuToggle
           span
@@ -31,11 +31,11 @@ html(lang='es')
         ul#navMenu
           //- Menú Admin
           li#adminMenu(style='display: none;')
-            a(href='/admin/dashboard') Dashboard
+            a(href='/pokesector35/admin/dashboard') Dashboard
           li#adminMenu(style='display: none;')
-            a(href='/admin/users') Usuarios
+            a(href='/pokesector35/admin/users') Usuarios
           li#adminMenu(style='display: none;')
-            a(href='/admin/ranking') Ranking
+            a(href='/pokesector35/admin/ranking') Ranking
           li#adminMenu(style='display: none;')
             a(href='#' onclick='performLogout(event)') Logout
         
@@ -52,5 +52,5 @@ html(lang='es')
       p &copy; 2026 PokéSector 35 | Desarrollado por Luis Alonso
 
     //- Scripts
-    script(src='/js/layout.js')
+    script(src='/pokesector35/js/layout.js')
     block scripts

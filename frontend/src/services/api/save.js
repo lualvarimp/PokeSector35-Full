@@ -45,18 +45,15 @@ export async function saveGameToBackend(gameState, slotNumber) {
     }
 
     // 3. Save ranking entry
-    const totalEncounters = gameState.pokemonCaptured.length + gameState.pokemonEscaped.length;
-    if (totalEncounters >= 10) {
-      try {
-        await createRanking({
-          captured_count: gameState.pokemonCaptured.length,
-          escaped_count: gameState.pokemonEscaped.length,
-          difficulty_id: gameState.difficultyId || 'normal',
-          explorer_name: gameState.playerName || null,
-        });
-      } catch (e) {
-        console.warn('Error saving ranking:', e.message);
-      }
+    try {
+      await createRanking({
+        captured_count: gameState.pokemonCaptured.length,
+        escaped_count: gameState.pokemonEscaped.length,
+        difficulty_id: gameState.difficultyId || 'normal',
+        explorer_name: gameState.playerName || null,
+      });
+    } catch (e) {
+      console.warn('Error saving ranking:', e.message);
     }
 
     // 4. Save replay from localStorage and clear it

@@ -1,4 +1,3 @@
-
 let globalStats = {
   totalUsers: 0,
   totalGames: 0,
@@ -12,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const accessToken = localStorage.getItem('access_token');
 
   if (!accessToken) {
-    window.location.href = '/login';
+    window.location.href = '/pokesector35/login';
     return;
   }
 
@@ -46,7 +45,7 @@ async function loadUserStats() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch('/api/users', {
+    const response = await fetch('/pokesector35/api/users', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -58,7 +57,7 @@ async function loadUserStats() {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     globalStats.usersThisWeek = users.filter(user => {
-      return new Date(user.createdAt) > oneWeekAgo;
+      return new Date(user.created_at) > oneWeekAgo;
     }).length;
 
     document.getElementById('totalUsers').textContent = globalStats.totalUsers;
@@ -78,7 +77,7 @@ async function loadGameStats() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch('/api/ranking', {
+    const response = await fetch('/pokesector35/api/ranking', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -111,7 +110,7 @@ async function loadPokemonStats() {
     const accessToken = localStorage.getItem('access_token');
 
     // Obtener todos los usuarios
-    const usersResponse = await fetch('/api/users', {
+    const usersResponse = await fetch('/pokesector35/api/users', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -125,7 +124,7 @@ async function loadPokemonStats() {
     // Obtener Pokémon de cada usuario
     for (const user of users) {
       try {
-        const pokedexResponse = await fetch(`/api/users/${user.id}/pokedex`, {
+        const pokedexResponse = await fetch(`/pokesector35/api/users/${user.id}/pokedex`, {
           headers: { 'Authorization': `Bearer ${accessToken}` }
         });
 
@@ -176,7 +175,7 @@ async function loadTop3Players() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch('/api/ranking', {
+    const response = await fetch('/pokesector35/api/ranking', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -224,7 +223,7 @@ async function loadDifficultyStats() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch('/api/ranking', {
+    const response = await fetch('/pokesector35/api/ranking', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 

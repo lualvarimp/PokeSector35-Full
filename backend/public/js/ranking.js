@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const accessToken = localStorage.getItem('access_token');
 
   if (!accessToken) {
-    window.location.href = '/login';
+    window.location.href = '/pokesector35/login';
     return;
   }
 
@@ -29,7 +29,7 @@ async function loadRanking() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch('/api/ranking', {
+    const response = await fetch('/pokesector35/api/ranking', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
     const ranking = await response.json();
@@ -221,7 +221,7 @@ async function deleteRanking(rankingId, username) {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/ranking/${rankingId}`, {
+    const response = await fetch(`/pokesector35/api/ranking/${rankingId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });

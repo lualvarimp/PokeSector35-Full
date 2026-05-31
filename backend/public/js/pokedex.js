@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const accessToken = localStorage.getItem('access_token');
 
   if (!accessToken) {
-    window.location.href = '/login';
+    window.location.href = '/pokesector35/login';
     return;
   }
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   userId = urlParams.get('userId');
 
   if (!userId) {
-    window.location.href = '/admin/users';
+    window.location.href = '/pokesector35/admin/users';
     return;
   }
 
@@ -233,7 +233,7 @@ async function loadPokemon() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/users/${userId}/pokedex`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/pokedex`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -373,7 +373,7 @@ async function deletePokemon(pokemonId) {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/users/${userId}/pokedex/${pokemonId}`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/pokedex/${pokemonId}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
@@ -438,7 +438,7 @@ async function loadUserSlotsIntoSelect() {
 
   try {
     const accessToken = localStorage.getItem('access_token');
-    const resp = await fetch(`/api/users/${userId}/slots`, {
+    const resp = await fetch(`/pokesector35/api/users/${userId}/slots`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
     if (!resp.ok) return;
@@ -501,11 +501,11 @@ async function addPokemon() {
 
     if (!accessToken) {
       alert('Token expirado. Por favor, vuelve a loguear');
-      window.location.href = '/login';
+      window.location.href = '/pokesector35/login';
       return;
     }
 
-    const response = await fetch(`/api/users/${userId}/pokedex`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/pokedex`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,

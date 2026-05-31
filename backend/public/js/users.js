@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const accessToken = localStorage.getItem('access_token');
 
   if (!accessToken) {
-    window.location.href = '/login';
+    window.location.href = '/pokesector35/login';
     return;
   }
 
@@ -30,7 +30,7 @@ async function loadUsers() {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch('/api/users', {
+    const response = await fetch('/pokesector35/api/users', {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -88,7 +88,7 @@ function renderUsers(users) {
     const buttonClass = isDisabled ? 'btn-enable' : 'btn-disable';
 
     return `
-    <tr>
+    <tr class="${user.role === 'admin' ? 'admin-row' : ''}">
       <td>#${user.id}</td>
       <td>${user.username}</td>
       <td>
@@ -99,7 +99,7 @@ function renderUsers(users) {
       <td>${formattedDate}</td>
       <td>
         <div class="actions-cell">
-          <a href="/admin/users/${user.id}" class="btn-small btn-view">Ver</a>
+          <a href="/pokesector35/admin/users/${user.id}" class="btn-small btn-view">Ver</a>
           <button class="btn-small ${buttonClass}" onclick="toggleUserStatus(${user.id}, ${isDisabled})">${buttonText}</button>
         </div>
       </td>
@@ -252,11 +252,11 @@ async function toggleUserStatus(userId, isCurrentlyDisabled) {
 
     if (isCurrentlyDisabled) {
       // Habilitar (restaurar)
-      url = `/api/users/${userId}/restore`;
+      url = `/pokesector35/api/users/${userId}/restore`;
       method = 'PUT';
     } else {
       // Deshabilitar (soft delete)
-      url = `/api/users/${userId}`;
+      url = `/pokesector35/api/users/${userId}`;
       method = 'DELETE';
     }
 

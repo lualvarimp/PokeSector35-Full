@@ -9,11 +9,6 @@ export function validateCreateRanking(req, res, next) {
     return res.status(400).json({ error: 'Los conteos no pueden ser negativos' });
   }
 
-  const totalEncounters = captured_count + escaped_count;
-  if (totalEncounters < 10) {
-    return res.status(400).json({ error: 'Mínimo 10 encuentros para registrar en ranking' });
-  }
-
   if (!['facil', 'normal', 'dificil', 'infernal'].includes(difficulty_id)) {
     return res.status(400).json({ error: 'difficulty_id inválida' });
   }

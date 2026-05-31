@@ -12,6 +12,7 @@ export async function getRankingGlobal(difficulty = null) {
     SELECT
       r.id,
       r.user_id,
+      u.username,
       r.explorer_name,
       r.captured_count,
       r.escaped_count,
@@ -21,7 +22,6 @@ export async function getRankingGlobal(difficulty = null) {
     FROM ranking r
     JOIN users u ON r.user_id = u.id
     WHERE u.deleted_at IS NULL
-      AND (r.captured_count + r.escaped_count) >= 10
   `;
 
   const replacements = [];
@@ -110,7 +110,6 @@ export async function getRankingByPercentage(difficulty = null) {
     FROM ranking r
     JOIN users u ON r.user_id = u.id
     WHERE u.deleted_at IS NULL
-      AND (r.captured_count + r.escaped_count) >= 10
   `;
 
   const replacements = [];

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const userRole = localStorage.getItem('user_role');
 
   if (!accessToken) {
-    window.location.href = '/login';
+    window.location.href = '/pokesector35/login';
     return;
   }
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   currentUserId = pathParts[pathParts.length - 1];
 
   if (!currentUserId || currentUserId === 'users') {
-    window.location.href = '/admin/users';
+    window.location.href = '/pokesector35/admin/users';
     return;
   }
 
@@ -37,7 +37,7 @@ async function loadUserData(userId) {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/users/${userId}`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -66,8 +66,8 @@ async function loadUserData(userId) {
     }
 
     // Configurar botones de navegación
-    document.getElementById('viewPokedexBtn').href = `/admin/pokedex?userId=${userId}`;
-    document.getElementById('viewSlotsBtn').href = `/admin/slots?userId=${userId}`;
+    document.getElementById('viewPokedexBtn').href = `/pokesector35/admin/pokedex?userId=${userId}`;
+    document.getElementById('viewSlotsBtn').href = `/pokesector35/admin/slots?userId=${userId}`;
 
     // Cargar estadísticas completas (1 request en lugar de 2)
     await loadStatistics(userId);
@@ -85,7 +85,7 @@ async function loadStatistics(userId) {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/users/${userId}/stats`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/stats`, {
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
@@ -173,7 +173,7 @@ async function updateUserField(field, value) {
     const accessToken = localStorage.getItem('access_token');
 
     if (field === 'password') {
-      const response = await fetch(`/api/users/${currentUserId}/change-password`, {
+      const response = await fetch(`/pokesector35/api/users/${currentUserId}/change-password`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -189,14 +189,14 @@ async function updateUserField(field, value) {
 
     } else if (field === 'explorerName') {
       // Actualizar explorer_name en todos los slots del usuario
-      const slotsResp = await fetch(`/api/users/${currentUserId}/slots`, {
+      const slotsResp = await fetch(`/pokesector35/api/users/${currentUserId}/slots`, {
         headers: { 'Authorization': `Bearer ${accessToken}` }
       });
       if (!slotsResp.ok) { alert('Error obteniendo slots'); return; }
       const slots = await slotsResp.json();
 
       await Promise.all(slots.map(slot =>
-        fetch(`/api/users/${currentUserId}/slots/${slot.slot_number}`, {
+        fetch(`/pokesector35/api/users/${currentUserId}/slots/${slot.slot_number}`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -215,7 +215,7 @@ async function updateUserField(field, value) {
       alert('Nombre de explorador actualizado');
 
     } else {
-      const response = await fetch(`/api/users/${currentUserId}`, {
+      const response = await fetch(`/pokesector35/api/users/${currentUserId}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -270,14 +270,14 @@ async function permanentlyDeleteUser(userId) {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/users/${userId}/permanent`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/permanent`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
 
     if (response.ok) {
       alert('Usuario eliminado permanentemente');
-      window.location.href = '/admin/users';
+      window.location.href = '/pokesector35/admin/users';
     } else {
       const data = await response.json();
       alert(`Error: ${data.error}`);
@@ -300,7 +300,7 @@ async function restoreUser(userId) {
   try {
     const accessToken = localStorage.getItem('access_token');
 
-    const response = await fetch(`/api/users/${userId}/restore`, {
+    const response = await fetch(`/pokesector35/api/users/${userId}/restore`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${accessToken}` }
     });
@@ -332,7 +332,7 @@ function closeCreateModal() {
 
 function closeSuccessModal() {
   document.getElementById('successModal').style.display = 'none';
-  window.location.href = '/admin/users';
+  window.location.href = '/pokesector35/admin/users';
 }
 
 // ============================================================================
@@ -347,7 +347,7 @@ document.getElementById('createUserForm')?.addEventListener('submit', async (e) 
   const role = document.getElementById('newRole').value;
 
   try {
-    const response = await fetch('/api/auth/register', {
+    const response = await fetch('/pokesector35/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password, role })

@@ -78,7 +78,7 @@ export function updateMenu(action) {
 const VIEW_SELECTORS = [
     '.menu-main', '.menu-start', '.menu-slots', '.menu-info', '.menu-customize',
     '.menu-color', '.menu-explorer', '.menu-difficulty', '.menu-sticker', '.menu-vibration',
-    '.menu-ranking', '.menu-pokedex', '.menu-account', '.menu-confirm',
+    '.menu-ranking', '.menu-pokedex', '.menu-account', '.menu-contact', '.menu-confirm',
 ];
 
 export function showView(view) {
@@ -201,6 +201,9 @@ function handleMain(action) {
                 break;
             case 'logout':
                 import('./menu-account.js').then(m => m.onLogout());
+                break;
+            case 'contact':
+                showView('contact');
                 break;
         }
     }

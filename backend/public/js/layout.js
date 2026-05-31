@@ -8,7 +8,7 @@ async function performLogout(event) {
   try {
     const refreshToken = localStorage.getItem('refresh_token');
 
-    await fetch('/api/auth/logout', {
+    await fetch('/pokesector35/api/auth/logout', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -27,7 +27,7 @@ async function performLogout(event) {
 
     // Redirigir a login y reemplazar el historial
     // Usar location.replace() para que NO se pueda volver atrás
-    window.location.replace('/login');
+    window.location.replace('/pokesector35/login');
 
   } catch (error) {
     console.error('Error en logout:', error);
@@ -36,7 +36,7 @@ async function performLogout(event) {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user_role');
     localStorage.removeItem('username');
-    window.location.replace('/login');
+    window.location.replace('/pokesector35/login');
   }
 }
 
@@ -50,7 +50,7 @@ function checkAuthOnLoad() {
   
   // Si no hay token y no estamos en login, redirigir a login
   if (!accessToken && !window.location.pathname.includes('/login')) {
-    window.location.replace('/login');
+    window.location.replace('/pokesector35/login');
   }
   
   // Si hay token pero es inválido, redirigir a login
@@ -128,7 +128,7 @@ window.addEventListener('pageshow', (event) => {
     
     // Si no hay token, redirigir a login
     if (!accessToken && !window.location.pathname.includes('/login')) {
-      window.location.replace('/login');
+      window.location.replace('/pokesector35/login');
     }
   }
 });
